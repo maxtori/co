@@ -1,7 +1,10 @@
 [
   {
     "nom": "Petite taille",
-    "description": "Le halfelin obtient un bonus de +1 en DEF et de +3 à tous les tests de discrétion ainsi qu’à tous les tests effectués pour subtiliser quelque chose (pickpocket, vol à l’étalage, etc.). En revanche, un halfelin ne peut pas utiliser à une main une arme dont les DM dépassent 1d6 (épée courte, masse, etc., mais pas rapière). Il lui faut utiliser les deux mains pour les armes qui infligent 1d8 à 1d10 de DM (épée longue) et il lui est interdit d’utiliser les armes qui infligent plus de 1d10 DM. Il ne peut pas utiliser d’arc long ni d’arbalète lourde."
+    "description": "Le halfelin obtient un bonus de +1 en DEF et de +3 à tous les tests de discrétion ainsi qu’à tous les tests effectués pour subtiliser quelque chose (pickpocket, vol à l’étalage, etc.). En revanche, un halfelin ne peut pas utiliser à une main une arme dont les DM dépassent 1d6 (épée courte, masse, etc., mais pas rapière). Il lui faut utiliser les deux mains pour les armes qui infligent 1d8 à 1d10 de DM (épée longue) et il lui est interdit d’utiliser les armes qui infligent plus de 1d10 DM. Il ne peut pas utiliser d’arc long ni d’arbalète lourde.",
+    "bonus": [
+      { "id": "DEF", "valeur": 1 }
+    ]
   },
   {
     "nom": "Résistance légendaire",
@@ -17,6 +20,11 @@
   },
   {
     "nom": "Vif et bien nourri",
-    "description": "Le halfelin augmente ses valeurs d’AGI et de CON de +1."
+    "description": "Le halfelin augmente ses valeurs d’AGI et de CON de +1.",
+    "bonus": [
+      { "id": "AGI", "valeur": 1 },
+      { "id": "CON", "valeur": 1 }
+    ]
+
   }
 ]

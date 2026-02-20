@@ -17,6 +17,10 @@
   },
   {
     "nom": "Bonne nature",
-    "description": "Le gnome augmente ses valeurs de CON et de CHA de +1."
+    "description": "Le gnome augmente ses valeurs de CON et de CHA de +1.",
+    "bonus": [
+      { "id": "CON", "valeur": 1 },
+      { "id": "CHA", "valeur": 1 }
+    ]
   }
 ]

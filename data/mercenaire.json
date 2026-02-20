@@ -10,14 +10,23 @@
   },
   {
     "nom": "Combattant aguerri",
-    "description": "L’arquebusier choisit une capacité de rang 1 de son choix de guerrier, de voleur (armure de cuir) ou de rôdeur (armure de cuir renforcé). Il gagne aussi +1 en DEF."
+    "description": "L’arquebusier choisit une capacité de rang 1 de son choix de guerrier, de voleur (armure de cuir) ou de rôdeur (armure de cuir renforcé). Il gagne aussi +1 en DEF.",
+    "bonus": [
+      { "id": "DEF", "valeur": 1 }
+    ]
   },
   {
     "nom": "Constitution héroïque",
-    "description": "L’arquebusier augmente sa valeur de CON de +1 et il obtient un dé bonus aux tests de CON."
+    "description": "L’arquebusier augmente sa valeur de CON de +1 et il obtient un dé bonus aux tests de CON.",
+    "bonus": [
+      { "id": "CON", "valeur": 1 }
+    ]
   },
   {
     "nom": "Combat de masse",
-    "description": "Si le combat implique au moins 10 créatures actives (en comptant l’arquebusier et ses alliés), l’arquebusier obtient, au choix, une action d’attaque ou une action de mouvement supplémentaire à son tour. De plus, l’arquebusier gagne +1 en DEF. Note : à titre exceptionnel, si la voie du mercenaire est choisie pour construire un profil hybride, elle ne donne pas accès à la maîtrise des armes à poudre. En revanche, elle n’interdit pas le port du bouclier."
+    "description": "Si le combat implique au moins 10 créatures actives (en comptant l’arquebusier et ses alliés), l’arquebusier obtient, au choix, une action d’attaque ou une action de mouvement supplémentaire à son tour. De plus, l’arquebusier gagne +1 en DEF. Note : à titre exceptionnel, si la voie du mercenaire est choisie pour construire un profil hybride, elle ne donne pas accès à la maîtrise des armes à poudre. En revanche, elle n’interdit pas le port du bouclier.",
+    "bonus": [
+      { "id": "DEF", "valeur": 1 }
+    ]
   }
 ]

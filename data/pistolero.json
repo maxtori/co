@@ -14,7 +14,10 @@
   },
   {
     "nom": "Agilité héroïque",
-    "description": "L’arquebusier augmente sa valeur d’AGI de +1 et il obtient un dé bonus aux tests d’AGI."
+    "description": "L’arquebusier augmente sa valeur d’AGI de +1 et il obtient un dé bonus aux tests d’AGI.",
+    "bonus": [
+      { "id": "AGI", "valeur": 1 }
+    ]
   },
   {
     "nom": "As de la gâchette",

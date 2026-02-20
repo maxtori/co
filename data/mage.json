@@ -11,11 +11,20 @@
   },
   {
     "nom": "Tour de magie",
-    "description": "Le mage peut réaliser un tour de magie (portée 10 m) par round en action gratuite sans dépenser aucun PM. Par exemple, fermer une porte à distance, éteindre ou allumer une bougie en claquant des doigts. Il ne peut réaliser aucune action qui nécessite une valeur de caractéristique supérieure à 0 (par exemple, s’il faut au moins +1 ou un test de FOR pour pousser une porte lourde, ce sort ne permet pas de la fermer). Cette capacité ne peut produire aucun DM direct. De plus, le mage gagne +1 en DEF et +2 PM (en plus de celui gagné avec cette capacité ; au total, en apprenant ce sort, le mage acquiert donc 3 PM d’un coup)."
+    "description": "Le mage peut réaliser un tour de magie (portée 10 m) par round en action gratuite sans dépenser aucun PM. Par exemple, fermer une porte à distance, éteindre ou allumer une bougie en claquant des doigts. Il ne peut réaliser aucune action qui nécessite une valeur de caractéristique supérieure à 0 (par exemple, s’il faut au moins +1 ou un test de FOR pour pousser une porte lourde, ce sort ne permet pas de la fermer). Cette capacité ne peut produire aucun DM direct. De plus, le mage gagne +1 en DEF et +2 PM (en plus de celui gagné avec cette capacité ; au total, en apprenant ce sort, le mage acquiert donc 3 PM d’un coup).",
+    "sort": true,
+    "bonus": [
+      { "id": "DEF", "valeur": 1 },
+      { "id": "PM", "valeur": 2 }
+    ]
   },
   {
     "nom": "Esprit supérieur",
-    "description": "Le mage augmente son INT et sa VOL de +1. Désormais, il obtient un dé bonus aux tests d’INT."
+    "description": "Le mage augmente son INT et sa VOL de +1. Désormais, il obtient un dé bonus aux tests d’INT.",
+    "bonus": [
+      { "id": "INT", "valeur": 1 },
+      { "id": "VOL", "valeur": 1 }
+    ]
   },
   {
     "nom": "Tempête de mana",

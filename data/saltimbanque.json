@@ -5,7 +5,10 @@
   },
   {
     "nom": "Grâce féline",
-    "description": "Le barde gagne son CHA en Initiative et +1 en DEF (+2 au rang 4). De plus, le barde ajoute son rang + 2 aux tests de danse, de mime ou de jonglerie."
+    "description": "Le barde gagne son CHA en Initiative et +1 en DEF (+2 au rang 4). De plus, le barde ajoute son rang + 2 aux tests de danse, de mime ou de jonglerie.",
+    "bonus": [
+      { "id": "DEF", "valeur": 1 }
+    ]
   },
   {
     "nom": "Lanceur de couteau",
@@ -14,7 +17,10 @@
   },
   {
     "nom": "Liberté d’action",
-    "description": "Le barde est immunisé à la peur et à tous les sorts qui asservissent l’esprit (possession, charme), il est immunisé aux états ralenti et immobilisé."
+    "description": "Le barde est immunisé à la peur et à tous les sorts qui asservissent l’esprit (possession, charme), il est immunisé aux états ralenti et immobilisé.",
+    "bonus": [
+      { "id": "DEF", "valeur": 1 }
+    ]
   },
   {
     "nom": "Esquive acrobatique",

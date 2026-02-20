@@ -10,15 +10,24 @@
   {
     "nom": "Grand pas",
     "description": "En milieu naturel, le rôdeur obtient +1 en DEF (ce bonus passe à +2 au rang 5) et 10 m de déplacement en action gratuite (à son tour de jeu). Enfin, il n’est pas gêné par les terrains difficiles naturels, mais il n’obtient pas alors de déplacement supplémentaire.",
-    "action": "gratuite"
+    "action": "gratuite",
+    "bonus": [
+      { "id": "DEF", "valeur": 1 }
+    ]
   },
   {
     "nom": "Constitution héroïque",
-    "description": "Le rôdeur augmente sa valeur de CON de +1. Désormais, il obtient un dé bonus aux tests de CON."
+    "description": "Le rôdeur augmente sa valeur de CON de +1. Désormais, il obtient un dé bonus aux tests de CON.",
+    "bonus": [
+      { "id": "CON", "valeur": 1 }
+    ]
   },
   {
     "nom": "Increvable",
     "description": "Une fois par combat, lorsqu’il tombe à 0PV, le rôdeur peut récupérer [4d4° + CON] PV au début de son prochain tour. Lorsqu’il se relève, il bénéficie d’un bonus de +5 en DEF pendant 1 round et il se débarrasse de tous les états préjudiciables non permanents qui l’affectent.",
-    "action": "limitée"
+    "action": "limitée",
+    "bonus": [
+      { "id": "DEF", "valeur": 1 }
+    ]
   }
 ]

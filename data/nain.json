@@ -17,6 +17,10 @@
   },
   {
     "nom": "Ténacité",
-    "description": "Le nain augmente ses valeurs de CON et de VOL de +1."
+    "description": "Le nain augmente ses valeurs de CON et de VOL de +1.",
+    "bonus": [
+      { "id": "CON", "valeur": 1 },
+      { "id": "VOL", "valeur": 1 }
+    ]
   }
 ]

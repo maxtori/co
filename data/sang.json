@@ -13,7 +13,10 @@
   },
   {
     "nom": "Exsangue",
-    "description": "Le corps du sorcier devient cadavérique. Il gagne +2 en DEF et ce bonus passe à +3 au rang 5 (Si le personnage porte une armure autre qu’une armure d’os de sorcier, le bonus est réduit de 1 point, donc +1 DEF et +2 DEF au rang 5). De plus, lorsqu’il tombe à 0 PV, il peut continuer à agir, mais avec un dé malus à tous ses tests. S’il subit encore au moins 1 DM, il sombre dans l’inconscience."
+    "description": "Le corps du sorcier devient cadavérique. Il gagne +2 en DEF et ce bonus passe à +3 au rang 5 (Si le personnage porte une armure autre qu’une armure d’os de sorcier, le bonus est réduit de 1 point, donc +1 DEF et +2 DEF au rang 5). De plus, lorsqu’il tombe à 0 PV, il peut continuer à agir, mais avec un dé malus à tous ses tests. S’il subit encore au moins 1 DM, il sombre dans l’inconscience.",
+    "bonus": [
+      { "id": "DEF", "valeur": 2 }
+    ]
   },
   {
     "nom": "Rituel de sang",
@@ -25,6 +28,9 @@
     "nom": "Lien de sang",
     "description": "En réussissant un test opposé d’attaque magique (portée 20 m), le sorcier tisse un lien avec sa victime. Pendant INT minutes, la moitié des DM reçus par le sorcier sont également subis par la cible (les DM infligés au sorcier ne sont pas pour autant réduits) et le sorcier peut lui lancer un sort sans la voir (si elle est à portée).",
     "action": "attaque",
-    "sort": true
+    "sort": true,
+    "bonus": [
+      { "id": "DEF", "valeur": 1 }
+    ]
   }
 ]

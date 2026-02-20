@@ -1,8 +1,7 @@
 [
   {
     "nom": "Siphon des âmes",
-    "description": "Une fois par round, lorsqu’une créature humanoïde vivante meurt à moins de 20 m du sorcier, il récupère NC PV (arrondis à 1 pour NC ½). À partir du rang 3, si la créature est de NC supérieur à 4, il peut choisir de récupérer 1 PM au
-lieu des PV."
+    "description": "Une fois par round, lorsqu'une créature humanoïde vivante meurt à moins de 20 m du sorcier, il récupère NC PV (arrondis à 1 pour NC 1/2). À partir du rang 3, si la créature est de NC supérieur à 4, il peut choisir de récupérer 1 PM au lieu des PV."
   },
   {
     "nom": "Masque mortuaire",

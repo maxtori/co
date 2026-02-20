@@ -64,17 +64,57 @@ type peuple =
   | Nain
 [@@deriving encoding {assoc}, jsoo]
 
-type caracteristique =
-  | AGI
-  | CON
-  | FOR
-  | PER
-  | CHA
-  | INT
-  | VOL
-[@@deriving encoding, jsoo]
+type caracteristique = [
+  | `AGI
+  | `CON
+  | `FOR
+  | `PER
+  | `CHA
+  | `INT
+  | `VOL
+] [@@deriving encoding {assoc}, jsoo]
 
-type caracteristique_avec_valeur = { caracteristique: caracteristique; valeur: int } [@@deriving encoding, jsoo]
+type bonus = [
+  | `DEF
+  | `INI
+  | `WEA
+  | `PV
+  | `PC
+  | `PR
+  | `PM
+] [@@deriving encoding {assoc}, jsoo]
+
+type caracteristique_ou_bonus = [ caracteristique | bonus ] [@@deriving encoding]
+
+[@@@jsoo
+  class type caracteristique_ou_bonus_jsoo = Ezjs_min.js_string
+  let caracteristique_ou_bonus_to_jsoo : caracteristique_ou_bonus -> caracteristique_ou_bonus_jsoo Ezjs_min.t = function
+    | #caracteristique as v -> caracteristique_to_jsoo v
+    | #bonus as v -> bonus_to_jsoo v
+  let caracteristique_ou_bonus_of_jsoo : caracteristique_ou_bonus_jsoo Ezjs_min.t -> caracteristique_ou_bonus = fun v ->
+    try (caracteristique_of_jsoo v :> caracteristique_ou_bonus) with _ ->
+    (bonus_of_jsoo v :> caracteristique_ou_bonus)
+  let caracteristique_ou_bonus_jsoo_conv = caracteristique_ou_bonus_to_jsoo, caracteristique_ou_bonus_of_jsoo
+]
+
+type valeur = [
+  | `int of int
+  | `car of caracteristique
+] [@@deriving encoding]
+
+[@@@jsoo
+  type valeur_jsoo = Ezjs_min.Unsafe.top
+  let valeur_to_jsoo : valeur -> valeur_jsoo Ezjs_min.t = function
+    | `int i -> Ezjs_min.Unsafe.inject i
+    | `car c -> Ezjs_min.Unsafe.inject (caracteristique_to_jsoo c)
+  let valeur_of_jsoo : valeur_jsoo Ezjs_min.t -> valeur = fun v ->
+    try (`int (Float.to_int @@ Ezjs_min.float_of_number @@ Ezjs_min.Unsafe.coerce v))
+    with _ -> `car (caracteristique_of_jsoo (Ezjs_min.Unsafe.coerce v))
+  let valeur_jsoo_conv = valeur_to_jsoo, valeur_of_jsoo
+]
+
+type avec_valeur = { id: caracteristique_ou_bonus; valeur: valeur } [@@deriving encoding, jsoo]
+type avec_nom = string * avec_valeur [@@deriving encoding, jsoo]
 
 type caracteristiques = {
   agilite: int;
@@ -465,6 +505,7 @@ type capacite = {
   description: string;
   action: action list; [@dft []] [@encoding actions_enc]
   sort: bool; [@dft false]
+  bonus: avec_valeur list; [@dft []]
 } [@@deriving encoding, jsoo]
 
 type voie = capacite list [@@deriving encoding, jsoo]
@@ -486,26 +527,13 @@ type points_avec_max = {
   max: int;
 } [@@deriving encoding, jsoo]
 
-type phase =
-  | Profil of { profils: (famille * profil list) list; choix: (famille * profil) option }
-  | Peuple of { peuples: peuple list; choix: peuple option }
-  | Caracteristiques of {
-      bonuses: caracteristique_avec_valeur list list;
-      choix: caracteristiques; choix_bonus: (caracteristique_avec_valeur list * int) option
-    }
-  | Voies of { voies: voie_type list; choix: (voie_type * int) list }
-  | Enregistrement of {
-      ideaux: string list; travers_options: string list;
-      nom: string; label: string; ideal: string; travers: string;
-    }
-[@@deriving encoding, jsoo {remove_undefined; snake}]
-
 type personnage = {
   nom: string;
   niveau: int;
   famille: famille;
   profil: profil;
   peuple: peuple;
+  caracteristiques_base: caracteristiques;
   caracteristiques: caracteristiques;
   points_de_vigueur: points_avec_max;
   des_de_recuperation: points_avec_max;
@@ -518,14 +546,13 @@ type personnage = {
   travers: travers option;
   description: description;
   voies: (voie_type * int) list; [@dft []]
-  creation: phase option;
-  caracteristiques_bonus: caracteristique_avec_valeur list;
+  bonuses: avec_nom list;
 } [@@deriving encoding, jsoo]
 
 let caracteristiques_par_defaut peuple = match peuple with
   | None ->
-    { agilite=2; constitution=0; force=3; perception=1; charisme=(-1);
-      intelligence=0; volonte=1 }
+    { agilite=0; constitution=0; force=0; perception=0; charisme=0;
+      intelligence=0; volonte=0 }
   | Some p -> match p with
     | Demi_elfe ->
       { agilite=2; constitution=0; force=(-1); perception=3; charisme=1;
@@ -556,10 +583,12 @@ let points_vide = { courant = 0; max = 0 }
 
 let personnage_vide = {
   nom=""; niveau=1; famille=Aventuriers; profil=`Arquebusier; peuple=Demi_elfe;
-  caracteristiques=caracteristiques_par_defaut (Some Demi_elfe); points_de_vigueur=points_vide;
+  caracteristiques=caracteristiques_par_defaut None;
+  caracteristiques_base=caracteristiques_par_defaut (Some Demi_elfe);
+  points_de_vigueur=points_vide;
   des_de_recuperation=points_vide; points_de_chance=points_vide; points_de_mana=points_vide;
   initiative=0; defense=0; equipements=[]; ideal=None; travers=None; description=`Null;
-  voies=[]; creation=None; caracteristiques_bonus=[];
+  voies=[]; bonuses=[];
 }
 
 let profils () =
@@ -571,44 +600,44 @@ let profils () =
   ) famille_assoc
 
 let bonuses_peuple p c =
-  let l = match p with
-    | Demi_elfe -> [
-        [ PER, 1; FOR, -1 ]; [ PER, 1; CON, -1 ];
-        [ CHA, 1; FOR, -1 ]; [ CHA, 1; CON, -1 ];
-      ]
-    | Demi_orc -> [
-        [ FOR, 1; CHA, -1 ]; [ FOR, 1; INT, -1 ];
-        [ CON, 1; CHA, -1 ]; [ CON, 1; INT, -1 ];
-      ]
-    | Elfe_haut -> [
-        [ INT, 1; FOR, -1 ]; [ CHA, 1; FOR, -1 ];
-      ]
-    | Elfe_sylvain -> [
-        [ AGI, 1; FOR, -1 ]; [ PER, 1; FOR, -1 ];
-      ]
-    | Gnome -> [
-        [ INT, 1; FOR, -1 ]; [ PER, 1; FOR, -1 ];
-      ]
-    | Halfelin -> [
-        [ AGI, 1; FOR, -1 ]; [ VOL, 1; FOR, -1 ];
-      ]
+  let nom, l = match p with
+    | Demi_elfe -> "demi_elfe", [
+      [ `PER, 1; `FOR, -1 ]; [ `PER, 1; `CON, -1 ];
+      [ `CHA, 1; `FOR, -1 ]; [ `CHA, 1; `CON, -1 ];
+    ]
+    | Demi_orc -> "demi_orc", [
+      [ `FOR, 1; `CHA, -1 ]; [ `FOR, 1; `INT, -1 ];
+      [ `CON, 1; `CHA, -1 ]; [ `CON, 1; `INT, -1 ];
+    ]
+    | Elfe_haut -> "elfe_haut", [
+      [ `INT, 1; `FOR, -1 ]; [ `CHA, 1; `FOR, -1 ];
+    ]
+    | Elfe_sylvain -> "elfe_sylvain", [
+      [ `AGI, 1; `FOR, -1 ]; [ `PER, 1; `FOR, -1 ];
+    ]
+    | Gnome -> "gnome", [
+      [ `INT, 1; `FOR, -1 ]; [ `PER, 1; `FOR, -1 ];
+    ]
+    | Halfelin -> "halfelin", [
+      [ `AGI, 1; `FOR, -1 ]; [ `VOL, 1; `FOR, -1 ];
+    ]
     | Humain ->
       let aux acc i =
-        let acc = if c.agilite = i then AGI :: acc else acc in
-        let acc = if c.constitution = i then CON :: acc else acc in
-        let acc = if c.force = i then FOR :: acc else acc in
-        let acc = if c.perception = i then PER :: acc else acc in
-        let acc = if c.charisme = i then CHA :: acc else acc in
-        let acc = if c.intelligence = i then INT :: acc else acc in
-        let acc = if c.volonte = i then VOL :: acc else acc in
+        let acc = if c.agilite = i then `AGI :: acc else acc in
+        let acc = if c.constitution = i then `CON :: acc else acc in
+        let acc = if c.force = i then `FOR :: acc else acc in
+        let acc = if c.perception = i then `PER :: acc else acc in
+        let acc = if c.charisme = i then `CHA :: acc else acc in
+        let acc = if c.intelligence = i then `INT :: acc else acc in
+        let acc = if c.volonte = i then `VOL :: acc else acc in
         acc in
       let l = aux [] (-1) in
       let l = if List.length l >= 2 then l else aux l 0 in
-      List.map (fun c -> [c, 1]) l
-    | Nain -> [
-        [ CON, 1; AGI, -1 ]; [ VOL, 1; AGI, -1 ];
+      "humain", List.map (fun c -> [c, 1]) l
+    | Nain -> "nain", [
+        [ `CON, 1; `AGI, -1 ]; [ `VOL, 1; `AGI, -1 ];
       ] in
-  List.map (fun l -> List.map (fun (caracteristique, valeur) -> {caracteristique; valeur}) l) l
+  List.map (fun l -> List.map (fun (id, v) -> nom, {id; valeur=`int v}) l) l
 
 let verifie_caracteristiques c =
   let acc = [] in
@@ -631,14 +660,44 @@ let verifie_caracteristiques c =
   | _ -> false
 
 let ajoute_caracteristiques ?(factor=1) c l =
-  List.fold_left (fun acc {caracteristique; valeur} -> match caracteristique with
-    | AGI -> { acc with agilite = acc.agilite + factor * valeur }
-    | CON -> { acc with constitution = acc.constitution + factor * valeur }
-    | FOR -> { acc with force = acc.force + factor * valeur }
-    | PER -> { acc with perception = acc.perception + factor * valeur }
-    | CHA -> { acc with charisme = acc.charisme + factor * valeur }
-    | INT -> { acc with intelligence = acc.intelligence + factor * valeur }
-    | VOL -> { acc with volonte = acc.volonte + factor * valeur }) c l
+  List.fold_left (fun acc (_, {id; valeur}) ->
+    match valeur with
+    | `car _ -> acc
+    | `int v ->
+      let v = factor * v in
+      match id with
+      | `AGI -> { acc with agilite = acc.agilite + v }
+      | `CON -> { acc with constitution = acc.constitution + v }
+      | `FOR -> { acc with force = acc.force + v }
+      | `PER -> { acc with perception = acc.perception + v }
+      | `CHA -> { acc with charisme = acc.charisme + v }
+      | `INT -> { acc with intelligence = acc.intelligence + v }
+      | `VOL -> { acc with volonte = acc.volonte + v }
+      | _ -> acc
+  ) c l
+
+let ajoute_bonus ?(factor=1) p l =
+  List.fold_left (fun acc (_, {id; valeur}) ->
+    let v = factor * (match valeur with
+      | `int i -> i
+      | `car c -> match c with
+        | `AGI -> acc.caracteristiques.agilite
+        | `CON -> acc.caracteristiques.constitution
+        | `FOR -> acc.caracteristiques.force
+        | `PER -> acc.caracteristiques.perception
+        | `CHA -> acc.caracteristiques.charisme
+        | `INT -> acc.caracteristiques.intelligence
+        | `VOL -> acc.caracteristiques.volonte) in
+    match id with
+    | `DEF -> { acc with defense = acc.defense + v }
+    | `INI -> { acc with initiative = acc.initiative + v }
+    | `WEA -> acc (* todo *)
+    | `PV -> { acc with points_de_vigueur = { max = acc.points_de_vigueur.max + v; courant = acc.points_de_vigueur.courant + v } }
+    | `PC -> { acc with points_de_chance = { max = acc.points_de_chance.max + v; courant = acc.points_de_chance.courant + v } }
+    | `PR -> { acc with des_de_recuperation = { max = acc.des_de_recuperation.max + v; courant = acc.des_de_recuperation.courant + v } }
+    | `PM -> { acc with points_de_mana = { max = acc.points_de_mana.max + v; courant = acc.points_de_mana.courant + v } }
+    | _ -> acc
+  ) p l
 
 let voies_peuple = function
   | Demi_elfe -> [ `Elfe_haut; `Elfe_sylvain; `Humain ]
@@ -709,7 +768,9 @@ let verifie_voies p voies =
   if points_capacite > points_niveau then Some "trop de capacites" else
   None
 
-let remplit_caracteristiques p nb_sorts def_equipement agi_max  =
+let remplit_caracteristiques p def_equipement agi_max  =
+  let caracteristiques = ajoute_caracteristiques p.caracteristiques_base p.bonuses in
+  let p = { p with caracteristiques } in
   let aux p = { courant=p; max=p } in
   let points_de_vigueur = aux @@ p.caracteristiques.constitution + p.niveau * (match p.famille with
     | Aventuriers -> 8
@@ -720,11 +781,13 @@ let remplit_caracteristiques p nb_sorts def_equipement agi_max  =
     | Mystiques -> 1 | _ -> 0) in
   let points_de_chance = aux @@ 2 + p.caracteristiques.charisme + (match p.famille with
     | Aventuriers -> 1 | _ -> 0) in
-  let points_de_mana = aux (if nb_sorts = 0 then 0 else p.caracteristiques.volonte + nb_sorts) in
   let initiative = 10 + p.caracteristiques.perception in
   let defense = 10 + min agi_max p.caracteristiques.agilite + def_equipement in
-  { p with points_de_vigueur; des_de_recuperation; points_de_chance; points_de_mana;
-           initiative; defense }
+  let p = { p with points_de_vigueur; des_de_recuperation; points_de_chance;
+                   initiative; defense; points_de_mana=aux 0 } in
+  let p = ajoute_bonus p p.bonuses in
+  let points_de_mana = aux @@ if p.points_de_mana.max = 0 then 0 else p.points_de_mana.max + p.caracteristiques.volonte in
+  { p with points_de_mana }
 
 let equipements_profil : profil -> equipement_nom list = function
   | `Arquebusier -> [ `petoire; `epee_longue; `dague; `cuir_renforce ]
@@ -741,14 +804,15 @@ let equipements_profil : profil -> equipement_nom list = function
   | `Moine -> [ `baton ]
   | `Pretre -> [ `masse; `petit_bouclier; `chemise_de_mailles ]
 
-let nombre_sorts voies =
-  List.fold_left (fun acc (l, rg) ->
-    let rec aux acc i l =
-      if i > rg then acc else
-      match l with
-      | [] -> acc
-      | c :: tl ->
-        let acc = if c.sort then acc + 1 else acc in
-        aux acc (i+1) tl in
-    aux acc 0 l
-  ) 0 voies
+let bonus_voies voies =
+  let rec aux acc i rg l =
+    if i > rg then acc else
+    match l with
+    | [] -> acc
+    | (c: capacite) :: tl ->
+      let acc = acc @ (List.map (fun x -> c.nom, x) c.bonus) in
+      let acc = if c.sort then acc @ [ c.nom, { id=`PM; valeur=`int 1 } ] else acc in
+      aux acc (i+1) rg tl in
+   List.fold_left (fun acc (l, rg) ->
+     aux acc 1 rg l
+  ) [] voies

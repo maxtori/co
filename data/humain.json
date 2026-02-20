@@ -17,6 +17,10 @@
   },
   {
     "nom": "Polyvalence",
-    "description": "Le personnage augmente sa caractéristique la plus faible de +1 et sa Volonté de +1."
+    "description": "Le personnage augmente sa caractéristique la plus faible de +1 et sa Volonté de +1.",
+    "bonus": [
+      { "id": "VOL", "valeur": 1 },
+      { "id": "WEA", "valeur": 1 }
+    ]
   }
 ]

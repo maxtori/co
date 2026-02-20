@@ -18,6 +18,10 @@
   },
   {
     "nom": "Colosse",
-    "description": "Le demi-orc augmente ses valeurs de FOR et de CON de +1."
+    "description": "Le demi-orc augmente ses valeurs de FOR et de CON de +1.",
+    "bonus": [
+      { "id": "CON", "valeur": 1 },
+      { "id": "FOR", "valeur": 1 }
+    ]
   }
 ]

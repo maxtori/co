@@ -2,14 +2,37 @@ open Ezjs_min
 open Ezjs_idb
 open Co
 
-module Personnages = Store(StringTr)(struct
-    type js = personnage_jsoo t
-    type t = personnage
-    let to_js = personnage_to_jsoo
-    let of_js = personnage_of_jsoo
-  end)
+type phase =
+  | Profil of { profils: (famille * profil list) list; choix: (famille * profil) option }
+  | Peuple of { peuples: peuple list; choix: peuple option }
+  | Caracteristiques of {
+      bonuses: avec_nom list list;
+      choix: caracteristiques; choix_bonus: (avec_nom list * int) option
+    }
+  | Voies of { voies: voie_type list; choix: (voie_type * int) list }
+  | Enregistrement of {
+      ideaux: string list; travers_options: string list;
+      nom: string; label: string; ideal: string; travers: string;
+    }
+[@@deriving jsoo {remove_undefined; snake}]
 
-type personnage_et_clef = string * personnage [@@deriving jsoo]
+type avec_phase = {
+  perso: personnage;
+  creation: phase option;
+} [@@deriving jsoo]
+
+type avec_label = {
+  label: string;
+  perso: personnage;
+  creation: phase option;
+} [@@deriving jsoo]
+
+module Personnages = Store(StringTr)(struct
+    type js = avec_phase_jsoo t
+    type t = avec_phase
+    let to_js = avec_phase_to_jsoo
+    let of_js = avec_phase_of_jsoo
+  end)
 
 type genre_de = [
   | `points_de_vigueur
@@ -27,7 +50,8 @@ type de = {
 type choix_edition = {
   niveau: int;
   caracteristiques: caracteristiques;
-  bonus_peuple: caracteristique_avec_valeur list * int;
+  bonuses: avec_nom list;
+  bonus: avec_nom;
   voies: (voie_type * int) list;
   equipements: equipement_nom list;
   equipement: equipement_nom;
@@ -35,19 +59,19 @@ type choix_edition = {
 
 type edition = {
   label: string;
-  personnage: personnage;
-  bonuses_peuple: caracteristique_avec_valeur list list;
+  perso: personnage;
   voies: voie_type list;
   equipements: equipement_nom list;
   choix: choix_edition;
+  ids: caracteristique_ou_bonus list;
 } [@@deriving jsoo]
 
 type page =
   | Chargement
-  | Personnages of personnage_et_clef list
-  | Personnage of personnage_et_clef
+  | Personnages of avec_label list
+  | Personnage of { label: string; perso: personnage }
   | Importation of string
-  | Creation of personnage_et_clef
+  | Creation of { label: string; perso: personnage; creation: phase }
   | Edition of edition
 [@@deriving jsoo {remove_undefined; snake}]
 
@@ -82,25 +106,25 @@ let ouverture_fichier fichier f =
 
 let chargement_personnages app f =
   let st = Personnages.store ~mode:READONLY app##.db in
-  Personnages.fold st (fun k p acc -> (k, p) :: acc) [] @@ fun l ->
+  Personnages.fold st (fun label {perso; creation} acc -> {label; perso; creation} :: acc) [] @@ fun l ->
   f app (List.rev l)
 
-let ajout_personnage app key p f =
+let ajout_personnage ?creation app label perso f =
   let st = Personnages.store ~mode:READWRITE app##.db in
-  Personnages.add ~key ~callback:(fun _ -> f app (key, p)) st p
+  Personnages.add ~key:label ~callback:(fun _ -> f app {label; perso; creation}) st {perso; creation}
 
-let edition_personnage app key p =
+let edition_personnage ?creation app label perso =
   let st = Personnages.store ~mode:READWRITE app##.db in
-  Personnages.put ~key st p
+  Personnages.put ~key:label st {perso; creation}
 
-let suppression_personnage app key =
+let suppression_personnage app label =
   let st = Personnages.store ~mode:READWRITE app##.db in
-  Personnages.delete st (Personnages.K key)
+  Personnages.delete st (Personnages.K label)
 
-let importation_personnage app key fichier f = ouverture_fichier fichier @@ fun s ->
+let importation_personnage app label fichier f = ouverture_fichier fichier @@ fun s ->
   let p = EzEncoding.destruct personnage_enc s in
-  let key = if String.trim key = "" then Format.sprintf "%s_%d" p.nom p.niveau else key in
-  ajout_personnage app key p f
+  let label = if String.trim label = "" then Format.sprintf "%s_%d" p.nom p.niveau else label in
+  ajout_personnage app label p f
 
 let to_raw x = Unsafe.global##._Vue##toRaw x
 
@@ -120,7 +144,7 @@ let rec unproxy x =
 
 let charge_fichier url f =
   Ezjs_fetch.fetch url Ezjs_fetch.to_text @@ function
-  | Error _ -> log "%s non présent" url; f None
+  | Error e -> js_log e; log "%s non présent" url; f None
   | Ok r -> f (Some r.Ezjs_fetch.body)
 
 let charge_voie v f =
@@ -138,18 +162,21 @@ let charge_voie v f =
       f (Some voie)
 
 let charge_equipement e f =
-  match List.assoc_opt e !equipements with
-  | Some e -> f (Some e)
-  | None ->
-    let e_str = equipement_to_str e in
-    Format.printf "chargement equipement %s@." e_str;
-    let url = Format.sprintf "data/%s.json" e_str in
-    charge_fichier url @@ function
-    | None -> f None
-    | Some s ->
-      let equipement = EzEncoding.destruct equipement_enc s in
-      equipements := (e, equipement) :: !equipements;
-      f (Some equipement)
+  match e with
+  | `autre _ -> f None
+  | _ ->
+    match List.assoc_opt e !equipements with
+    | Some e -> f (Some e)
+    | None ->
+      let e_str = equipement_to_str e in
+      Format.printf "chargement equipement %s@." e_str;
+      let url = Format.sprintf "data/%s.json" e_str in
+      charge_fichier url @@ function
+      | None -> f None
+      | Some s ->
+        let equipement = EzEncoding.destruct equipement_enc s in
+        equipements := (e, equipement) :: !equipements;
+        f (Some equipement)
 
 let chargement_voies l f =
   let rec aux = function
@@ -184,16 +211,16 @@ let route app p =
   | Personnages l ->
     let rec aux = function
       | [] -> f app
-      | (_, (p: personnage)) :: tl ->
-        chargement_voies (List.map fst p.voies) @@ fun () ->
-        chargement_equipements p.equipements @@ fun _ ->
+      | ({perso; _}: avec_label) :: tl ->
+        chargement_voies (List.map fst perso.voies) @@ fun () ->
+        chargement_equipements perso.equipements @@ fun _ ->
         aux tl in
     aux l
-  | Personnage (_, p) ->
-    chargement_voies (List.map fst p.voies) @@ fun _ ->
-    chargement_equipements p.equipements @@ fun _ ->
+  | Personnage {perso; _} ->
+    chargement_voies (List.map fst perso.voies) @@ fun _ ->
+    chargement_equipements perso.equipements @@ fun _ ->
     f app
-  | Creation (_, { creation = Some Voies {voies; _}; equipements; _}) ->
+  | Creation { creation = Voies {voies; _}; perso = {equipements; _}; _ } ->
     chargement_voies voies @@ fun _ ->
     chargement_equipements equipements @@ fun _ ->
     f app
@@ -210,34 +237,31 @@ let init app =
 
 let%meth commence_creation app =
   let profils = profils () in
-  let nom = Format.sprintf "perso_%ld" (to_int32 @@ date##now) in
-  let p = Creation (nom, { personnage_vide with creation=Some (Profil {profils; choix=None}) }) in
+  let label = Format.sprintf "perso_%ld" (to_int32 @@ date##now) in
+  let p = Creation { label; perso=personnage_vide; creation=Profil {profils; choix=None} } in
   route app (page_to_jsoo p)
 
 and personnage app p =
-  let k, p = personnage_et_clef_of_jsoo p in
+  let p = avec_label_of_jsoo p in
   let page = match p.creation with
-    | Some _ -> Creation (k, p)
-    | None -> Personnage (k, p) in
+    | Some creation -> Creation { label=p.label; perso=p.perso; creation }
+    | None -> Personnage { label=p.label; perso=p.perso } in
   route app (page_to_jsoo page)
 
 and dir app p = route app p
 
 and home app = init app
 and edition app = match page_of_jsoo app##.page with
-  | Personnage (label, p) ->
-    let caracteristiques = ajoute_caracteristiques ~factor:(-1) p.caracteristiques p.caracteristiques_bonus in
-    let bonuses_peuple = bonuses_peuple p.peuple caracteristiques in
-    let bonus_peuple_index, _ = List.fold_left (fun (i, acc) b ->
-      if b = p.caracteristiques_bonus then acc, acc+1 else i, acc+1) (0, 0) bonuses_peuple in
+  | Personnage { label; perso=p } ->
+    let ids = List.map snd caracteristique_assoc @ List.map snd bonus_assoc in
     let choix = {
-      niveau=p.niveau; caracteristiques;
-      bonus_peuple = (p.caracteristiques_bonus, bonus_peuple_index);
+      niveau=p.niveau; caracteristiques=p.caracteristiques_base;
+      bonuses = p.bonuses; bonus = ("", {id=`AGI; valeur=`int 0});
       voies=p.voies; equipements=p.equipements; equipement=`autre "" } in
     let voies = voies_peuple p.peuple @ voies_profil p.profil in
     let edition = {
-      label; personnage=p; voies; choix;
-      equipements=List.map snd equipement_nom_assoc; bonuses_peuple } in
+      label; perso=p; voies; choix; ids;
+      equipements=List.map snd equipement_nom_assoc } in
     route app (page_to_jsoo (Edition edition))
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"
 
@@ -246,98 +270,87 @@ and [@noconv] importation app (ev: Dom_html.inputElement Dom.event t) =
   | Some target, Importation key ->
     let f = List.hd @@ Dom.list_of_nodeList target##.files in
     importation_personnage app key f @@ fun app p ->
-    route app (page_to_jsoo (Personnage p))
+    route app (page_to_jsoo (Personnage {label=p.label; perso=p.perso}))
   | _ -> ()
 
 and voie _app v =
-  Firebug.console##log_2 (string "voie") v;
   match List.assoc_opt (voie_type_of_jsoo v) !voies with
   | None -> log_str "voie non trouvée"; undefined
   | Some v -> def (voie_to_jsoo v)
 
 and phase_suivante app =
   match page_of_jsoo app##.page with
-  | Creation (n, personnage) ->
-    begin match personnage.creation with
-      | Some Profil {choix=None; _ } ->
+  | Creation { perso; creation; label } ->
+    begin match creation with
+      | Profil {choix=None; _ } ->
         alert app "profil non choisi"
-      | Some Profil {choix=Some (famille, profil); _ } ->
+      | Profil {choix=Some (famille, profil); _ } ->
         let peuples = List.map snd peuple_assoc in
         let equipements = equipements_profil profil in
-        let personnage = {
-          personnage with famille; profil; equipements;
-                          creation=Some (Peuple { peuples; choix=None }) } in
-        let p = Creation (n, personnage) in
-        ajout_personnage app n personnage @@ fun app _ ->
+        let creation = Peuple { peuples; choix=None } in
+        let perso = { perso with famille; profil; equipements } in
+        let p = Creation { perso; creation; label } in
+        ajout_personnage ~creation app label perso @@ fun app _ ->
         route app (page_to_jsoo p)
-      | Some Peuple {choix=None; _ } ->
+      | Peuple {choix=None; _ } ->
         alert app "peuple non choisi"
-      | Some Peuple {choix=Some peuple; _ } ->
+      | Peuple {choix=Some peuple; _ } ->
         let choix = caracteristiques_par_defaut (Some peuple) in
         let bonuses = bonuses_peuple peuple choix in
-        let personnage = {
-          personnage with
-          peuple; caracteristiques=choix;
-          creation = Some (Caracteristiques { bonuses; choix; choix_bonus=None })
-        } in
-        edition_personnage app n personnage;
-        let p = Creation (n, personnage) in
+        let creation = Caracteristiques { bonuses; choix; choix_bonus=None } in
+        let perso = { perso with peuple; caracteristiques=choix } in
+        edition_personnage ~creation app label perso;
+        let p = Creation { perso; creation; label } in
         route app (page_to_jsoo p)
-      | Some Caracteristiques { choix_bonus=None; _ } ->
+      | Caracteristiques { choix_bonus=None; _ } ->
         alert app "caracteristiques bonus non choisies"
-      | Some Caracteristiques { choix; choix_bonus=Some (cb, _); _ } ->
+      | Caracteristiques { choix; choix_bonus=Some (bonuses, _); _ } ->
         if verifie_caracteristiques choix then
-          let caracteristiques = ajoute_caracteristiques choix cb in
-          let voies = voies_peuple personnage.peuple @ voies_profil personnage.profil in
-          let personnage = {
-            personnage with caracteristiques; creation = Some (Voies { voies; choix=[] });
-                            caracteristiques_bonus=cb } in
-          edition_personnage app n personnage;
-          let p = Creation (n, personnage) in
+          let voies = voies_peuple perso.peuple @ voies_profil perso.profil in
+          let perso = { perso with caracteristiques_base=choix; bonuses } in
+          let creation = Voies { voies; choix=[] } in
+          edition_personnage ~creation app label perso;
+          let p = Creation { perso; creation; label } in
           route app (page_to_jsoo p)
         else alert app "caracteristiques non valables"
-      | Some Voies { choix=l; _ } ->
-        begin match verifie_voies personnage l with
+      | Voies { choix=l; _ } ->
+        begin match verifie_voies perso l with
           | None ->
-            let personnage = { personnage with voies=l } in
-            let nb_sorts = nombre_sorts @@ List.filter_map (fun (v, rg) -> Option.map (fun v -> v, rg) @@ List.assoc_opt v !voies) l in
+            let perso = { perso with voies=l } in
+            let bonus_voies = bonus_voies @@ List.filter_map (fun (v, rg) -> Option.map (fun v -> v, rg) @@ List.assoc_opt v !voies) l in
             let def_equipement, agi_max = List.fold_left (fun (def, agi) e ->
               match List.assoc_opt e !equipements with
               | Some Armure { defense; agilite_max; _ } ->
                 def + defense, Option.fold ~none:agi ~some:(fun a -> min a agi) agilite_max
-              | _ -> def, agi) (0, 8) personnage.equipements in
-            let personnage = remplit_caracteristiques personnage nb_sorts def_equipement agi_max in
-            edition_personnage app n personnage;
+              | _ -> def, agi) (0, 8) perso.equipements in
+            let perso = { perso with bonuses = perso.bonuses @ bonus_voies } in
+            let perso = remplit_caracteristiques perso def_equipement agi_max in
             let ideaux = "" :: (List.map fst ideal_assoc) in
             let travers_options = "" :: (List.map fst travers_assoc) in
-            let phase = Enregistrement {ideaux; travers_options; nom=""; label=""; ideal=""; travers=""} in
-            let p = Creation (n, { personnage with creation = Some phase }) in
+            let creation = Enregistrement {ideaux; travers_options; nom=""; label=""; ideal=""; travers=""} in
+            edition_personnage ~creation app label perso;
+            let p = Creation { perso; creation; label } in
             route app (page_to_jsoo p)
           | Some e -> alert app e
         end
-      | Some Enregistrement {nom; label; ideal; travers; _} ->
+      | Enregistrement {nom; label=lbl; ideal; travers; _} ->
         if nom = "" then alert app "nom vide" else
         let ideal = List.assoc_opt ideal ideal_assoc in
         let travers = List.assoc_opt travers travers_assoc in
-        let personnage = { personnage with nom; ideal; travers; creation=None } in
-        let label = if label = "" then Format.sprintf "%s_%d" nom personnage.niveau else label in
-        ajout_personnage app label personnage @@ fun app (k, p) ->
-        suppression_personnage app n;
-        let p = Personnage (k, p) in
+        let perso = { perso with nom; ideal; travers } in
+        let lbl = if lbl = "" then Format.sprintf "%s_%d" nom perso.niveau else lbl in
+        ajout_personnage app lbl perso @@ fun app {perso; _} ->
+        suppression_personnage app label;
+        let p = Personnage {label=lbl; perso} in
         route app (page_to_jsoo p)
-      | _ -> init app
     end
   | _ -> init app
 
-and peuple_bonus _app peuple caracteristiques =
-  let bonuses = bonuses_peuple (peuple_of_jsoo peuple) (caracteristiques_of_jsoo caracteristiques) in
-  of_listf (of_listf caracteristique_avec_valeur_to_jsoo) bonuses
-
 and capacite_choisie app vt rg =
   match page_of_jsoo app##.page with
-  | Creation (_, personnage) ->
-    begin match personnage.creation with
-      | Some Voies { choix; _ } ->
+  | Creation { creation; _ } ->
+    begin match creation with
+      | Voies { choix; _ } ->
         List.exists (fun (c, i) -> c = voie_type_of_jsoo vt && i >= rg) choix
       | _ -> false
     end
@@ -363,10 +376,10 @@ and choisit_capacite app vt rg =
       else if rg0 = rg then splice c i 1 (Some (rg-1))
       else splice c i 1 (Some rg) in
   match page_of_jsoo app##.page with
-  | Creation (_, personnage) ->
-    begin match personnage.creation with
-      | Some Voies { choix; _ } ->
-        let c = (Unsafe.coerce app)##.page##.creation##._1##.creation##.voies##.choix in
+  | Creation { creation; _ } ->
+    begin match creation with
+      | Voies { choix; _ } ->
+        let c = (Unsafe.coerce app)##.page##.creation##.creation##.voies##.choix in
         aux c choix
       | _ -> ()
     end
@@ -389,7 +402,7 @@ and telecharge_personnage _app label p =
   elt##click
 
 and charge_modal_de app g = match page_of_jsoo app##.page with
-  | Personnage (_, p) ->
+  | Personnage { perso=p; _ } ->
     let genre = genre_de_of_jsoo g in
     let titre = genre_de_titre genre in
     let points = match genre with
@@ -405,7 +418,7 @@ and charge_modal_de app g = match page_of_jsoo app##.page with
 
 and change_de app g points =
   match page_of_jsoo app##.page with
-  | Personnage (n, p) ->
+  | Personnage { label; perso=p } ->
     let points = points_avec_max_of_jsoo points in
     if points.max < points.courant then alert app "valeur supérieur au maximum" else
     let p = match genre_de_of_jsoo g with
@@ -413,8 +426,8 @@ and change_de app g points =
       | `des_de_recuperation -> { p with des_de_recuperation = points }
       | `points_de_chance -> { p with points_de_chance = points }
       | `points_de_mana -> { p with points_de_mana = points } in
-    edition_personnage app n p;
-    let p = Personnage (n, p) in
+    edition_personnage app label p;
+    let p = Personnage {label; perso=p} in
     app##.de := undefined;
     route app (page_to_jsoo p)
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"
@@ -436,19 +449,25 @@ and armures _app l =
 and edite app = match page_of_jsoo app##.page with
   | Edition e ->
     if not (verifie_caracteristiques e.choix.caracteristiques) then alert app "caracteristiques non valables" else
-    let caracteristiques = ajoute_caracteristiques e.choix.caracteristiques (fst e.choix.bonus_peuple) in
-    let p = { e.personnage with caracteristiques; niveau = e.choix.niveau; equipements=e.choix.equipements } in
+    let p = { e.perso with niveau = e.choix.niveau; equipements=e.choix.equipements;
+                           bonuses=e.choix.bonuses } in
     begin match verifie_voies p e.choix.voies with
       | None ->
         let p = { p with voies=e.choix.voies } in
-        let nb_sorts = nombre_sorts @@ List.filter_map (fun (v, rg) -> Option.map (fun v -> v, rg) @@ List.assoc_opt v !voies) e.choix.voies in
+        let bonus_voies = bonus_voies @@ List.filter_map (fun (v, rg) -> Option.map (fun v -> v, rg) @@ List.assoc_opt v !voies) e.choix.voies in
+        let bonuses = List.fold_left (fun acc (n, b) ->
+          match List.find_opt (fun (n2, _) -> n = n2) acc with
+          | None -> acc @ [ n, b ]
+          | Some _ -> acc
+        ) p.bonuses bonus_voies in
+        let p = { p with bonuses } in
         let def_equipement, agi_max = List.fold_left (fun (def, agi) e ->
           match List.assoc_opt e !equipements with
           | Some Armure { defense; agilite_max; _ } ->
             def + defense, Option.fold ~none:agi ~some:(fun a -> min a agi) agilite_max
           | _ -> def, agi) (0, 8) p.equipements in
-        let p = remplit_caracteristiques p nb_sorts def_equipement agi_max in
-        let p = Personnage (e.label, p) in
+        let p = remplit_caracteristiques p def_equipement agi_max in
+        let p = Personnage {label=e.label; perso=p} in
         route app (page_to_jsoo p)
       | Some e -> alert app e
     end
@@ -461,15 +480,21 @@ and retire_equipement app e = match page_of_jsoo app##.page with
     (Unsafe.coerce app)##.page##.edition##.choix##.equipements := of_listf equipement_nom_to_jsoo equipements;
   | _ -> ()
 
-and pp_equipement _app e =
-  let s = equipement_to_str (equipement_nom_of_jsoo e) in
-  string @@ String.capitalize_ascii @@ String.map (function '_' -> ' ' | c -> c) s
-
-and ajout_equipement app = match page_of_jsoo app##.page with
+and ajoute_equipement app = match page_of_jsoo app##.page with
   | Edition { choix = { equipement; equipements; _ }; _ } ->
     let equipements = equipements @ [ equipement ] in
     (Unsafe.coerce app)##.page##.edition##.choix##.equipements := of_listf equipement_nom_to_jsoo equipements
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"
+
+and ajoute_bonus app = match page_of_jsoo app##.page with
+  | Edition { choix = { bonuses; bonus; _ }; _ } ->
+    let bonuses = bonuses @ [ bonus ] in
+    (Unsafe.coerce app)##.page##.edition##.choix##.bonuses := of_listf avec_nom_to_jsoo bonuses
+  | _ -> alert app "cette fonction n'est pas accessible sur cette page"
+
+and pp_equipement _app e =
+  let s = equipement_to_str (equipement_nom_of_jsoo e) in
+  string @@ String.capitalize_ascii @@ String.map (function '_' -> ' ' | c -> c) s
 
 and pp_peuple _app p =
   let s = match Json_encoding.construct peuple_enc (peuple_of_jsoo p) with `String s -> s | _ -> assert false in

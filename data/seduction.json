@@ -13,7 +13,10 @@
   },
   {
     "nom": "Charisme héroïque",
-    "description": "Le barde augmente sa valeur de CHA de +1. Désormais, il obtient un dé bonus aux tests de CHA. De plus, le barde peut désormais utiliser son CHA au lieu de sa VOL pour calculer le nombre de PM dont il dispose."
+    "description": "Le barde augmente sa valeur de CHA de +1. Désormais, il obtient un dé bonus aux tests de CHA. De plus, le barde peut désormais utiliser son CHA au lieu de sa VOL pour calculer le nombre de PM dont il dispose.",
+    "bonus": [
+      { "id": "CHA", "valeur": 1 }
+    ]
   },
   {
     "nom": "Suggestion",

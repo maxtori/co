@@ -18,6 +18,10 @@
   },
   {
     "nom": "Supériorité elfique",
-    "description": "L’elfe augmente ses valeurs d’AGI et PER de +1."
+    "description": "L’elfe augmente ses valeurs d’AGI et PER de +1.",
+    "bonus": [
+      { "id": "AGI", "valeur": 1 },
+      { "id": "PER", "valeur": 1 }
+    ]
   }
 ]

@@ -1,5 +1,5 @@
 {
-  "dommage": [ 1, "d4" ],
+  "dommage": [ 1, "d6" ],
   "type": "contondants",
   "prix": "2 pa",
   "notes": "Arme à deux mains"
