@@ -222,7 +222,7 @@
             <div class="col p-0 text-bg-light">Equipements</div>
           </div>
           <div v-for="e in armes(page.personnage[1].equipements)" class="row mx-0">
-            <span class="col border p-0 text-bg-light">{{ e[0] }}</span>
+            <span class="col border p-0 text-bg-light">{{ pp_equipement(e[0]) }}</span>
             <template v-if="e[1].arme_au_contact!==undefined">
               <span class="col border p-0">
                 {{e[1].arme_au_contact.dommage[0]}}{{e[1].arme_au_contact.dommage[1]}}
