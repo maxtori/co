@@ -1,0 +1,32 @@
+[
+  {
+    "nom": "Choc",
+    "description": "Si l’ensorceleur réussit un test d’attaque magique réussi contre la DEF de son adversaire situé à une portée de 20 m, il lui inflige [1d4° + CHA] DM. Si la cible a un NC inférieur au rang atteint par l’ensorceleur dans la voie, elle doit réussir un test de FOR difficulté 10 pour ne pas être renversée.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Serviteur invisible",
+    "description": "Ce sort crée une force invisible pendant CHA minutes. Le serviteur peut effectuer à distance des tâches simples ne nécessitant pas de test de réussite avec une AGI et une INT de +0 et une FOR égale au CHA de l’ensorceleur (portée 20 m). Il peut par exemple rapporter un objet ou actionner un levier, voire faire la vaisselle. Le serviteur invisible se déplace à la même vitesse que l’ensorceleur, ne pèse rien, ne parle pas, n’a pas vraiment d’existence et peut se déplacer dans toutes les directions. Concevez-le davantage comme une force qui obéit aux injonctions télépathiques de son créateur que comme une créature. Il n’attaque pas et ne peut pas être combattu, mais il peut être dissipé grâce au sort de maîtrise de la magie.",
+    "action": "limitée",
+    "sort": true
+  },
+  {
+    "nom": "Arme de mana",
+    "description": "Le sort crée une lame d’énergie lumineuse pendant [rang] rounds. Dès le premier round et à chaque round suivant, l’ensorceleur peut lui ordonner d’attaquer une cible de son choix à portée (action gratuite, portée 20 m). La lame doit réussir un test d’attaque magique contre la DEF de l’adversaire. Elle inflige [1d4° + CHA] DM en cas de réussite. L’ensorceleur ne peut maintenir actif qu’un seul sort d’arme de mana à la fois.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Porte dimensionnelle",
+    "description": "L’ensorceleur se téléporte lui-même et jusqu’à un allié par point de CHA à une distance maximale de 60 m. Le lieu d’arrivée doit être en vue.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Mur de mana",
+    "description": "L’ensorceleur crée un mur de force invisible et indestructible (portée 10 m, maximum 5 m de haut et 10 m de long, vertical, sans coudes), ou bien un hémisphère de 3 m de rayon centré sur lui-même, tous les deux immobiles. Le sort dure CHA minutes. Aucune matière ni force ne peut passer à travers le mur de force. En revanche, les attaques mentales ne sont pas stoppées et une porte dimensionnelle (ou une téléportation) permet de le franchir.",
+    "action": "attaque",
+    "sort": true
+  }
+]

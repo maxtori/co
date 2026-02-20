@@ -1,0 +1,14 @@
+{
+  "name": "co",
+  "short_name": "co",
+  "description": "co",
+  "start_url": "index.html",
+  "display": "standalone",
+  "theme_color": "black",
+  "background_color": "black",
+  "serviceworker": "sw.js",
+  "icons": [
+    { "src": "assets/co_192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/co_512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "assets/co_512.png", "sizes": "any", "type": "image/png" } ]
+}

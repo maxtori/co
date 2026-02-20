@@ -1,0 +1,32 @@
+[
+  {
+    "nom": "Injonction",
+    "description": "L’ensorceleur donne un ordre simple (mais pas suicidaire) de deux ou trois mots que la cible doit pouvoir comprendre. S’il réussit un test opposé d’attaque magique contre une cible à une portée de 20 m, la victime doit exécuter l’ordre pendant son prochain tour. En plus de ce sort, l’ensorceleur ajoute son rang + 2 aux tests de persuasion ou de séduction.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Sommeil",
+    "description": "Une fois par combat, l’ensorceleur vise une zone de 10 m de diamètre à une portée maximale de 20 m. Le sort affecte jusqu’à [1d4° + CHA] créatures vivantes de NC inférieur à 1. Le sort affecte les créatures de NC inférieur à 2 au rang 4 puis à 3 au rang 5. Les créatures perdent conscience pendant CHA minutes. Il est possible de les réveiller en les cognant violemment (action d’attaque, 1 DM).",
+    "action": "limitée",
+    "sort": true
+  },
+  {
+    "nom": "Confusion",
+    "description": "En réussissant un test opposé d’attaque magique contre sa cible (portée 20 m), l’ensorceleur désoriente sa victime pendant CHA rounds. Au tour de la victime, celui qui l’incarne lance 1d6 : sur 1-3 la victime n’agit pas, sur 4-6 elle attaque la créature la plus proche (au hasard). À la fin de son tour, elle peut mettre fin au sort prématurément en réussissant un test de VOL difficulté [12 + CHA de l’ensorceleur].",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Amitié",
+    "description": "Si l’ensorceleur réussit un test opposé d’attaque magique (portée 10 m) contre une cible humanoïde de niveau ou NC inférieur au sien, celle-ci se comporte comme un ami de longue date tant qu’elle n’est pas attaquée. La victime peut résister au sort avec un test de VOL difficulté [10 + CHA de l’ensorceleur] une fois par jour après chaque récupération complète. Si la cible est d’un niveau au moins égal au niveau du lanceur de sort, ce dernier obtient seulement un dé bonus à tous les tests de CHA qu’il effectue contre la victime pendant 10 min.",
+    "action": "limitée",
+    "sort": true
+  },
+  {
+    "nom": "Domination",
+    "description": "En réussissant un test opposé d’attaque magique contre une cible de niveau ou NC inférieur au sien (portée 20 m), l’ensorceleur prend contrôle de sa cible pendant CHA minutes. Son propre corps devient inactif et s’écroule au sol. Si la créature meurt pendant la domination, l’ensorceleur réintègre son corps et subit 1d4° DM. Si la cible est d’un niveau trop élevé, il peut la forcer à faire une seule action de son choix (mouvement ou attaque) ; ensuite, il est éjecté et subit 1d4° DM.",
+    "action": "attaque",
+    "sort": true
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "nom": "Robustesse",
+    "description": "Le guerrier augmente sa valeur maximale de PV de rang + 2. De plus, vous ajoutez votre rang + 2 à tous les tests destinés à résister aux efforts physiques, à la chaleur ou au froid (conditions naturelles)."
+  },
+  {
+    "nom": "Résilient",
+    "description": "Désormais, il suffit de 10 min au guerrier pour bénéficier des effets d’une récupération rapide (au lieu de 30 min) et cela passe à 5 min au rang 4 de la voie. De plus, le guerrier obtient un bonus égal au rang atteint dans la voie pour tous les tests destinés à résister aux états étourdi et affaibli."
+  },
+  {
+    "nom": "Armure lourde",
+    "description": "Au choix le guerrier gagne +1 en DEF ou il apprend à porter l’armure de plaque (DEF +6) et désormais, il peut utiliser toutes les capacités de guerrier avec cette armure*."
+  },
+  {
+    "nom": "Constitution héroïque",
+    "description": "Le guerrier augmente sa CON de +1. Désormais, il obtient un dé bonus aux tests de CON."
+  },
+  {
+    "nom": "Dur à cuire",
+    "description": "Le guerrier gagne +1 en DEF et, une fois par combat, lorsqu’il tombe à 0 PV, il peut encore agir un round avant de tomber inconscient. De plus, il ne subit plus de dé malus lorsqu’il est immobilisé et lorsqu’il est étourdi ; il peut encore attaquer, mais avec un dé malus."
+  }
+]

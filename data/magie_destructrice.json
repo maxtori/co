@@ -1,0 +1,32 @@
+[
+  {
+    "nom": "Arc de feu",
+    "description": "Des flammes jaillissent des doigts tendus du magicien. Jusqu’à 3 cibles au contact subissent [1d4°+INT] DM, les cibles peuvent faire un test d’AGI difficulté [10 + INT] pour ne subir que la moitié des DM. Les DM passent à 2d4° au rang 4.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Saper les forces",
+    "description": "Le magicien choisit une cible vivante située à une distance maximum de 10 m. S’il réussit un test opposé d’attaque magique, la cible subit un malus de -2 à ses tests de FOR, d’attaque au contact et aux DM, jusqu’à la fin du combat. Le sort n’est pas cumulable plusieurs fois sur la même cible.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Flèche de feu",
+    "description": "Le magicien choisit une cible située à moins de 30 m. Si son attaque magique réussit (contre DEF), la cible subit [3d4°+INT] DM. Chaque round de combat suivant, le feu inflige 1d6 DM supplémentaires. Sur un résultat de 1 ou 2, le sort prend fin. Les DM sur la durée ne sont pas cumulables si le sort est lancé plusieurs fois.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Explosion de feu",
+    "description": "Le magicien choisit un point situé à moins de 30 m. Toutes les créatures (y compris le magicien et ses compagnons) se trouvant dans un rayon de 5 m autour de ce point subissent [4d4°+INT] DM et peuvent effectuer un test d’AGI difficulté [10 + INT] pour ne subir que la moitié des DM.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Appel de la foudre",
+    "description": "Le magicien projette des traits de foudre sur toutes les cibles de son choix dans un rayon de 10 m autour de lui. Il fait un seul test d’at taque magique et toutes les créatures ciblées dont il atteint la DEF subissent [2d4°+INT] DM d’électricité. Note : Le joueur peut décider de substituer un élément à un autre lors de l’acquisition d’un sort, par exemple Mains électriques, Explosion acide et Tempête de glace. Toutefois ce choix est définitif.",
+    "action": "attaque",
+    "sort": true
+  }
+]

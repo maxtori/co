@@ -1,0 +1,22 @@
+[
+  {
+    "nom": "Diversité",
+    "description": "Un humain obtient un bonus de +3 aux tests de deux domaines associés à son origine géographique ou sociale (voir ci-dessous). De plus, il gagne 1 PC supplémentaire."
+  },
+  {
+    "nom": "Instinct de survie",
+    "description": "Une fois par combat, lorsqu’une attaque devrait amener l’humain à 0 PV, les DM qu’elle inflige sont divisés par 2 (minimum 1). Après avoir bénéficié de cette capacité, l’humain gagne pour le reste du combat un bonus de +2 en DEF."
+  },
+  {
+    "nom": "Touche-à-tout",
+    "description": "Le personnage obtient une capacité de rang 1 ou 2 de n’importe quel profil au choix du joueur. Si la capacité est de rang 2 ou accorde un bonus de DEF, il doit respecter les limitations d’armure."
+  },
+  {
+    "nom": "Loup parmi les loups",
+    "description": "Une fois par round, l’humain gagne +1d4° aux DM qu’il inflige lorsqu’il combat un adversaire humanoïde de taille moyenne. Ce bonus ne s’applique qu’aux DM initiaux d’une attaque, pas aux DM sur la durée."
+  },
+  {
+    "nom": "Polyvalence",
+    "description": "Le personnage augmente sa caractéristique la plus faible de +1 et sa Volonté de +1."
+  }
+]

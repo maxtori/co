@@ -1,0 +1,32 @@
+[
+  {
+    "nom": "Peau d’écorce",
+    "description": "La peau du druide prend la consistance de l’écorce. Il bénéficie d’un bonus à la DEF égal à +2 pendant PER minutes. Ce bonus augmente de +1 aux rangs 3 et 5. Les effets du sort ne sont pas cumulables au bonus d’une armure métallique ou d’un autre sort de protection qui ajoute un bonus de DEF (à l’exception du Masque du prédateur). En plus de ce sort, le druide ajoute son rang + 2 aux tests pour identifier les plantes et connaître leurs propriétés.",
+    "action": "mouvement",
+    "sort": true
+  },
+  {
+    "nom": "Prison végétale",
+    "description": "Le druide peut commander à la végétation de pousser et bloquer ses ennemis (mais pas ses alliés) dans une zone de 10 m de diamètre (portée 20 m) pendant PER minutes. Les cibles sont immobilisées. À son tour, une créature peut se libérer (action d’attaque) avec un test de FOR difficulté [10 + PER du druide]. En cas de réussite, elle n’est plus affectée par le sort pour le reste du combat.",
+    "action": "limitée",
+    "sort": true
+  },
+  {
+    "nom": "Flèche vivante",
+    "description": "En une action, le druide enchante une flèche et la tire (il doit tenir un arc en main). Cette flèche a pour particularité de prendre racine dans la plaie et de devenir un arbuste. S’il réussit un test d’attaque à distance, il inflige les DM habituels de son attaque, et au round suivant, la flèche inflige 3d4° DM supplémentaires. Si la victime est réduite à 0 PV par ce sort, un jeune arbuste pousse sur son cadavre.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Animation d’un arbre",
+    "description": "Le druide peut animer un arbre en le touchant. Il combat à son service pendant [niveau du druide] rounds. Il peut animer un seul arbre à la fois.",
+    "action": "limitée",
+    "sort": true
+  },
+  {
+    "nom": "Porte végétale",
+    "description": "Une fois par jour, le druide peut pénétrer dans le tronc d’un gros arbre et sortir de celui d’un autre arbre appartenant à la même forêt et situé à une distance maximale de PER × 10 km. À partir du niveau 10 et tous les 4 niveaux supplémentaires, le druide peut emmener une personne avec lui.",
+    "action": "attaque",
+    "sort": true
+  }
+]

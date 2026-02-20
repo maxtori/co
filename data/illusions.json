@@ -1,0 +1,32 @@
+[
+  {
+    "nom": "Mirage",
+    "description": "L’ensorceleur crée une illusion visuelle et sonore immobile d’une durée de CHA minutes. Le volume maximal de l’illusion est de 2 m de côté par rang dans la voie (portée 50 m). À partir du rang 4, l’illusion peut être animée, mais dans ce cas sa durée est exprimée en rounds. En plus de ce sort, l’ensorceleur ajoute son rang + 2 aux tests de supercherie ou à tout test qui lui servirait à mentir.",
+    "action": "limitée",
+    "sort": true
+  },
+  {
+    "nom": "Image décalée",
+    "description": "L’ensorceleur crée des images décalées qui se superposent à sa silhouette pendant [1d4 + CHA] rounds. Lorsqu’une attaque au contact ou à distance le touche, l’ensorceleur lance 1d6 : sur 5-6, il ne subit pas les DM.",
+    "action": "mouvement",
+    "sort": true
+  },
+  {
+    "nom": "Sort illusoire",
+    "description": "L’ensorceleur lance un sort d’attaque qui n’est qu’une illusion. Il inflige [3d4°+CHA] DM contre une seule cible ou [2d4°+CHA] DM contre un maximum de cibles égal au rang atteint. Le joueur peut décrire la nature du sort à sa guise (une Explosion de feu, une nuée de criquets, une lance de glace, etc.), son imagination demeurant sa seule limite. Chaque cible peut faire un test de PER difficulté [10 + CHA de l’ensorceleur] pour ne subir aucun DM. Les créatures sans esprit (créatures artificielles, certaines plantes et morts-vivants) sont immunisées à ce sort. Les PV perdus de cette façon se récupèrent normalement.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Imitation",
+    "description": "Pendant CHA minutes, l’ensorceleur peut prendre l’apparence d’une créature de taille proche de la sienne (+ ou – 50 cm) qu’il voit au moment de l’incantation. Une créature qui touche l’ensorceleur se rend compte que quelque chose ne va pas et a le droit à un test d’INT difficulté [10 + CHA de l’ensorceleur] pour voir à travers l’illusion.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Exécution mentale",
+    "description": "Ce sort invoque les pires terreurs d’une créature humanoïde vivante et lui fait croire à sa propre mort. L’ensorceleur doit faire un test opposé d’attaque magique contre sa cible (portée 20 m). En cas de succès la victime tombe à 0 PV ou si la cible est de niveau supérieur ou égal à l’ensorceleur, elle est étourdie (-5 DEF et pas d’action) pendant 1 round. Une créature ne peut être la cible de ce sort qu’une fois par jour. Les créatures sans esprit (créatures artificielles, certaines plantes et certains morts-vivants) sont immunisées à ce sort.",
+    "action": "attaque",
+    "sort": true
+  }
+]

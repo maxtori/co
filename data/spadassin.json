@@ -1,0 +1,24 @@
+[
+  {
+    "nom": "Attaque en finesse",
+    "description": "Le voleur ajoute son AGI à son Init. et peut remplacer sa FOR par son AGI pour ses tests d’attaque au contact (mais pas aux DM) lorsqu’il utilise une arme légère à une main (dague, épée courte ou rapière). Enfin, il obtient un bonus égal à son rang + 2 aux tests d’intimidation."
+  },
+  {
+    "nom": "Esquive fatale",
+    "description": "Une fois par combat, le voleur peut esquiver une attaque et s’arranger pour que celle-ci affecte un autre adversaire à son contact. Comparez le test d’attaque à la DEF de la nouvelle cible pour savoir si celle-ci subit des DM. Cette capacité ne peut pas être utilisée si le voleur n’a qu’un seul adversaire au contact et jamais contre une réussite critique (un critique touche toujours sa cible).",
+    "action": "gratuite"
+  },
+  {
+    "nom": "Frappe chirurgicale",
+    "description": "Par sa science de l’escrime (et de la fourberie), le voleur augmente ses chances de faire des coups critiques avec une arme légère de 2 points (ainsi, au lieu de 20, le critique standard est obtenu entre 18 et 20). Toutefois, la valeur minimale requise pour obtenir un critique ne peut être inférieure à 16 (voir page 213)."
+  },
+  {
+    "nom": "Ambidextrie",
+    "description": "Avec sa main gauche, le voleur peut effectuer une attaque au contact gratuite avec une dague ou une épée courte à chaque round. Cette attaque ne peut pas bénéficier des avantages d’une attaque sournoise.",
+    "action": "gratuite"
+  },
+  {
+    "nom": "Botte secrète",
+    "description": "Lorsque le voleur obtient un critique sur le dé d’une attaque au contact de sa main principale avec une arme légère (mais pas sur une ouverture mortelle), il inflige à sa cible un état préjudiciable au choix parmi affaibli, aveuglé, étourdi, immobilisé ou ralenti pendant 1 round. Vous ne pouvez infliger chaque état préjudiciable qu’une seule fois par combat. Alternativement, le voleur peut choisir que l’attaque devienne une attaque sournoise dont les DM s’ajoutent au critique (au lieu d’infliger un état préjudiciable)."
+  }
+]

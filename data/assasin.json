@@ -1,0 +1,26 @@
+[
+  {
+    "nom": "Discrétion",
+    "description": "Le voleur ajoute son rang + 2 à tous les tests de discrétion, de déguisement ou pour cacher une arme sur lui. Il apprend le langage silencieux à base de signe des voleurs (argotien) et enfin il obtient un dé bonus en attaque lorsqu’il attaque un adversaire surpris."
+  },
+  {
+    "nom": "Attaque sournoise",
+    "description": "Une fois par round, quand il attaque un adversaire surpris ou qui lui tourne le dos** avec une arme légère, le voleur inflige +2d4° DM supplémentaires. Les DM infligés par cette capacité augmentent de 1d4° à chaque fois qu’il atteint le rang 4 dans une voie de voleur (pour un maximum de 7d4°). Cette capacité nécessite l’utilisation d’une arme légère (dague, éventuellement lancée, épée courte, rapière) dans tous les autres cas, le bonus aux DM est divisé par deux (cela comprend les armes à distance).",
+    "action": "limitée"
+  },
+  {
+    "nom": "Attaque par surprise",
+    "description": "Contre un adversaire surpris, le voleur peut réaliser une attaque sournoise en utilisant une action d’attaque plutôt qu’une action limitée et il augmente les DM de son attaque sournoise de 2d4°.",
+    "action": "attaque"
+  },
+  {
+    "nom": "Disparition",
+    "description": "Une fois par combat, le voleur peut disparaître dans un flash lumineux et un nuage de fumée. Aucun adversaire ne peut l’attaquer pendant qu’il a disparu, mais il peut subir des DM de zone. Il ne réapparaît qu’au début de son prochain tour à une distance maximale de 20 m de sa position initiale. À ce moment, si le voleur a l’initiative, il peut réaliser une attaque sournoise.",
+    "action": "mouvement"
+  },
+  {
+    "nom": "Ouverture mortelle",
+    "description": "Une fois par combat, le voleur obtient une réussite critique automatique contre la cible de son choix. Il profite donc d’une réussite automatique, des dommages multipliés par 2 prévus dans ce cas et d’une attaque sournoise (dont les DM ne sont pas doublés). ** Attaquer dans le dos : lorsque le voleur attaque la même créature qu’un allié au contact de cette cible, on considère qu’il peut attaquer celle-ci dans le dos (sauf si la cible peut se placer dos à un obstacle infranchissable). Il est possible de réaliser une attaque sournoise à distance, mais pas à portée longue et uniquement contre un adversaire surpris (pas avec la règle d’attaque dans le dos ci-dessus).",
+    "action": "limitée"
+  }
+]

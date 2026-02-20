@@ -1,0 +1,23 @@
+[
+  {
+    "nom": "Proche de la nature",
+    "description": "Le barbare ajoute son rang + 2 à ses tests de survie (dont les tests de récupération) et de discrétion en milieu naturel. De plus, il gagne 1 PV supplémentaire."
+  },
+  {
+    "nom": "Armure de vent",
+    "description": "Lorsqu’il ne porte aucune armure, le barbare peut se relever par une action de mouvement et il obtient +2 en DEF. Ce bonus passe à +3 au rang 5. S’il porte une armure, il gagne seulement +1 en DEF."
+  },
+  {
+    "nom": "Vigilance",
+    "description": "Le barbare possède des sens très affûtés, il est difficile de le surprendre, il ajoute son rang + 2 à tous les tests effectués pour détecter les pièges mécaniques, magiques (ses poils se hérissent) ou les embuscades. Il devient immunisé aux Attaques sournoises d’un voleur ou à toute capacité similaire d’une créature de niveau inférieur au sien."
+  },
+  {
+    "nom": "Résistance à la magie",
+    "description": "Le barbare devient capable de résister à la magie. Lorsqu’il est la cible d’un sort, une fois par round, il peut faire un test d’attaque magique* opposé à celui du sort (si le sort n’en demande pas, faites-en tout de même un à cette occasion). En cas de réussite, il n’en subit pas les effets.",
+    "action": "gratuite"
+  },
+  {
+    "nom": "Vitalité débordante",
+    "description": "Le barbare guérit à une vitesse presque surnaturelle. Tant que son niveau actuel de PV est compris entre 1 et un tiers de son maximum, il récupère 1d4° PV par heure, de nuit comme de jour. * Si le personnage est un profil hybride est qu’il est capable de faire de la magie (il possède au moins une capacité de sort), il subit un dé malus sur ce test opposé. Avoir cédé à la magie le rend moins apte à y résister."
+  }
+]

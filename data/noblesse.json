@@ -1,0 +1,22 @@
+[
+  {
+    "nom": "Éduqué",
+    "description": "Le chevalier sait lire et écrire, et apprend à parler une langue supplémentaire. De plus, il ajoute son rang + 2 à tous les tests d’histoire, d’héraldique et de géographie ainsi qu’aux tests pour savoir se comporter dans la haute société."
+  },
+  {
+    "nom": "Écuyer",
+    "description": "Le chevalier dispose d’un écuyer à son service (Init. [chevalier], DEF [10 + rang], PV [niveau × 4], Att [attaque magique], DM 1d4°+1). Il est absolument loyal à son maître, il s’occupe de sa monture et de son équipement, prépare le campement, panse les blessures, etc. Grâce à l’écuyer, les armes du chevalier sont parfaitement affûtées et il augmente de 1 point les chances d’obtenir un critique sur les attaques au contact (par exemple, 19-20 au lieu de 20). De plus, le chevalier, sa monture et jusqu’à CHA alliés récupèrent 1d4° PV supplémentaires après chaque récupération complète s’ils profitent des services de l’écuyer. Si l’écuyer vient à mourir, le chevalier en prendra un autre à son service au niveau suivant."
+  },
+  {
+    "nom": "Autorité naturelle",
+    "description": "Le chevalier ajoute son rang + 2 aux tests réalisés pour donner des ordres ou intimider. De plus, le noble chevalier reçoit la formation nécessaire au port de l’armure de plaque complète (DEF +7). Désormais, il peut utiliser toutes les capacités des voies de chevalier* en portant cette armure."
+  },
+  {
+    "nom": "Massacrer la piétaille",
+    "description": "Le chevalier ajoute +1d4° aux DM contre la piétaille. S’il y a au moins 4 créatures aux statistiques semblables impliquées dans le combat, elles sont assimilées à de la piétaille (même si leur nombre est par la suite réduit à moins de 4 au cours du combat). Les cavaliers ne sont jamais considérés comme de la piétaille."
+  },
+  {
+    "nom": "Formation d’élite",
+    "description": "Le chevalier possède les moyens et la culture nécessaires pour obtenir une formation dans n’importe quel domaine qui lui sied. Choisissez une capacité de rang 1 à 3 dans n’importe quel profil issu de la famille des combattants ou des aventuriers (voir page 78). De plus, le chevalier choisit une caractéristique ; désormais, il obtient un dé bonus lors des tests en rapport avec celle-ci."
+  }
+]

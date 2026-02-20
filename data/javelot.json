@@ -1,0 +1,6 @@
+{
+  "dommage": [ 1, "d6" ],
+  "portee": 20,
+  "type": "perforants",
+  "prix": "1 pa"
+}

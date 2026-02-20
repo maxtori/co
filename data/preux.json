@@ -1,0 +1,23 @@
+[
+  {
+    "nom": "Ignorer la douleur",
+    "description": "Une fois par combat, le chevalier peut noter à part les DM subis par une attaque (mais pas un critique). Il ne subira les DM que lorsque le combat sera terminé. De plus le héros gagne un bonus égal à rang + 2 pour haranguer et convaincre les foules (au moins 15 individus).",
+    "action": "gratuite"
+  },
+  {
+    "nom": "Piqûres d’insectes",
+    "description": "Le chevalier obtient une réduction des DM (RD) des attaques à distance (arcs, arbalètes, lances, etc.) qui dépend de l’armure qu’il porte. Armure de plaques (complète ou non) RD 3, armure intermédiaire (Chemise ou cotte de mailles) RD 2, armure de cuir (simple ou renforcée) RD 1. Les DM infligés par une attaque sont toujours au minimum d’un point."
+  },
+  {
+    "nom": "Laissez-le-moi",
+    "description": "Le chevalier met un point d’honneur à combattre le leader ennemi. Lorsqu’il peut aisément être identifié dans un groupe d’au moins 4 créatures, le chevalier lui inflige +1d4° DM par attaque au contact. Chaque fois que le chevalier inflige des DM à une créature de cette façon, la créature doit réussir un test d’INT difficulté 15 ou elle ne peut pas attaquer d’autre adversaire que lui à son prochain tour."
+  },
+  {
+    "nom": "Charisme héroïque",
+    "description": "Le chevalier augmente son CHA de +1. Désormais, il obtient un dé bonus aux tests de CHA."
+  },
+  {
+    "nom": "Seul contre tous",
+    "description": "Le chevalier sait faire face à de nombreux adversaires. Lorsque au moins 3 adversaires l’attaquent au contact à ce round, il obtient une action d’attaque (A) supplémentaire à ce round."
+  }
+]

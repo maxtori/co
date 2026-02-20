@@ -1,0 +1,23 @@
+[
+  {
+    "nom": "Pacifisme",
+    "description": "Tant que le moine n’a réalisé aucune action offensive dans un combat, il bénéficie d’un bonus de +5 en DEF et divise par deux tous les DM subis par des attaques. De plus, il obtient un bonus égal à son rang + 2 à tous les tests d’empathie (pour analyser l’état émotionnel d’un interlocuteur) ou à ceux effectués pour apaiser un auditoire ou le convaincre de ne pas avoir recours à la violence."
+  },
+  {
+    "nom": "Transe de guérison",
+    "description": "Le moine peut méditer pendant 10 min et récupérer ainsi [1d4°+VOL] PV. Les soins augmentent de +1d4° chaque fois que le personnage atteint le rang 4 dans une voie de moine. Il doit terminer une récupération rapide avant de pouvoir à nouveau utiliser cette capacité et il ne peut pas l’utiliser plus de trois fois par jour."
+  },
+  {
+    "nom": "Maîtrise du ki",
+    "description": "Le moine utilise sa force mentale pour augmenter son efficacité en combat. Il ajoute sa VOL à son Initiative et à ses PV. De plus, il gagne +2 en DEF (ce bonus passe à +3 au rang 5)."
+  },
+  {
+    "nom": "Volonté héroïque",
+    "description": "Le moine augmente sa VOL de +1. Désormais, il obtient un dé bonus aux tests de VOL."
+  },
+  {
+    "nom": "Projection mentale",
+    "description": "Une fois par jour, le moine entre en méditation et projette son esprit hors de son corps pendant [1d4°+VOL] minutes. Il ressemble à un ectoplasme de couleur blanche qui se déplace en volant à la vitesse de 10 m par round. Il peut passer au travers des murs, mais pas des êtres vivants ou des barrières magiques. Le moine ne perçoit le monde que par sa projection mentale, mais ressent les DM qui sont infligés à son corps. Il peut utiliser cette capacité une fois de plus chaque jour par rang 5 atteint dans une autre voie de moine. De plus le moine augmente définitivement de +1 la valeur de sa plus faible caractéristique (choisir en cas d’égalité).",
+    "action": "limitée"
+  }
+]

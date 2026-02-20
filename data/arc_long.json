@@ -1,0 +1,7 @@
+{
+  "dommage": [ 1, "d8" ],
+  "portee": 50,
+  "type": "perforants",
+  "prix": "8 pa",
+  "notes": "Arme tenue à deux mains, nécessite d’avoir une valeur minimale de +1 en FOR"
+}

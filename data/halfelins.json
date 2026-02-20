@@ -1,0 +1,22 @@
+[
+  {
+    "nom": "Petite taille",
+    "description": "Le halfelin obtient un bonus de +1 en DEF et de +3 à tous les tests de discrétion ainsi qu’à tous les tests effectués pour subtiliser quelque chose (pickpocket, vol à l’étalage, etc.). En revanche, un halfelin ne peut pas utiliser à une main une arme dont les DM dépassent 1d6 (épée courte, masse, etc., mais pas rapière). Il lui faut utiliser les deux mains pour les armes qui infligent 1d8 à 1d10 de DM (épée longue) et il lui est interdit d’utiliser les armes qui infligent plus de 1d10 DM. Il ne peut pas utiliser d’arc long ni d’arbalète lourde."
+  },
+  {
+    "nom": "Résistance légendaire",
+    "description": "Le halfelin obtient un bonus égal à son rang à tous les tests opposés d’attaque magique effectués pour résister à un sort."
+  },
+  {
+    "nom": "Bon pour le moral",
+    "description": "Un halfelin qui mange bien est un halfelin heureux. À chaque repas (jusqu’à 4 fois par jour, espacés d’au moins 3 h) au cours duquel le personnage boit et mange des mets de qualité et en quantité, il récupère 1d4° PV."
+  },
+  {
+    "nom": "Petit veinard",
+    "description": "Le halfelin gagne 1 PC supplémentaire. De plus, il peut esquiver une attaque de son choix par combat (avant d’avoir pris connaissance des DM, mais pas un critique)."
+  },
+  {
+    "nom": "Vif et bien nourri",
+    "description": "Le halfelin augmente ses valeurs d’AGI et de CON de +1."
+  }
+]

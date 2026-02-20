@@ -1,0 +1,25 @@
+[
+  {
+    "nom": "Protéger un allié",
+    "description": "S’il n’est pas surpris, le guerrier peut accorder un bonus de DEF de +2 à un allié à son contact contre une attaque par round. Il doit annoncer son intention avant de connaître le résultat de l’attaque. De plus, vous ajoutez votre rang + 2 à tous les tests destinés à éviter d’être surpris.",
+    "action": "gratuite"
+  },
+  {
+    "nom": "Parer un coup",
+    "description": "Le guerrier utilise une action de mouvement pour se mettre en posture défensive. Il peut alors essayer de parer une attaque à tout moment avant son prochain tour. Il doit faire un test d’attaque au contact (il peut remplacer la FOR par l’AGI pour ce test) en opposition au test de l’attaque au contact ou à distance réussie par son adversaire. S’il l’emporte, l’attaque adverse est bloquée par le bouclier. Il ne subit aucun DM sauf si la créature est de taille énorme ou colossale, auquel cas, il subit tout de même la moitié des DM. À partir du rang 5, le guerrier peut utiliser cette capacité en action gratuite (toujours une fois par round), mais dans ce cas, il subit un dé malus au test opposé.",
+    "action": "mouvement"
+  },
+  {
+    "nom": "Défense au bouclier",
+    "description": "Le guerrier obtient un bonus de +1 en DEF lorsqu’il manie un bouclier. Ce bonus passe à +2 au rang 5. De plus, lorsqu’il tient son bouclier en main, il retranche son rang à tous les DM des attaques de zone (sorts d'Explosion de feu, mains brûlantes, foudre, etc. et aux souffles) sauf s’il est surpris."
+  },
+  {
+    "nom": "Absorber un sort",
+    "description": "Lorsqu’il s’est préparé à parer un coup, le guerrier peut décider à la place d’absorber un sort. S’il réussit un test d’attaque au contact (il peut remplacer la FOR par l’AGI pour ce test) opposé à un test d’attaque magique du lanceur de sort, le sort est absorbé par le bouclier et n’a aucun effet sur le guerrier (mais s’il s’agit d’un sort de zone, les autres cibles sont affectées normalement)."
+  },
+  {
+    "nom": "Renvoi de sort",
+    "description": "Le guerrier peut décider de renvoyer un sort qu’il vient d’absorber grâce à sa capacité Absorber un sort. Au lieu d’être annulé, le sort absorbé est immédiatement retourné contre son expéditeur : le lanceur du sort subit alors les effets de sa propre attaque ! Cet effet ne fonctionne pas contre les sorts de zone.",
+    "action": "gratuite"
+  }
+]

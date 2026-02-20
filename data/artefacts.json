@@ -1,0 +1,27 @@
+[
+  {
+    "nom": "Bâton de mage",
+    "description": "Lorsqu’il utilise son bâton, le forgesort inflige [1d4°+INT] DM magiques. À partir du rang 3, au prix d’une action limitée, il peut utiliser sa valeur d’attaque magique pour une attaque au contact et il inflige [2d4°+INT] DM dans un éclair d’énergie ! Si le forgesort fait l’acquisition d’un bâton magique, les bonus de celui-ci s’ajouteront normalement à l’attaque et aux DM (de même pour le bonus de feu de la voie du métal)."
+  },
+  {
+    "nom": "Ouverture - fermeture",
+    "description": "Le forgesort peut ouvrir une porte fermée à clef en la touchant, il doit réussir un test d’attaque magique contre la difficulté pour la crocheter. Il peut aussi sceller une porte ou un coffre pour INT minutes. Seul un mot de commande qu’il choisit permet d’ouvrir l’objet. Celui-ci peut toujours être brisé par la force, mais il bénéficie d’un bonus de +5 en solidité et en RD pour toute la durée du sort. À partir du rang 4, le forgesort peut rendre ce sort permanent en sacrifiant une gemme d’une valeur de 100 pa et en prolongeant l’incantation par un rituel de 10 min.",
+    "action": "mouvement",
+    "sort": true
+  },
+  {
+    "nom": "Sac sans fond",
+    "description": "Le forgesort possède un sac magique dans lequel il peut entreposer 50 kg de matériel par rang dans la voie, tandis que le sac semble toujours peser un kilogramme. Le sac ne fonctionne pas si on tente d’y mettre une créature vivante. Le sac est de plus capable de fournir au forgesort les objets qu’il désire. Une fois par heure, il peut en retirer un ou plusieurs objets dont la valeur totale ne dépasse pas 25 pa, le poids 50 kg, la circonférence 1 m et le volume 1 m3. Ces objets ont hélas la propriété de disparaître au bout d’une heure. De ce fait, la nourriture magique retirée du sac ne nourrit pas vraiment celui qui la consomme."
+  },
+  {
+    "nom": "Frappe des arcanes",
+    "description": "Le forgesort frappe le sol de son bâton et provoque une onde dévastatrice dans un rayon de 10 m autour de lui. Toutes les créatures dans la zone subissent automatiquement [3d4°+INT] DM et doivent réussir un test de FOR difficulté [10 + INT] pour ne pas être renversées.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Artefact étrange",
+    "description": "Le forgesort crée un artefact qu’il est le seul à pouvoir utiliser et dont la description est laissée au soin du joueur. L’artefact permet d’utiliser les capacités de rang 5 suivantes chacune une fois par jour au prix d’une action limitée : Téléportation (voie de la magie universelle, magicien), Interruption du temps (voie de la magie protectrice, magicien), Forme éthérée (voie de l’air, ensorceleur), Prescience (voie de la divination, ensorceleur). À chaque utilisation, le joueur doit lancer 1d6 : sur un résultat de 1 ou 2, l’artefact ne fonctionne pas, le forgesort doit réparer l’artefact lors d’une récupération rapide avant de pouvoir faire une nouvelle tentative de ce pouvoir (il peut tenter d’utiliser les autres pouvoirs normalement).",
+    "action": "limitée"
+  }
+]

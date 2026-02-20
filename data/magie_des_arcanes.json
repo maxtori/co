@@ -1,0 +1,32 @@
+[
+  {
+    "nom": "Projectile de mana",
+    "description": "Le magicien choisit une cible visible située à moins de 30 m et lance sur elle un projectile d’énergie ésotérique pure, déformant la trame de la réalité. La cible subit automatiquement 1d4° DM. Si le joueur obtient le résultat maximal sur son dé de dommages, il peut le relancer et ajouter le nouveau résultat (une seule fois). Les DM du projectile de mana augmentent de +1 chaque fois que le personnage atteint le rang 4 dans une voie de magicien jusqu’à un maximum égal à sa valeur d’INT.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Lévitation",
+    "description": "Le magicien peut se déplacer verticalement de 5 m par action de mouvement vers le haut ou de 10 m vers le bas pendant INT minutes. Rester en vol stationnaire à la même hauteur demande une action de mouvement.",
+    "action": "mouvement",
+    "sort": true
+  },
+  {
+    "nom": "Forme gazeuse",
+    "description": "Le magicien prend la consistance d’un gaz pendant 1 min. Il se déplace au ras du sol (s’il chute, il le fait au ralenti) à une vitesse de 5 m par action de mouvement (M). Il peut s’introduire par les plus petits interstices (comme sous une porte), mais ne peut utiliser aucune capacité. Sous cette forme, les armes ordinaires ne lui infligent aucun DM, mais la magie et les armes magiques l’affectent normalement.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Accélération",
+    "description": "Le magicien voit son métabolisme s’accélérer pendant [1d4°+INT] rounds. Il reçoit immédiatement une action de mouvement supplémentaire, puis une action de mouvement supplémentaire à chaque round. À son tour, il peut choisir de sacrifier cette action de mouvement pour obtenir au choix +3 en DEF pendant un round ou -1 PM sur le lancement d’un sort à ce round. Il est possible de cumuler cette réduction de -1 PM avec une Concentration (L) (voir le chapitre « La magie », page 227). Par exemple, une Désintégration lancée de cette façon coûtera 5 – 2 – 1 = 2 PM.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Désintégration",
+    "description": "Le magicien projette un rayon mortel dont la portée est de 20 m et qui annule la cohésion de la matière, ne laissant derrière lui qu’un amas de poussière. Un test d’attaque magique réussi contre la DEF de la cible inflige [5d4°+INT] DM. Si le magicien vise un objet porté par une créature, le test d’attaque subit un dé malus. Les objets magiques sont insensibles à ce sort et les objets normaux (jusqu’à 100 kg) sont réduits en poussière. Une créature réduite à 0 PV par ce sort est proprement désintégrée, ne laissant aucun cadavre derrière elle ! (Ses objets magiques sont épargnés).",
+    "action": "attaque",
+    "sort": true
+  }
+]

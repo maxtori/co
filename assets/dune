@@ -1,0 +1,8 @@
+(install
+ (package co)
+ (section share)
+ (files
+  (glob_files (*.css with_prefix assets/))
+  (glob_files (*.ttf with_prefix assets/))
+  (glob_files (*.png with_prefix assets/))
+))

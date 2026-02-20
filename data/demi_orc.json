@@ -1,0 +1,23 @@
+[
+  {
+    "nom": "Impressionnant",
+    "description": "Le demi-orc gagne un bonus de +3 à tous les tests d’intimidation. De plus, dans le noir total, le demi-orc voit comme dans la pénombre jusqu’à 30 m."
+  },
+  {
+    "nom": "Talent pour la violence",
+    "description": "Le joueur choisit une capacité de rang 1 de n’importe quelle voie de barbare ou de guerrier."
+  },
+  {
+    "nom": "Critique brutal",
+    "description": "Le demi-orc augmente de 1 point la zone de critique sur une attaque au contact (19-20 au d20) et ajoute +1d4° aux DM en cas de critique."
+  },
+  {
+    "nom": "Attaque sanglante",
+    "description": "Le demi-orc réalise une attaque de contact qui provoque une hémorragie. En plus des DM normaux, l’attaque produit un saignement qui inflige à la victime 1d4° DM à chaque round suivant jusqu’à ce que la cible soit soignée (tout effet de soins ou une action limitée utilisée à cet effet). On ne peut pas cumuler plusieurs effets de saignement.",
+    "action": "limitée"
+  },
+  {
+    "nom": "Colosse",
+    "description": "Le demi-orc augmente ses valeurs de FOR et de CON de +1."
+  }
+]

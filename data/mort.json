@@ -1,0 +1,31 @@
+[
+  {
+    "nom": "Siphon des âmes",
+    "description": "Une fois par round, lorsqu’une créature humanoïde vivante meurt à moins de 20 m du sorcier, il récupère NC PV (arrondis à 1 pour NC ½). À partir du rang 3, si la créature est de NC supérieur à 4, il peut choisir de récupérer 1 PM au
+lieu des PV."
+  },
+  {
+    "nom": "Masque mortuaire",
+    "description": "Le sorcier prend l’apparence de la mort pendant INT minutes. Il est alors considéré non-vivant et devient immunisé à la plupart des pouvoirs des morts-vivants (drain de vigueur et affaiblissement, paralysie de la goule, etc.). De plus, ceux-ci le prennent pour l’un des leurs. Il divise par deux tous les DM de froid. Il ne peut pas bénéficier de soins tant qu’il est sous l’effet de ce sort. Note : Les créatures non vivantes sont infatigables, ne respirent pas et sont immunisées aux maladies, aux poisons et à la plupart des attaques qui demandent un test de CON. Elles voient dans le noir comme dans de la pénombre à une distance de 30 m.",
+    "action": "mouvement",
+    "sort": true
+  },
+  {
+    "nom": "Baiser du vampire",
+    "description": "Ce sort nécessite la réussite d’un test opposé d’attaque magique (portée 30 m). La victime subit [2d4°+INT] DM et le sorcier récupère autant de PV (sans dépasser son maximum de PV).",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Peur",
+    "description": "Le sorcier effectue un test opposé d’attaque magique contre une cible (portée 20 m). S’il l’emporte, la victime fuit aussi loin du sorcier que possible pendant INT rounds (il lui faut généralement autant de temps pour revenir !). Les créatures dont le NC est supérieur ou égal au niveau du sorcier ne fuient qu’un seul round. Le sorcier peut choisir de lancer ce sort en action limitée et toutes les créatures à son contact sont affectées (faire un test d’attaque magique par adversaire).",
+    "action": ["attaque", "limitée"],
+    "sort": true
+  },
+  {
+    "nom": "Briser les cœurs",
+    "description": "Le sorcier fait mine d’arracher le cœur de sa victime, puis de broyer dans sa main (l’image du cœur de la victime apparaît dans la main du sorcier). Il doit faire un test opposé d’attaque magique contre une cible vivante (portée 20 m) et, en cas de réussite, il inflige [5d4°+INT] DM, la moitié en cas de test raté. Ce sort ne peut affecter une même cible qu’une seule fois par combat.",
+    "action": "attaque",
+    "sort": true
+  }
+]

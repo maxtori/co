@@ -1,0 +1,28 @@
+[
+  {
+    "nom": "Divination",
+    "description": "S’il emporte un test opposé d’attaque magique contre une créature de NC inférieur à son niveau (portée 10 m), l’ensorceleur devine son nom d’usage, son métier et quelques autres renseignements, tous de notoriété publique (si la cible agit sous couverture, ce sont les informations qui concernent la couverture que l’ensorceleur apprend). Si la cible du sort est volontaire et qu’il lit les lignes de sa main, il n’y a pas besoin de test et l’ensorceleur peut utiliser ce sort sur une créature de NC supérieur ou égal à son niveau. En plus de ce sort, l’ensorceleur gagne +1 en Init. et en DEF. Ce bonus augmente de +1 au rang 3 de la voie et de +1 chaque fois que le personnage atteint le rang 5 dans une voie d’ensorceleur.",
+    "action": "limitée",
+    "sort": true
+  },
+  {
+    "nom": "Détection de l’invisible",
+    "description": "Pendant CHA minutes, l’ensorceleur détecte les créatures invisibles (le sort révèle une silhouette, mais pas l’apparence exacte de la créature) ou cachées à moins de 20 m et si un sort de Clairvoyance affecte l’endroit. Aveuglé (par magie ou dans l’obscurité), ce sort lui permet de détecter les créatures présentes (et donc d’attaquer sans malus), mais pas de distinguer son environnement.",
+    "action": "limitée",
+    "sort": true
+  },
+  {
+    "nom": "Clairvoyance",
+    "description": "L’ensorceleur peut voir et entendre à distance ce qui se passe dans un lieu qu’il connaît (pas de limite de portée) ou juste derrière une porte qu’il touche pendant CHA rounds (action limitée à chaque round). Les créatures présentes ont droit à un test de PER difficulté [12 + CHA de l’ensorceleur] : en cas de réussite, elles se sentent observées.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Perception héroïque",
+    "description": "L’ensorceleur augmente sa valeur de PER de +1. Désormais, il obtient un dé bonus aux tests de PER, et il ajoute sa PER au nombre de PM dont il bénéficie."
+  },
+  {
+    "nom": "Prescience",
+    "description": "Une fois par combat, au début du round, le joueur peut décider qu’il a eu une vision des différents futurs possibles. Il bénéficie d’un bonus de +10 en attaque, en Défense et à tous les tests de PER pour tout le round, il divise tous les DM subis par 2 et il peut choisir d’agir à n’importe quel moment dans le round, sans considération d’initiative."
+  }
+]

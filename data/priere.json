@@ -1,0 +1,29 @@
+[
+  {
+    "nom": "Bénédiction",
+    "description": "Le prêtre entonne un chant pour encourager ses compagnons en vue. Ses alliés et lui bénéficient d’un bonus de +1 à tous leurs tests de caractéristique et d’attaque pendant CHA minutes. Ce bonus passe à +2 au rang 5. De plus, le prêtre obtient un bonus égal à son rang + 2 à tous les tests de théologie ou de cosmologie.",
+    "action": "limitée",
+    "sort": true
+  },
+  {
+    "nom": "Sanctuaire",
+    "description": "Pendant 1 min (10 rounds), tous les adversaires qui veulent attaquer le prêtre doivent réussir un test d’INT difficulté [10 + CHA du prêtre]. S’ils échouent, ils ne peuvent pas l’attaquer pour la durée du sort. Ceux dont le niveau est inférieur à la moitié de celui du prêtre sont automatiquement affectés (pas de test d’INT). Si le prêtre commet une action offensive, le sort prend fin immédiatement et il ne peut plus être lancé avant de prendre une récupération rapide.",
+    "action": "limitée",
+    "sort": true
+  },
+  {
+    "nom": "Destruction du mal",
+    "description": "Tous les morts-vivants et les démons dans un rayon de 10 m autour du prêtre subissent automatiquement [2d4°+CHA] DM. Les DM passent à 3d4° au rang 5.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Volonté héroïque",
+    "description": "Le prêtre augmente sa VOL de +1. Désormais, il obtient un dé bonus aux tests de VOL."
+  },
+  {
+    "nom": "Intervention divine",
+    "description": "Le prêtre fait appel à son dieu pour changer le cours des événements. Une fois par combat, il peut décider qu’un test du MJ ou des joueurs est une réussite ou un échec, même après que les dés ont révélé leur résultat. Il ne peut pas modifier le résultat du test obtenu par une créature d’un NC supérieur à son niveau.",
+    "action": "gratuite"
+  }
+]

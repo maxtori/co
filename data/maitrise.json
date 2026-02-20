@@ -1,0 +1,23 @@
+[
+  {
+    "nom": "Agilité du singe",
+    "description": "Le moine ajoute son rang + 2 à tous ses tests pour effectuer des acrobaties ou esquiver et il gagne +2 en DEF. Ce bonus passe à +3 au rang 4. Se relever (si le personnage est renversé) devient une action gratuite."
+  },
+  {
+    "nom": "Griffes du tigre",
+    "description": "Désormais, lorsque le moine obtient un résultat de 1 au dé de DM à mains nues, il le remplace par le résultat maximal du dé. De plus le moine peut choisir d’infliger des DM tranchants ou perforants lorsqu’il combat à mains nues au lieu de DM contondants."
+  },
+  {
+    "nom": "Morsure du serpent",
+    "description": "Lorsqu’il attaque à mains nues, le moine augmente de 1 point les chances d’obtenir un critique sur les attaques au contact (par exemple, 19-20 au lieu de 20). De plus, ses coups critiques portés à mains nues sont désormais si douloureux que la cible est affaiblie pendant 1 round."
+  },
+  {
+    "nom": "Fureur du dragon",
+    "description": "Une fois par combat, le moine peut effectuer une attaque tournoyante qui inflige automatiquement [3d4°+FOR] DM à tous les adversaires au contact et oblige ceux-ci à réussir un test de FOR difficulté 10 pour ne pas être renversés.",
+    "action": "limitée"
+  },
+  {
+    "nom": "Moment de perfection",
+    "description": "Une fois par jour, le moine peut choisir de réussir toutes ses attaques automatiquement (pas de critique) et d’esquiver toutes celles qui le prennent pour cible pendant un round. Tout semble aller au ralenti autour de lui… Il peut utiliser cette capacité une fois de plus chaque jour par rang 5 atteint dans une autre voie de moine, mais pas plus d’une fois par combat. De plus le moine augmente définitivement de +1 la valeur de sa plus faible caractéristique (choisir en cas d’égalité)."
+  }
+]

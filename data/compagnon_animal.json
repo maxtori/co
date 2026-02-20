@@ -1,0 +1,24 @@
+[
+  {
+    "nom": "Le Loup",
+    "description": "Le rôdeur obtient un loup pour compagnon animal. En combat, le loup attaque en même temps que le rôdeur. Le loup comprend des ordres simples comme : garde, reste, apporte, attaque, etc."
+  },
+  {
+    "nom": "Travail d’équipe",
+    "description": "Lorsque le loup et le rôdeur sont au contact, le loup obtient un dé bonus en attaque et le rôdeur obtient un dé bonus aux tests effectués pour pister ou pour éviter d’être surpris (Vigilance)."
+  },
+  {
+    "nom": "Lien empathique",
+    "description": "Le rôdeur peut communiquer avec son loup par télépathie et le guérir à distance en dépensant ses propres PV (1 PV du rôdeur pour 1 PV octroyé au loup, sans limitation de quantité) au prix d’une
+action limitée.",
+    "action": "limitée"
+  },
+  {
+    "nom": "Loup alpha",
+    "description": "Le loup du rôdeur devient un spécimen particulièrement puissant."
+  },
+  {
+    "nom": "Tactiques de meute",
+    "description": "Lorsque le loup attaque la même cible que le rôdeur, il obtient un bonus de 1d4° aux DM. Chaque fois que le rôdeur dépense 1 PV pour soigner son loup, le loup récupère 2 PV. De plus, le rôdeur et son loup augmentent leur DEF de +1 chaque fois que le personnage atteint le rang 5 dans une voie de rôdeur (celle-ci incluse)."
+  }
+]

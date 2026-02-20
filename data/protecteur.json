@@ -1,0 +1,28 @@
+[
+  {
+    "nom": "Baies magiques",
+    "description": "Le druide doit se trouver devant un buisson ou un arbre vivant. Son incantation fait pousser PER fruits qu’il peut cueillir. Chaque fruit offre l’équivalent d’un repas et rend [1d4°+rang] PV après 1 min à celui qui le consomme. Les effets de ces fruits ne fonctionnent qu’une fois par jour et par personnage. En plus de ce sort, le druide ajoute son rang + 2 à tous les tests de vigilance et de discrétion en pleine nature.",
+    "action": "limitée",
+    "sort": true
+  },
+  {
+    "nom": "Forêt vivante",
+    "description": "Après un rituel de 30 min, la forêt s’éveille dans un rayon de 1 km par rang et devient une alliée du druide pendant 24 h. Dans ce périmètre, les ennemis du druide sont désorientés et gênés par les branches et les racines. Ils divisent leur déplacement par deux et subissent un dé malus à tous les tests de survie, d’orientation, de perception ou de discrétion. Le druide peut lancer ce sort une seule fois par jour. Si deux druides essaient d’influencer la forêt, c’est celui dont le niveau est le plus élevé qui l’emporte.",
+    "sort": true
+  },
+  {
+    "nom": "Régénération",
+    "description": "Une cible touchée par le druide récupère [3d4°+PER] PV par un rituel de 10 min (la cible et le druide doivent rester au calme). À partir du rang 5, ce sort permet aussi de faire repousser les membres ou les parties du corps amputées. Une cible peut bénéficier de ce sort seulement une fois par jour.",
+    "sort": true
+  },
+  {
+    "nom": "Perception héroïque",
+    "description": "Le druide augmente sa PER de +1. Désormais, il obtient un dé bonus aux tests de PER. De plus, il ajoute désormais sa PER pour calculer ses PM (en plus de sa VOL)."
+  },
+  {
+    "nom": "Forme d’arbre",
+    "description": "Le druide peut se transformer en arbre (environ 5 m de hauteur) pendant PER minutes. Il prend les mêmes caractéristiques (à l’exception de l’INT, de la PER et de la VOL) que l’arbre animé (voir plus loin), y compris les PV. Sous cette forme, il ne peut pas parler, mais peut utiliser les sorts des voies du protecteur et des végétaux. À la fin du sort, ou s’il est réduit à 0 PV, il reprend forme humaine et retrouve les PV que le personnage avait au début du sort.",
+    "action": "attaque",
+    "sort": true
+  }
+]

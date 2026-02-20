@@ -1,0 +1,24 @@
+[
+  {
+    "nom": "Archer émérite",
+    "description": "Le rôdeur ajoute sa PER aux DM qu’il inflige à l’arc et +1 par rang dans la voie en initiative. Le joueur peut souhaiter une variante de cette capacité s’appliquant aux armes de jet (dague, hachette, javelot) plutôt qu’à l’arc (rebaptisez-la voie du lancer). Dans ce cas, le PJ ajoute sa FOR aux DM qu’il inflige et double la portée de jet (pas de bonus d’Init.). Par ailleurs, toutes les capacités de la voie qui suivent s’appliquent aux armes de jet plutôt qu’à l’arc."
+  },
+  {
+    "nom": "Tir chirurgical",
+    "description": "Le rôdeur peut tirer sur une cible engagée en mêlée sans pénalité (mais pas sur une cible à couvert). Il ne risque jamais de toucher un allié, même en cas d’échec critique."
+  },
+  {
+    "nom": "Dans le mille",
+    "description": "Pour une attaque à distance, le rôdeur peut choisir de s’imposer un dé malus en attaque. Si elle est réussie, il ajoute 2d4° aux DM. Cette capacité peut être utilisée avec Tir rapide ou Flèche de mort par exemple. Transformez cette capacité en action limitée (L) pour obtenir +3d4° aux DM au lieu de 2d4°."
+  },
+  {
+    "nom": "Tir rapide",
+    "description": "Le rôdeur peut faire deux attaques à distance pendant son tour avec un malus de -2.",
+    "action": "limitée"
+  },
+  {
+    "nom": "Flèche de mort",
+    "description": "Vous obtenez un dé bonus en attaque à distance et vous ajoutez 1d4° aux DM. Au lieu du dé bonus et de +1d4° aux DM, vous pouvez infliger un état préjudiciable de votre choix parmi aveuglé, affaibli, ralenti ou immobilisé pendant 1 round à une cible d’un NC inférieur au vôtre. Vous ne pouvez infliger chaque état préjudiciable qu’une seule fois par combat. Note : Si le MJ le permet, cette voie peut être déclinée pour une autre catégorie d’arme à distance : arbalètes, armes à poudre, etc. Conseil aux joueurs : utilisez plutôt Flèche de mort contre une cible avec une haute DEF et Tir rapide contre des cibles multiples et une faible DEF.",
+    "action": "limitée"
+  }
+]

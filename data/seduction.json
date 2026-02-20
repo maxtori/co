@@ -1,0 +1,24 @@
+[
+  {
+    "nom": "Charmant",
+    "description": "Le barde ajoute son rang + 2 aux tests effectués pour séduire, convaincre, mentir ou baratiner. Désormais, il peut dépenser 1 point de chance pour améliorer l’action d’un compagnon en vue, ce PC permet d’ajouter [1d4° + CHA] sur le résultat du test (au lieu de +10)."
+  },
+  {
+    "nom": "Dentelles et rapière",
+    "description": "Le barde ne met pas d’armure, cela ne sied point en société. Sa seule armure est la dentelle, sa seule défense, la rapière. Lorsqu’il ne porte aucune armure, le barde ajoute son CHA en DEF (en plus de son AGI), toutefois ce bonus ne peut pas dépasser le rang atteint dans la voie."
+  },
+  {
+    "nom": "Baratineur de génie",
+    "description": "Si le barde peut passer 10 minutes avec un humanoïde dont le niveau est inférieur ou égal à 1 (NC 1), il peut dépenser un 1 PC pour le charmer. La cible répond favorablement à vos requêtes dans la limite de ce que ferait un ami et ce lien peut se renforcer avec le temps. Si vous ne partagez pas une langue commune, cela vous coûte 2 PC."
+  },
+  {
+    "nom": "Charisme héroïque",
+    "description": "Le barde augmente sa valeur de CHA de +1. Désormais, il obtient un dé bonus aux tests de CHA. De plus, le barde peut désormais utiliser son CHA au lieu de sa VOL pour calculer le nombre de PM dont il dispose."
+  },
+  {
+    "nom": "Suggestion",
+    "description": "Le barde peut suggérer une action à une créature en réussissant un test opposé d’attaque magique. En cas de réussite, la créature fera tout son possible pour satisfaire cette demande pendant 1 heure ou jusqu’à avoir réussi. Elle évitera les actions suicidaires (ce qui lui donnerait immédiatement un test d’INT difficulté 10 pour échapper au sort). Le sort ne peut pas affecter une créature de niveau supérieur ou égal à celui du lanceur.",
+    "action": "gratuite",
+    "sort": true
+  }
+]

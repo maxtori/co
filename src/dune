@@ -1,0 +1,18 @@
+(library
+ (name co)
+ (public_name co)
+ (modules co)
+ (preprocess (pps ppx_deriving_encoding ppx_deriving_jsoo))
+ (libraries ez_api.encoding_js))
+
+(executable
+ (name ui)
+ (modules ui)
+ (preprocess (pps ppx_deriving_jsoo vue-ppx))
+ (libraries ezjs_idb ezjs_fetch co)
+ (modes js))
+
+(install
+  (package co)
+  (section share)
+  (files index.html ui.bc.js manifest.json sw.js))

@@ -1,0 +1,25 @@
+[
+  {
+    "nom": "Grosse tête",
+    "description": "Le forgesort remplace la force brutale par un peu de réflexion. Il peut effectuer un test d’INT au lieu d’un test de FOR (par exemple, il utilise un levier pour déplacer une lourde charge). De plus, au niveau où il acquiert cette capacité, il peut ajouter son INT à ses PV au lieu de la CON. Il ajoute son rang + 2 à tous les tests de bricolage ou de science."
+  },
+  {
+    "nom": "Golem",
+    "description": "Le golem est une créature humanoïde fabriquée par le forgesort pour lui servir de serviteur et de garde du corps. Il comprend des ordres simples, comme suivre, attaquer, monter la garde, mais il est incapable d’actions complexes ou nécessitant une motricité fine (comme de la couture par exemple !)."
+  },
+  {
+    "nom": "Protecteur",
+    "description": "Une fois par round, s’il est au contact d’un personnage, le golem peut s’interposer et subir les DM d’une attaque à sa place.",
+    "action": "gratuite"
+  },
+  {
+    "nom": "Statuette",
+    "description": "Le forgesort transforme son golem en statuette d’une douzaine de centimètres de haut, recouverte de runes. Sous forme de statuette, le golem ne peut pas agir, mais il bénéficie d’une RD 10. À tout moment, le forgesort peut utiliser une action de mouvement pour jeter la figurine au sol et lui rendre sa taille normale et toutes ses fonctions.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Golem supérieur",
+    "description": "Le forgesort peut améliorer son golem en choisissant une option parmi les suivantes. Le joueur peut choisir une option différente supplémentaire à chaque fois qu’il atteint le rang 5 dans une voie de forgesort. Armure : +5 en DEF; Forme de félin : +3 en AGI et en DEF, dé bonus en AGI; Baliste : portée 20 m, [1d4°+AGI] DM; Grande taille : +2 PV par niveau et +1 en FOR et DM; Vol : des « sauts » de 40 m en action limitée; Cerveau amélioré : +2 en INT, PER et CHA, doué de parole; Puissant : +2 en FOR et aux DM, dé bonus en FOR; Arme à deux mains : +1d4° aux DM au contact"
+  }
+]

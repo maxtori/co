@@ -1,0 +1,23 @@
+[
+  {
+    "nom": "Maître de la survie",
+    "description": "En milieu naturel, le druide ajoute son rang + 2 à tous les tests de survie (s’orienter, trouver un abri et de la nourriture, éviter les dangers, etc.) dont les tests de récupération effectués chaque nuit. Lorsqu’il dort en milieu naturel, s’il utilise 1 DR, il guérit 1d4° PV supplémentaire."
+  },
+  {
+    "nom": "Terrains difficiles",
+    "description": "Le druide ne subit aucune pénalité de déplacement en terrain difficile (natation, neige, boue, broussailles, pente abrupte, etc.). Il obtient un bonus de +3 en initiative, et +1 en attaque et en DEF lors d’un combat dans ces conditions."
+  },
+  {
+    "nom": "Bâton de druide",
+    "description": "Le druide combat avec les deux extrémités de son bâton de bois noueux (ou de son épieu). Lorsqu’il utilise cette capacité, il effectue deux attaques de contact pour lesquelles il peut remplacer sa FOR par son AGI en attaque s’il le souhaite. Il inflige [1d4°+FOR ou AGI au choix] DM par attaque (plus d’éventuels bonus si l’arme est magique) et il gagne +2 en DEF pendant 1 round.",
+    "action": "limitée"
+  },
+  {
+    "nom": "Constitution héroïque",
+    "description": "Le druide augmente sa CON de +1. Désormais, il obtient un dé bonus aux tests de CON."
+  },
+  {
+    "nom": "Résistant",
+    "description": "Le druide divise par deux tous les DM « naturels non magiques » : froid, feu, chutes, poisons… mais aussi les DM provoqués par les animaux ou les insectes (même géants). Cette protection s’étend aussi à ses compagnons animaux."
+  }
+]

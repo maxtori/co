@@ -1,0 +1,6 @@
+(executable
+ (name test)
+ (modules test)
+ (preprocess (pps ppx_deriving_arg))
+ (libraries co ez_api.js)
+ (modes js))

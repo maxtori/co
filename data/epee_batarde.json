@@ -1,0 +1,7 @@
+{
+  "dommage": [ 1, "d8" ],
+  "deux_mains": [ 1, "d12" ],
+  "type": "tranchants",
+  "prix": "9 pa",
+  "notes": "Arme à une ou deux mains"
+}

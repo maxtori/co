@@ -1,0 +1,4 @@
+(install
+ (package co)
+ (section share)
+ (files (glob_files (*.json with_prefix data/))))

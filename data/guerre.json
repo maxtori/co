@@ -1,0 +1,25 @@
+[
+  {
+    "nom": "Armure sur mesure",
+    "description": "L’armure du chevalier est parfaitement ajustée, aussi il n’ajoute que la moitié de sa DEF à la difficulté des tests pour lesquels l’armure inflige une pénalité. De plus, lorsqu’il porte une armure lourde (plaque ou plaque complète), il obtient un bonus de +1 en DEF à chaque fois qu’il atteint le rang 5 dans une voie de chevalier."
+  },
+  {
+    "nom": "Encaisser un coup",
+    "description": "Le chevalier se place de façon à dévier un coup sur son armure. Jusqu’à son tour au round suivant, il peut retrancher la valeur de DEF de son armure (bonus de magie inclus si elle est enchantée) aux DM d’une seule attaque au contact qu’il subit (minimum 1 DM). Au rang 5, il peut ajouter son bonus de bouclier (là aussi, bonus de magie inclus et cumulable au bonus d’armure). Le chevalier ne peut pas être étourdi ou renversé par une attaque qu’il a décidé d’encaisser.",
+    "action": "mouvement"
+  },
+  {
+    "nom": "Frappe du justicier",
+    "description": "Lorsque le chevalier réalise cette attaque au contact, si le test d’attaque est un échec, il inflige tout de même ½ DM à sa cible. Un résultat de 1 au d20 n’inflige aucun DM.",
+    "action": "limitée"
+  },
+  {
+    "nom": "Force héroïque",
+    "description": "Le chevalier augmente sa FOR de +1. Désormais, il obtient un dé bonus aux tests de FOR."
+  },
+  {
+    "nom": "Mon armure est une arme",
+    "description": "Une fois par combat, le chevalier peut donner un coup avec son armure (gantelet, heaume, spallière, etc.) en action gratuite. Il inflige automatiquement [1d4° + FOR] DM, et si la FOR de la cible est inférieure à celle du chevalier, elle est (au choix du chevalier) renversée ou étourdie pour 1 round ou recule de 3 m.",
+    "action": "gratuite"
+  }
+]

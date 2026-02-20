@@ -1,0 +1,27 @@
+[
+  {
+    "nom": "Fortifiant",
+    "description": "Un breuvage qui guérit immédiatement 1d4° PV et permet de gagner un dé bonus aux trois prochains tests effectués dans une période de 30 min. En plus de cette recette, grâce à ses études, le forgesort ajoute son rang + 2 aux tests d’alchimie et de chimie ou pour identifier une potion (test difficulté 10 + rang du sort).",
+    "action": "limitée"
+  },
+  {
+    "nom": "Feu grégeois",
+    "description": "Le forgesort lance la fiole à une distance maximale de 10 m (réussite automatique). Le contenu explose dans un rayon de 3 m en infligeant 2d4° DM. Un test d’AGI difficulté [10 + INT du forgesort] réussi permet aux victimes de diviser les DM par deux. Les DM passent à 3d4° au rang 4 et 4d4° au rang 5.",
+    "action": "limitée"
+  },
+  {
+    "nom": "Élixir de guérison",
+    "description": "Le forgesort peut préparer un élixir qui soigne [2d4°+INT] PV au bout d’une minute ou guérit un empoisonnement de manière instantanée.",
+    "action": "limitée"
+  },
+  {
+    "nom": "Élixirs mineurs",
+    "description": "Le forgesort apprend à préparer des élixirs parmi Forme gazeuse, Maîtrise des éléments, Chute ralentie (voies de magicien) et Masque mortuaire (voie de sorcier). Il choisit un nombre d’élixirs égal à sa valeur d’INT (pour un maximum de 4).",
+    "action": "limitée"
+  },
+  {
+    "nom": "Élixirs majeurs",
+    "description": "Le forgesort apprend à préparer des élixirs parmi Invisibilité, Vol, Accélération (voies de magicien) et Masque du prédateur (voie de druide). Il choisit un nombre d’élixirs égal à sa valeur d’INT (pour un maximum de 4). Ces préparations comptent pour deux élixirs. Note : si un personnage choisit une capacité issue de la voie des élixirs par l’intermédiaire d’une autre voie, il acquiert seulement deux élixirs par jour (ou un seul dans le cas d’un élixir majeur). Consommer un élixir n’est pas limité par le type d’armure que porte celui qui le boit.",
+    "action": "limitée"
+  }
+]

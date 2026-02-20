@@ -1,0 +1,28 @@
+[
+  {
+    "nom": "Langage des animaux",
+    "description": "Le druide sait communiquer avec les mammifères. La communication reste primitive et limitée à l’intelligence de l’animal et à son point de vue (prédateur, proie, etc.). De plus, il ajoute son rang + 2 à tous les tests destinés à influencer un animal avec lequel il peut communiquer. Chaque fois que le personnage atteint le rang 4 dans une voie de druide, il apprend à communiquer avec une nouvelle catégorie d’animaux de son choix : les oiseaux, les reptiles (et les amphibiens), les poissons (et les mollusques) ou les arthropodes (insectes, araignées, scorpions, etc.) et enfin les animaux fantastiques (griffon, pégase, etc.)."
+  },
+  {
+    "nom": "Petit compagnon",
+    "description": "Le druide choisit un petit animal (écureuil, corbeau, chat). Il peut utiliser les sens de son familier (voir par ses yeux, entendre ce qu’il entend, etc.) et communiquer avec lui à distance illimitée. Il gagne +2 en DEF lorsque son familier est en vue. Le familier récupère tous les PV perdus après une récupération rapide. S’il est réduit à 0 PV, le familier prend la fuite et réapparaît auprès de son maître 24 h plus tard, complètement soigné. S’il est tué (lors d’un fait de jeu que le MJ juge inévitable), le druide perd 1d4° PV en contrecoup et pourra trouver un autre familier au prochain passage de niveau (pas forcément le même animal)."
+  },
+  {
+    "nom": "Nuée d’insectes",
+    "description": "En réussissant un test d’attaque magique contre la DEF de sa cible (portée 20 m), le druide libère sur celle-ci une nuée d’insectes volants qui piquent, aveuglent et la suivent pendant [3 + PER] rounds. La victime subit 1 DM par round et un malus de -2 à tous les tests. Les DM de zone détruisent la nuée.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Masque du prédateur",
+    "description": "Pendant PER minutes, le druide prend les traits d’un fauve ou d’un loup. Il gagne +2 en Initiative, en DEF, en attaque et aux DM au contact et peut voir dans la nuit (comme un elfe).",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Forme animale",
+    "description": "Pendant une durée de PER minutes, le druide peut prendre la forme d’un animal de taille moyenne ou inférieure (minimum une souris) d’une catégorie dont il maîtrise la communication (voir rang 1, à l’exception des animaux fantastiques). Il conserve seulement ses PV, ses valeur d’INT et de VOL, et acquiert les caractéristiques, les attaques, la DEF et les capacités naturelles de la forme choisie (le vol pour un oiseau, la respiration aquatique pour le poisson, etc.). Le druide ne peut ni utiliser son équipement ni ses propres capacités sous cette forme. Le druide peut reprendre sa forme humaine lorsqu’il le désire par une action de mouvement (M).",
+    "action": "attaque",
+    "sort": true
+  }
+]

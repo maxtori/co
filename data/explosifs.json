@@ -1,0 +1,25 @@
+[
+  {
+    "nom": "Tir de grenaille",
+    "description": "L’arquebusier sait réaliser un mélange de poudre et de grenaille. Quand il charge une arme à poudre, il peut choisir d’utiliser ce mélange à la place d’une munition normale (il doit l’annoncer au moment où il charge). Lorsqu’il tire cette munition (L), il fait un seul test d’attaque contre toutes les cibles lui faisant face dans un cône de 10 m de long et sur 5 m de large. Toutes les cibles dont il atteint la DEF subissent la moitié des DM habituels. De plus, le personnage ajoute son rang + 2 à tous les tests d’artificier (par exemple pour fabriquer et tirer des feux d’artifice).",
+    "action": "limitée"
+  },
+  {
+    "nom": "Démolition",
+    "description": "L’arquebusier peut préparer un explosif qui lui permet de démolir facilement des structures. Il lui faut 3 rounds complets pour préparer et poser son explosif. Celui-ci inflige à la structure [3d4° + INT] DM et ignore la moitié de sa RD (et seulement 2d4° DM dans un rayon de 2 m). Chaque jour, l’arquebusier peut utiliser un nombre de charges explosives égal au rang dans la voie. Ces charges permettent indifféremment d’utiliser les capacités Démolition, Piège explosif ou Boulet explosif."
+  },
+  {
+    "nom": "Poudre puissante",
+    "description": "L’arquebusier sait préparer une poudre plus puissante, il ajoute +10 m à la portée et +1 aux DM des armes à poudre. Le bonus aux DM augmente de +1 à chaque fois que le personnage atteint le rang 5 dans une voie d’arquebusier. De plus, sa poudre est magique et elle permet à ses projectiles d’affecter les créatures immunisées aux armes non magiques."
+  },
+  {
+    "nom": "Piège explosif",
+    "description": "Il faut 1 min à l’arquebusier pour installer un piège qui explose dans un rayon de 5 m en infligeant [5d4° + INT] DM de feu (test d’AGI difficulté 15 pour ne subir que la moitié des DM). Le piège est déclenché à l’intrusion de toute créature dans une zone d’un à deux mètres autour du piège. Une créature peut détecter le piège avec un test d’INT difficulté [15 + INT de l’arquebusier] avant de le déclencher.",
+    "action": "limitée"
+  },
+  {
+    "nom": "Boulet explosif",
+    "description": "L’arquebusier sait fabriquer et lancer de petites boules de métal garnies de poudre et d’une portée de 20 m qui explosent dans un rayon de 5 m en infligeant [4d4° + INT] DM perforants, divisés par 2 pour les victimes qui réussissent un test d’AGI difficulté 10. Ceux qui ratent le test sont de plus aveuglés un round par le flash lumineux de l’explosion.",
+    "action": "limitée"
+  }
+]
