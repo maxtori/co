@@ -244,7 +244,7 @@
           <div class="accordion" id="voies-accordeon" style="--bs-body-bg:none">
             <div v-for="v in page.personnage[1].voies" class="accordion-item">
               <button class="accordion-button d-flex collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#'+v[0]">
-                <span class="flex-fill">{{ v[0] }}</span>
+                <span class="flex-fill">{{ pp_voie(v[0]) }}</span>
                 <span class="me-3 badge text-bg-light">
                   <span class="m-2">Rang</span>
                   <span class="m-2">{{ v[1] }}</span>
@@ -386,16 +386,16 @@
             <ul class="list-group">
               <li v-for="vt in page.creation[1].creation.voies.voies" class="list-group-item p-0 text-center">
                 <button class="btn w-100" data-bs-toggle="collapse" :data-bs-target="'#'+vt" aria-expanded="false">
-                  {{ vt }}
+                  {{ pp_voie(vt) }}
                 </button>
                 <ul class="list-group collapse" :id="vt">
-                  <li v-for="(v, i) in voie(vt)" class="list-group-item list-group-item-action p-0" :class="(capacite_choisie(vt, i+1)) ? 'active' : ''" @click="choisit_capacite(vt, i+1)">
+                  <li v-for="(c, i) in voie(vt)" class="list-group-item list-group-item-action p-0" :class="(capacite_choisie(vt, i+1)) ? 'active' : ''" @click="choisit_capacite(vt, i+1)">
                     <div class="w-100 d-flex">
                       <span class="border border-secondary border-2 px-3">{{ i + 1 }}</span>
-                      <strong class="flex-fill text-bg-light">{{ v.nom }}</strong>
+                      <strong class="flex-fill text-bg-light">{{ c.nom }}</strong>
                     </div>
                     <p class="my-2">
-                      {{ v.description }}
+                      {{ c.description }}
                     </p>
                   </li>
                 </ul>
@@ -535,16 +535,16 @@
                   <ul class="list-group">
                     <li v-for="vt in page.edition.voies" class="list-group-item p-0 text-center">
                       <button class="btn w-100" data-bs-toggle="collapse" :data-bs-target="'#edition-'+vt" aria-expanded="false">
-                        {{ vt }}
+                        {{ pp_voie(vt) }}
                       </button>
                       <ul class="list-group collapse" :id="'edition-'+vt">
-                        <li v-for="(v, i) in voie(vt)" class="list-group-item list-group-item-action p-0" :class="(capacite_choisie(vt, i+1)) ? 'active' : ''" @click="choisit_capacite(vt, i+1)">
+                        <li v-for="(c, i) in voie(vt)" class="list-group-item list-group-item-action p-0" :class="(capacite_choisie(vt, i+1)) ? 'active' : ''" @click="choisit_capacite(vt, i+1)">
                           <div class="w-100 d-flex">
                             <span class="border border-secondary border-2 px-3">{{ i + 1 }}</span>
-                            <strong class="flex-fill text-bg-light">{{ v.nom }}</strong>
+                            <strong class="flex-fill text-bg-light">{{ c.nom }}</strong>
                           </div>
                           <p class="my-2">
-                            {{ v.description }}
+                            {{ c.description }}
                           </p>
                         </li>
                       </ul>

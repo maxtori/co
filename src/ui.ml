@@ -477,6 +477,12 @@ and pp_peuple _app p =
     string @@ String.map (function '_' -> '-' | c -> c) s
   else string @@ String.map (function '_' -> ' ' | c -> c) s
 
+and pp_voie _app v =
+  let s = match Json_encoding.construct voie_type_enc v with `String s -> s | _ -> assert false in
+  if String.starts_with ~prefix:"Demi_" s then
+    string @@ String.map (function '_' -> '-' | c -> c) s
+  else string @@ String.map (function '_' -> ' ' | c -> c) s
+
 [%%mounted fun app ->
   let elt = Dom_html.getElementById "erreur-modal" in
   ignore @@ Js_of_ocaml.Dom_events.listen elt (Js_of_ocaml.Dom_events.Typ.make "hide.bs.modal") @@ fun _ _ ->
