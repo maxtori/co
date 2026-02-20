@@ -472,16 +472,14 @@ and ajout_equipement app = match page_of_jsoo app##.page with
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"
 
 and pp_peuple _app p =
-  let s = match Json_encoding.construct peuple_enc p with `String s -> s | _ -> assert false in
-  if String.starts_with ~prefix:"Demi_" s then
-    string @@ String.map (function '_' -> '-' | c -> c) s
-  else string @@ String.map (function '_' -> ' ' | c -> c) s
+  let s = match Json_encoding.construct peuple_enc (peuple_of_jsoo p) with `String s -> s | _ -> assert false in
+  let b = String.starts_with ~prefix:"demi_" s in
+  string @@ String.capitalize_ascii @@ String.map (function '_' -> if b then '-' else ' ' | c -> c) s
 
 and pp_voie _app v =
-  let s = match Json_encoding.construct voie_type_enc v with `String s -> s | _ -> assert false in
-  if String.starts_with ~prefix:"Demi_" s then
-    string @@ String.map (function '_' -> '-' | c -> c) s
-  else string @@ String.map (function '_' -> ' ' | c -> c) s
+  let s = match Json_encoding.construct voie_type_enc (voie_type_of_jsoo v) with `String s -> s | _ -> assert false in
+  let b = String.starts_with ~prefix:"demi_" s in
+  string @@ String.capitalize_ascii @@ String.map (function '_' -> if b then '-' else ' ' | c -> c) s
 
 [%%mounted fun app ->
   let elt = Dom_html.getElementById "erreur-modal" in
