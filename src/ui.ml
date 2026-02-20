@@ -471,6 +471,12 @@ and ajout_equipement app = match page_of_jsoo app##.page with
     (Unsafe.coerce app)##.page##.edition##.choix##.equipements := of_listf equipement_nom_to_jsoo equipements
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"
 
+and pp_peuple _app p =
+  let s = match Json_encoding.construct peuple_enc p with `String s -> s | _ -> assert false in
+  if String.starts_with ~prefix:"Demi_" s then
+    string @@ String.map (function '_' -> '-' | c -> c) s
+  else string @@ String.map (function '_' -> ' ' | c -> c) s
+
 [%%mounted fun app ->
   let elt = Dom_html.getElementById "erreur-modal" in
   ignore @@ Js_of_ocaml.Dom_events.listen elt (Js_of_ocaml.Dom_events.Typ.make "hide.bs.modal") @@ fun _ _ ->
