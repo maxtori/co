@@ -379,6 +379,15 @@ and detruit_personnage app n =
   suppression_personnage app (to_string n);
   init app
 
+and telecharge_personnage _app label p =
+  let s = EzEncoding.construct ~compact:false personnage_enc (personnage_of_jsoo p) in
+  let blob = File.blob_from_string ~contentType:"application/json" s in
+  let href = Dom_html.window##._URL##createObjectURL blob in
+  let elt = Dom_html.createA Dom_html.document in
+  elt##.href := href;
+  elt##.download := string (Format.sprintf "%s.json" label);
+  elt##click
+
 and charge_modal_de app g = match page_of_jsoo app##.page with
   | Personnage (_, p) ->
     let genre = genre_de_of_jsoo g in
