@@ -34,17 +34,21 @@ module Personnages = Store(StringTr)(struct
     let of_js = avec_phase_of_jsoo
   end)
 
-type genre_de = [
-  | `points_de_vigueur
-  | `des_de_recuperation
-  | `points_de_chance
-  | `points_de_mana
-] [@@deriving jsoo]
-
-type de = {
-  genre: genre_de;
+type points = {
+  genre: genre_points;
   points: points_avec_max;
   titre: string;
+  de: de option;
+  resultat: int option; [@mutable]
+} [@@deriving jsoo]
+
+type des = {
+  titre: string option;
+  de: de;
+  nombre: int;
+  bonus: int;
+  extra: int;
+  resultat: int option; [@mutable]
 } [@@deriving jsoo]
 
 type choix_edition = {
@@ -80,7 +84,8 @@ let equipements : (equipement_nom * equipement) list ref = ref []
 
 let%data page : page = Chargement
 and modal_erreur : string option = None
-and de : de option = None
+and points : points option = None
+and des : des option = None
 
 let genre_de_titre = function
   | `points_de_vigueur -> "Points de vigeur"
@@ -234,6 +239,27 @@ let route app p =
 let init app =
   chargement_personnages app @@ fun app l ->
   route app (page_to_jsoo (Personnages l))
+
+let creation_box_de id =
+  let cs = Unsafe.global##._DiceBox in
+  let options = object%js
+    val assetPath = string "assets/"
+    val origin = string "https://unpkg.com/@3d-dice/dice-box@1.1.3/dist/"
+    val container = string ("#" ^ id)
+    val scale = 15
+    val themeColor = string "#ff0000"
+  end in
+  new%js cs options
+
+let lance_de id de n f =
+  let s = Format.sprintf "%d%s" n de in
+  let elt = Dom_html.getElementById id in
+  elt##.innerHTML := string "";
+  let box = creation_box_de id in
+  Promise.jthen box##init @@ fun () ->
+  Promise.jthen (box##roll (string s)) @@ fun r ->
+  let v = Array.fold_left (fun acc r -> acc + r##.value) 0 @@ to_array r in
+  f v
 
 let%meth commence_creation app =
   let profils = profils () in
@@ -401,36 +427,48 @@ and telecharge_personnage _app label p =
   elt##.download := string (Format.sprintf "%s.json" label);
   elt##click
 
-and charge_modal_de app g = match page_of_jsoo app##.page with
+and charge_modal_points app g = match page_of_jsoo app##.page with
   | Personnage { perso=p; _ } ->
-    let genre = genre_de_of_jsoo g in
+    let genre = genre_points_of_jsoo g in
     let titre = genre_de_titre genre in
-    let points = match genre with
-      | `points_de_vigueur -> p.points_de_vigueur
-      | `des_de_recuperation -> p.des_de_recuperation
-      | `points_de_chance -> p.points_de_chance
-      | `points_de_mana -> p.points_de_mana in
-    app##.de := def (de_to_jsoo { titre; genre; points });
+    let points, de = match genre with
+      | `points_de_vigueur -> p.points_de_vigueur, None
+      | `des_de_recuperation -> p.des_de_recuperation, Some (de_recuperation p.famille)
+      | `points_de_chance -> p.points_de_chance, None
+      | `points_de_mana -> p.points_de_mana, None in
+    let points = { titre; genre; points; de; resultat=None } in
+    app##.points := def (points_to_jsoo points);
     let cs : _ constr = Unsafe.global##.bootstrap##._Modal in
-    let md = new%js cs (string "#des-modal") in
+    let md = new%js cs (string "#points-modal") in
     ignore md##show
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"
 
-and change_de app g points =
-  match page_of_jsoo app##.page with
-  | Personnage { label; perso=p } ->
-    let points = points_avec_max_of_jsoo points in
-    if points.max < points.courant then alert app "valeur supérieur au maximum" else
-    let p = match genre_de_of_jsoo g with
-      | `points_de_vigueur -> { p with points_de_vigueur = points }
-      | `des_de_recuperation -> { p with des_de_recuperation = points }
-      | `points_de_chance -> { p with points_de_chance = points }
-      | `points_de_mana -> { p with points_de_mana = points } in
-    edition_personnage app label p;
-    let p = Personnage {label; perso=p} in
-    app##.de := undefined;
+and lance_de_recuperation app points = match page_of_jsoo app##.page, Optdef.to_option points##.de with
+  | Personnage {label; perso}, Some de ->
+    points##.resultat := undefined;
+    lance_de "des-recuperation" (to_string de) 1 @@ fun r ->
+    let p = points_of_jsoo points in
+    let points_de_vigueur = { perso.points_de_vigueur with courant = min (perso.points_de_vigueur.courant + r) perso.points_de_vigueur.max } in
+    let des_de_recuperation = { p.points with courant = p.points.courant - 1 } in
+    let perso = { perso with points_de_vigueur; des_de_recuperation } in
+    points##.points##.courant := des_de_recuperation.courant;
+    points##.resultat := def r;
+    edition_personnage app label perso;
+    let p = Personnage {label; perso} in
     route app (page_to_jsoo p)
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"
+
+and charge_modal_des app de bonus nombre titre  =
+  let des = { de=de_of_jsoo de; bonus; extra=0; nombre; titre=to_optdef to_string titre; resultat=None } in
+  app##.des := def (des_to_jsoo des);
+  let cs : _ constr = Unsafe.global##.bootstrap##._Modal in
+  let md = new%js cs (string "#des-modal") in
+  ignore md##show
+
+and lance_de _app des =
+  let d = des_of_jsoo des in
+  lance_de "des-container" (to_string des##.de) d.nombre @@ fun r ->
+  des##.resultat := def r
 
 and armes _app l =
   let l = to_listf equipement_nom_of_jsoo l in
@@ -507,9 +545,28 @@ and pp_voie _app v =
   string @@ String.capitalize_ascii @@ String.map (function '_' -> if b then '-' else ' ' | c -> c) s
 
 [%%mounted fun app ->
-  let elt = Dom_html.getElementById "erreur-modal" in
-  ignore @@ Js_of_ocaml.Dom_events.listen elt (Js_of_ocaml.Dom_events.Typ.make "hide.bs.modal") @@ fun _ _ ->
-  app##.modal_erreur_ := undefined; true
+  let elt_erreur = Dom_html.getElementById "erreur-modal" in
+  let elt_des = Dom_html.getElementById "des-modal" in
+  let elt_points = Dom_html.getElementById "points-modal" in
+  ignore (Js_of_ocaml.Dom_events.listen elt_erreur (Js_of_ocaml.Dom_events.Typ.make "hide.bs.modal") @@ fun _ _ ->
+          app##.modal_erreur_ := undefined; true);
+  ignore (Js_of_ocaml.Dom_events.listen elt_des (Js_of_ocaml.Dom_events.Typ.make "hide.bs.modal") @@ fun _ _ ->
+          app##.des := undefined; true);
+  ignore (Js_of_ocaml.Dom_events.listen elt_points (Js_of_ocaml.Dom_events.Typ.make "hide.bs.modal") @@ fun _ _ ->
+          begin match page_of_jsoo app##.page, to_optdef points_of_jsoo app##.points with
+            | Personnage { label; perso }, Some p ->
+              if p.points.max < p.points.courant then alert app "valeur supérieur au maximum" else
+              let perso = match p.genre with
+                | `points_de_vigueur -> { perso with points_de_vigueur = p.points }
+                | `des_de_recuperation -> { perso with des_de_recuperation = p.points }
+                | `points_de_chance -> { perso with points_de_chance = p.points }
+                | `points_de_mana -> { perso with points_de_mana = p.points } in
+              edition_personnage app label perso;
+              let p = Personnage {label; perso} in
+              app##.points := undefined;
+              route app (page_to_jsoo p)
+            | _ -> alert app "cette fonction n'est pas accessible sur cette page"
+         end; true)
 ]
 
 let () =

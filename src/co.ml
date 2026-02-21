@@ -128,6 +128,13 @@ type caracteristiques = {
 
 type de = [ `d3 | `d4 | `d6 | `d8 | `d10 | `d12 | `d20 ] [@@deriving encoding, jsoo]
 
+type genre_points = [
+  | `points_de_vigueur
+  | `des_de_recuperation
+  | `points_de_chance
+  | `points_de_mana
+] [@@deriving encoding, jsoo]
+
 type dommage_type = [
   | `contondants
   | `perforants
@@ -523,7 +530,7 @@ type voies = (voie_type * voie) list [@assoc (voie_type_to_str, voie_type_of_str
 ]
 
 type points_avec_max = {
-  courant: int;
+  courant: int; [@mutable]
   max: int;
 } [@@deriving encoding, jsoo]
 
@@ -745,21 +752,29 @@ let verifie_voies p voies =
     (rg_max = 7 && p.niveau >= 11) || (rg_max = 8 && p.niveau >= 13) in
   let profil_check = List.fold_left (fun acc (v, _) ->
     if not acc then acc else
-    match p.profil, v with
-    | _, #voie_peuple
-    | `Arquebusier, #voie_arquebusier
-    | `Barde, #voie_barde
-    | `Rodeur, #voie_rodeur
-    | `Voleur, #voie_voleur
-    | `Barbare, #voie_barbare
-    | `Chevalier, #voie_chevalier
-    | `Guerrier, #voie_guerrier
-    | `Ensorceleur, (#voie_ensorceleur | #voie_mage)
-    | `Forgesort, (#voie_forgesort | #voie_mage)
-    | `Magicien, (#voie_magicien | #voie_mage)
-    | `Sorcier, (#voie_sorcier | #voie_mage)
-    | `Druide, #voie_druide
-    | `Moine, #voie_moine -> true
+    match p.profil, p.peuple, v with
+    | _, Demi_elfe, (`Elfe_haut | `Elfe_sylvain | `Humain)
+    | _, Demi_orc, `Demi_orc
+    | _, Elfe_haut, `Elfe_haut
+    | _, Elfe_sylvain, `Elfe_sylvain
+    | _, Gnome, `Gnome
+    | _, Halfelin, `Halfelin
+    | _, Humain, `Humain
+    | _, Nain, `Nain
+    | `Arquebusier, _, #voie_arquebusier
+    | `Barde, _, #voie_barde
+    | `Rodeur, _, #voie_rodeur
+    | `Voleur, _, #voie_voleur
+    | `Barbare, _, #voie_barbare
+    | `Chevalier, _, #voie_chevalier
+    | `Guerrier, _, #voie_guerrier
+    | `Ensorceleur, _, (#voie_ensorceleur | #voie_mage)
+    | `Forgesort, _, (#voie_forgesort | #voie_mage)
+    | `Magicien, _, (#voie_magicien | #voie_mage)
+    | `Sorcier, _, (#voie_sorcier | #voie_mage)
+    | `Druide, _, #voie_druide
+    | `Moine, _, #voie_moine
+    | `Pretre, _, #voie_pretre -> true
     | _ -> false) true voies in
   let peuple_mage_check = (rg_mage = 0 && rg_peuple >= 1) || (rg_mage >= 1 && rg_peuple = 1) in
   if not profil_check then Some "voie pas dans le profil" else
@@ -816,3 +831,9 @@ let bonus_voies voies =
    List.fold_left (fun acc (l, rg) ->
      aux acc 1 rg l
   ) [] voies
+
+let de_recuperation = function
+  | Aventuriers -> `d8
+  | Combattants -> `d10
+  | Mages -> `d6
+  | Mystiques -> `d8

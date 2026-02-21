@@ -15,4 +15,4 @@
 (install
   (package co)
   (section share)
-  (files index.html ui.bc.js manifest.json sw.js))
+  (files index.html ui.bc.js manifest.json sw.js 3ddice.js))
