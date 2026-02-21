@@ -458,7 +458,7 @@ and lance_de_recuperation app points = match page_of_jsoo app##.page, Optdef.to_
     route app (page_to_jsoo p)
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"
 
-and charge_modal_des app de bonus nombre titre  =
+and charge_modal_des app de bonus nombre titre =
   let des = { de=de_of_jsoo de; bonus; extra=0; nombre; titre=to_optdef to_string titre; resultat=None } in
   app##.des := def (des_to_jsoo des);
   let cs : _ constr = Unsafe.global##.bootstrap##._Modal in

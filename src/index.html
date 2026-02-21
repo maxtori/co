@@ -24,10 +24,15 @@
 
       <nav class="navbar navbar-expand bg-dark text-center pb-0" style="position:fixed;bottom:0px;right:0;left:0;z-index:1000">
         <ul class="navbar-nav flex-fill">
-          <li class="nav-item border w-50">
+          <li>
+            <a class="nav-link border" role="button" @click="charge_modal_des('d20', 0, 1, undefined)">
+              <i class="bi bi-dice-5-fill"></i>
+            </a>
+          </li>
+          <li class="nav-item border" style="width: 45%">
             <a class="nav-link" role="button" @click="home()">Personnages</a>
           </li>
-          <li class="nav-item border w-50">
+          <li class="nav-item border" style="width: 45%">
             <a class="nav-link" role="button" @click="edition()" v-if="page.personnage!==undefined">Edition</a>
           </li>
         </ul>
@@ -606,13 +611,26 @@
               <div v-if="des" class="modal-content">
                 <div class="modal-header">
                   <h2 class="modal-title mx-auto">
-                    <span v-if="des.titre">
-                      <span>{{ des.titre }}</span>
-                      <span class="mx-4">|</span>
-                    </span>
-                    {{ des.nombre }}{{ des.de }}
-                    <span v-if="des.bonus && des.bonus > 0"> + {{ des.bonus }}</span>
-                    <span v-else-if="des.bonus"> - {{ Math.abs(des.bonus) }} </span>
+                    <div v-if="des.titre">
+                      <span v-if="des.titre">
+                        <span>{{ des.titre }}</span>
+                        <span class="mx-4">|</span>
+                      </span>
+                      {{ des.nombre }}{{ des.de }}
+                      <span v-if="des.bonus && des.bonus > 0"> + {{ des.bonus }}</span>
+                      <span v-else-if="des.bonus"> - {{ Math.abs(des.bonus) }} </span>
+                    </div>
+                    <div v-else class="d-flex">
+                      <input class="form-control py-0 w-50" v-model="des.nombre"/>
+                      <select class="form-select py-0 w-50" v-model="des.de">
+                        <option value="d4">d4</option>
+                        <option value="d6">d6</option>
+                        <option value="d8">d8</option>
+                        <option value="d10">d10</option>
+                        <option value="d12">d12</option>
+                        <option value="d20">d20</option>
+                      </select>
+                    </div>
                   </h2>
                 </div>
                 <div class="modal-body">
@@ -623,7 +641,7 @@
                   <div id="des-container" class="m-2" style="height: 180px">
                   </div>
                   <h2 v-if="des.resultat" class="text-center">
-                    {{ des.resultat }} {{ (des.bonus > 0) ? '+' : '-' }} {{ Math.abs(des.bonus) }} {{ (des.extra==0) ? '' : ((des.extra > 0) ? '+ '+String(des.extra) : '- '+String(Math.abs(des.extra))) }} = {{ des.resultat + des.bonus + des.extra }}
+                    {{ des.resultat }} {{ (des.bonus==0) ? '' : (des.bonus > 0) ? '+ '+String(des.bonus) : '- '+String(Math.abs(des.bonus)) }} {{ (des.extra==0) ? '' : (des.extra > 0) ? '+ '+String(des.extra) : '- '+String(Math.abs(des.extra)) }} {{ (des.bonus + des.extra == 0) ? '' : '= '+String(des.resultat + des.bonus + des.extra) }}
                   </h2>
                 </div>
                 <div class="modal-footer">
