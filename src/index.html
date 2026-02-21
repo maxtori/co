@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="assets/co_192.png">
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="assets/bs.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -33,7 +34,7 @@
             <a class="nav-link" role="button" @click="home()">Personnages</a>
           </li>
           <li class="nav-item border" style="width: 45%">
-            <a class="nav-link" role="button" @click="edition()" v-if="page.personnage!==undefined">Edition</a>
+            <a class="nav-link" role="button" @click="edition()" v-if="page.personnage!==undefined">Édition</a>
           </li>
         </ul>
       </nav>
@@ -158,7 +159,7 @@
               <span class="flex-fill text-bg-light">{{ page.personnage.perso.initiative }}</span>
             </div>
             <div class="col border p-0 d-flex justify-content-around">
-              <span class="flex-fill">Defense</span>
+              <span class="flex-fill">Défense</span>
               <span class="flex-fill text-bg-light">{{ page.personnage.perso.defense }}</span>
             </div>
           </div>
@@ -224,7 +225,7 @@
           </div>
 
           <div class="row mx-0 mt-3">
-            <div class="col p-0 text-bg-light">Equipements</div>
+            <div class="col p-0 text-bg-light">Équipements</div>
           </div>
           <div v-for="e in armes(page.personnage.perso.equipements)" class="row mx-0">
             <span class="col border p-0 text-bg-light">{{ pp_equipement(e[0]) }}</span>
