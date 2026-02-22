@@ -505,6 +505,7 @@ and edite app = match page_of_jsoo app##.page with
             def + defense, Option.fold ~none:agi ~some:(fun a -> min a agi) agilite_max
           | _ -> def, agi) (0, 8) p.equipements in
         let p = remplit_caracteristiques p def_equipement agi_max in
+        edition_personnage app e.label p;
         let p = Personnage {label=e.label; perso=p} in
         route app (page_to_jsoo p)
       | Some e -> alert app e
