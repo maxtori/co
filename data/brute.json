@@ -1,7 +1,11 @@
 [
   {
     "nom": "Argument de taille",
-    "description": "Le barbare ajoute sa FOR à son maximum de PV ainsi qu’à ses tests de CHA et à ceux de ses alliés au contact pour les tests de négociation, de persuasion ou d’intimidation. Allez savoir pourquoi, sa simple présence donne de la force aux arguments de ses alliés…"
+    "description": "Le barbare ajoute sa FOR à son maximum de PV ainsi qu’à ses tests de CHA et à ceux de ses alliés au contact pour les tests de négociation, de persuasion ou d’intimidation. Allez savoir pourquoi, sa simple présence donne de la force aux arguments de ses alliés…",
+    "bonus": [
+      { "id": "PV", "valeur": "FOR" }
+    ]
+
   },
   {
     "nom": "Tour de force",
@@ -15,7 +19,10 @@
   },
   {
     "nom": "Force héroïque",
-    "description": "Le barbare augmente sa FOR de +1. Désormais, il obtient un dé bonus aux tests de FOR."
+    "description": "Le barbare augmente sa FOR de +1. Désormais, il obtient un dé bonus aux tests de FOR.",
+    "bonus": [
+      { "id": "FOR", "valeur": 1 }
+    ]
   },
   {
     "nom": "Briseur d’os",

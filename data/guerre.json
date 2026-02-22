@@ -15,7 +15,10 @@
   },
   {
     "nom": "Force héroïque",
-    "description": "Le chevalier augmente sa FOR de +1. Désormais, il obtient un dé bonus aux tests de FOR."
+    "description": "Le chevalier augmente sa FOR de +1. Désormais, il obtient un dé bonus aux tests de FOR.",
+    "bonus": [
+      { "id": "FOR", "valeur": 1 }
+    ]
   },
   {
     "nom": "Mon armure est une arme",

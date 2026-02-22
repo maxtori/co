@@ -14,7 +14,10 @@
   },
   {
     "nom": "Charisme héroïque",
-    "description": "Le chevalier augmente son CHA de +1. Désormais, il obtient un dé bonus aux tests de CHA."
+    "description": "Le chevalier augmente son CHA de +1. Désormais, il obtient un dé bonus aux tests de CHA.",
+    "bonus": [
+      { "id": "CHA", "valeur": 1 }
+    ]
   },
   {
     "nom": "Seul contre tous",
