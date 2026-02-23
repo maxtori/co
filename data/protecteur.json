@@ -17,7 +17,12 @@
   },
   {
     "nom": "Perception héroïque",
-    "description": "Le druide augmente sa PER de +1. Désormais, il obtient un dé bonus aux tests de PER. De plus, il ajoute désormais sa PER pour calculer ses PM (en plus de sa VOL)."
+    "description": "Le druide augmente sa PER de +1. Désormais, il obtient un dé bonus aux tests de PER. De plus, il ajoute désormais sa PER pour calculer ses PM (en plus de sa VOL).",
+    "bonus": [
+      { "id": "PER", "valeur": 1 },
+      { "id": "PM", "valeur": "PER" }
+      ]
+    ]
   },
   {
     "nom": "Forme d’arbre",

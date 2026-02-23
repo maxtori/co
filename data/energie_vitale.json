@@ -20,6 +20,9 @@
   },
   {
     "nom": "Ascétisme",
-    "description": "Le moine ne mange presque plus, et il peut subsister sans eau et sans sommeil pendant [5 + VOL] jour. Il ne subit aucune pénalité durant cette période. De plus, le moine augmente sa CON de +1 et obtient un dé bonus aux tests de CON."
+    "description": "Le moine ne mange presque plus, et il peut subsister sans eau et sans sommeil pendant [5 + VOL] jour. Il ne subit aucune pénalité durant cette période. De plus, le moine augmente sa CON de +1 et obtient un dé bonus aux tests de CON.",
+    "bonus": [
+      { "id": "CON", "valeur": 1 }
+    ]
   }
 ]

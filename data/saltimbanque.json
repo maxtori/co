@@ -7,6 +7,7 @@
     "nom": "Grâce féline",
     "description": "Le barde gagne son CHA en Initiative et +1 en DEF (+2 au rang 4). De plus, le barde ajoute son rang + 2 aux tests de danse, de mime ou de jonglerie.",
     "bonus": [
+      { "id": "INI", "valeur": "CHA" },
       { "id": "DEF", "valeur": 1 }
     ]
   },

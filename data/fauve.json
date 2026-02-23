@@ -1,7 +1,11 @@
 [
   {
     "nom": "Vitesse du félin",
-    "description": "Le druide ajoute son rang + 2 aux tests de course, d’escalade ou de saut. De plus, il gagne +3 en Initiative et +1 en DEF. Le bonus de DEF passe à +2 au rang 3 et +3 au rang 5."
+    "description": "Le druide ajoute son rang + 2 aux tests de course, d’escalade ou de saut. De plus, il gagne +3 en Initiative et +1 en DEF. Le bonus de DEF passe à +2 au rang 3 et +3 au rang 5.",
+    "bonus": [
+      { "id": "INI", "valeur": 3 },
+      { "id": "DEF", "valeur": 1 }
+    ]
   },
   {
     "nom": "Panthère",
@@ -10,7 +14,10 @@
   {
     "nom": "Attaque bondissante",
     "description": "Le druide ou son félin parcourt de 5 à 10 m et bénéficie d’un dé bonus au test d’attaque et de +1d4° aux DM contre sa cible. Il ne peut pas effectuer d’attaque bondissante s’il est au contact d’un adversaire.",
-    "action": "limitée"
+    "action": "limitée",
+    "bonus": [
+      { "id": "DEF", "valeur": 1 }
+    ]
   },
   {
     "nom": "Grand félin",
@@ -18,6 +25,9 @@
   },
   {
     "nom": "Les sept vies du chat",
-    "description": "Cette capacité ne peut être utilisée que six fois, et pas plus d’une fois par niveau. Lorsque les PV du druide tombent à 0 ou qu’il meurt, le druide peut choisir d’ignorer ce qui a provoqué la mort ou l’inconscience ! Le MJ et le joueur doivent se mettre d’accord et trouver une raison plausible (ou pas !) pour expliquer la survie du personnage, et le faire réapparaître immédiatement ou un peu plus tard dans l’aventure si nécessaire."
+    "description": "Cette capacité ne peut être utilisée que six fois, et pas plus d’une fois par niveau. Lorsque les PV du druide tombent à 0 ou qu’il meurt, le druide peut choisir d’ignorer ce qui a provoqué la mort ou l’inconscience ! Le MJ et le joueur doivent se mettre d’accord et trouver une raison plausible (ou pas !) pour expliquer la survie du personnage, et le faire réapparaître immédiatement ou un peu plus tard dans l’aventure si nécessaire.",
+    "bonus": [
+      { "id": "DEF", "valeur": 1 }
+    ]
   }
 ]

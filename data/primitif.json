@@ -1,7 +1,10 @@
 [
   {
     "nom": "Proche de la nature",
-    "description": "Le barbare ajoute son rang + 2 à ses tests de survie (dont les tests de récupération) et de discrétion en milieu naturel. De plus, il gagne 1 PV supplémentaire."
+    "description": "Le barbare ajoute son rang + 2 à ses tests de survie (dont les tests de récupération) et de discrétion en milieu naturel. De plus, il gagne 1 PV supplémentaire.",
+    "bonus": [
+      { "id": "PV", "valeur": 1 }
+    ]
   },
   {
     "nom": "Armure de vent",

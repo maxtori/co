@@ -1,7 +1,10 @@
 [
   {
     "nom": "Vivacité",
-    "description": "Le guerrier gagne +3 en Initiative et aux tests d’AGI ou de FOR pour éviter d’être immobilisé ou renversé. De plus, une fois par combat, il obtient une action de mouvement supplémentaire à son tour."
+    "description": "Le guerrier gagne +3 en Initiative et aux tests d’AGI ou de FOR pour éviter d’être immobilisé ou renversé. De plus, une fois par combat, il obtient une action de mouvement supplémentaire à son tour.",
+    "bonus": [
+      { "id": "INI", "valeur": 3 }
+    ]
   },
   {
     "nom": "Manœuvre",

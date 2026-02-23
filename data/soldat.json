@@ -16,10 +16,16 @@
   },
   {
     "nom": "Force héroïque",
-    "description": "Le guerrier augmente sa FOR de +1. Désormais, il obtient un dé bonus aux tests de FOR."
+    "description": "Le guerrier augmente sa FOR de +1. Désormais, il obtient un dé bonus aux tests de FOR.",
+    "bonus": [
+      { "id": "FOR", "valeur": 1 }
+    ]
   },
   {
     "nom": "Rempart",
-    "description": "Vous pouvez désormais utiliser Teigneux contre un nombre d’adversaires égal à votre AGI + 2 à chaque round. Si vous réussissez cette attaque, le déplacement de votre adversaire est stoppé à l’endroit où vous l’avez attaqué. De plus vous gagnez +1 en DEF."
+    "description": "Vous pouvez désormais utiliser Teigneux contre un nombre d’adversaires égal à votre AGI + 2 à chaque round. Si vous réussissez cette attaque, le déplacement de votre adversaire est stoppé à l’endroit où vous l’avez attaqué. De plus vous gagnez +1 en DEF.",
+    "bonus": [
+      { "id": "FOR", "valeur": 1 }
+    ]
   }
 ]

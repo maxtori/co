@@ -5,7 +5,10 @@
   },
   {
     "nom": "Peau de fer",
-    "description": "Le moine gagne un bonus de +2 en DEF et il divise tous les DM temporaires subis par deux. Le bonus de DEF passe à +3 au rang 5."
+    "description": "Le moine gagne un bonus de +2 en DEF et il divise tous les DM temporaires subis par deux. Le bonus de DEF passe à +3 au rang 5.",
+    "bonus": [
+      { "id": "DEF", "valeur": 2 }
+    ]
   },
   {
     "nom": "Parade de projectiles",
@@ -19,6 +22,9 @@
   },
   {
     "nom": "Puissance du ki",
-    "description": "Le moine peut choisir de s’imposer un dé malus sur une attaque au contact et ajoute +2d4° aux DM. Cette capacité peut aussi être utilisée avec Projection du ki qui est une attaque magique."
+    "description": "Le moine peut choisir de s’imposer un dé malus sur une attaque au contact et ajoute +2d4° aux DM. Cette capacité peut aussi être utilisée avec Projection du ki qui est une attaque magique.",
+    "bonus": [
+      { "id": "DEF", "valeur": 1 }
+    ]
   }
 ]

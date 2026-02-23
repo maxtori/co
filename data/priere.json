@@ -21,7 +21,7 @@
     "nom": "Volonté héroïque",
     "description": "Le prêtre augmente sa VOL de +1. Désormais, il obtient un dé bonus aux tests de VOL.",
     "bonus": [
-      { "id": "VOL", "valeur": 2 }
+      { "id": "VOL", "valeur": 1 }
     ]
   },
   {

@@ -9,15 +9,26 @@
   },
   {
     "nom": "Maîtrise du ki",
-    "description": "Le moine utilise sa force mentale pour augmenter son efficacité en combat. Il ajoute sa VOL à son Initiative et à ses PV. De plus, il gagne +2 en DEF (ce bonus passe à +3 au rang 5)."
+    "description": "Le moine utilise sa force mentale pour augmenter son efficacité en combat. Il ajoute sa VOL à son Initiative et à ses PV. De plus, il gagne +2 en DEF (ce bonus passe à +3 au rang 5).",
+    "bonus": [
+      { "id": "INI", "valeur": "VOL" },
+      { "id": "PV", "valeur": "VOL" },
+      { "id": "DEF", "valeur": 2 }
+    ]
   },
   {
     "nom": "Volonté héroïque",
-    "description": "Le moine augmente sa VOL de +1. Désormais, il obtient un dé bonus aux tests de VOL."
+    "description": "Le moine augmente sa VOL de +1. Désormais, il obtient un dé bonus aux tests de VOL.",
+    "bonus": [
+      { "id": "VOL", "valeur": 1 }
+    ]
   },
   {
     "nom": "Projection mentale",
     "description": "Une fois par jour, le moine entre en méditation et projette son esprit hors de son corps pendant [1d4°+VOL] minutes. Il ressemble à un ectoplasme de couleur blanche qui se déplace en volant à la vitesse de 10 m par round. Il peut passer au travers des murs, mais pas des êtres vivants ou des barrières magiques. Le moine ne perçoit le monde que par sa projection mentale, mais ressent les DM qui sont infligés à son corps. Il peut utiliser cette capacité une fois de plus chaque jour par rang 5 atteint dans une autre voie de moine. De plus le moine augmente définitivement de +1 la valeur de sa plus faible caractéristique (choisir en cas d’égalité).",
-    "action": "limitée"
+    "action": "limitée",
+    "bonus": [
+      { "id": "DEF", "valeur": 1 }
+    ]
   }
 ]

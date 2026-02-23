@@ -14,7 +14,10 @@
   },
   {
     "nom": "Constitution héroïque",
-    "description": "Le druide augmente sa CON de +1. Désormais, il obtient un dé bonus aux tests de CON."
+    "description": "Le druide augmente sa CON de +1. Désormais, il obtient un dé bonus aux tests de CON.",
+    "bonus": [
+      { "id": "CON", "valeur": 1 }
+    ]
   },
   {
     "nom": "Résistant",

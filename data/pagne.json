@@ -1,22 +1,40 @@
 [
   {
     "nom": "Vigueur",
-    "description": "Le barbare est un athlète capable de prouesses physiques extraordinaires, il ajoute son rang + 2 aux tests de course, de saut ou d’escalade. De plus, il gagne 1 PV supplémentaire par rang atteint dans la voie."
+    "description": "Le barbare est un athlète capable de prouesses physiques extraordinaires, il ajoute son rang + 2 aux tests de course, de saut ou d’escalade. De plus, il gagne 1 PV supplémentaire par rang atteint dans la voie.",
+    "bonus": [
+      { "id": "PV", "valeur": 1 }
+    ]
   },
   {
     "nom": "Peau de pierre",
-    "description": "Le barbare est particulièrement endurci, il encaisse les coups plutôt que de les esquiver. Il peut choisir de remplacer son AGI par sa CON pour calculer sa DEF (la limitation du bonus maximal en fonction de l’armure portée s’applique toujours, mais cette fois elle s’applique à la CON). Autrement (si son AGI est supérieure ou égale à sa CON), il reçoit +1 en DEF et ce bonus passe à +2 au rang 4."
+    "description": "Le barbare est particulièrement endurci, il encaisse les coups plutôt que de les esquiver. Il peut choisir de remplacer son AGI par sa CON pour calculer sa DEF (la limitation du bonus maximal en fonction de l’armure portée s’applique toujours, mais cette fois elle s’applique à la CON). Autrement (si son AGI est supérieure ou égale à sa CON), il reçoit +1 en DEF et ce bonus passe à +2 au rang 4.",
+    "bonus": [
+      { "id": "PV", "valeur": 1 },
+      { "id": "DEF", "valeur": 1 }
+    ]
   },
   {
     "nom": "Tatouages",
-    "description": "Le barbare possède un tatouage magique* qui améliore ses performances physiques ou mentales. Au choix : taureau (+3 aux tests de FOR), ours (+3 aux tests de CON), panthère (+3 aux tests d’AGI), chouette (+3 aux tests de PER), loup (+3 aux tests de CHA), renard (+3 aux tests d’INT) ou serpent (+3 aux tests de VOL). De plus, lorsqu’il subit l’état étourdi, il est seulement ralenti."
+    "description": "Le barbare possède un tatouage magique* qui améliore ses performances physiques ou mentales. Au choix : taureau (+3 aux tests de FOR), ours (+3 aux tests de CON), panthère (+3 aux tests d’AGI), chouette (+3 aux tests de PER), loup (+3 aux tests de CHA), renard (+3 aux tests d’INT) ou serpent (+3 aux tests de VOL). De plus, lorsqu’il subit l’état étourdi, il est seulement ralenti.",
+    "bonus": [
+      { "id": "PV", "valeur": 1 }
+    ]
   },
   {
     "nom": "Constitution héroïque",
-    "description": "Le barbare augmente sa valeur de CON de +1 et obtient un dé bonus aux tests de CON."
+    "description": "Le barbare augmente sa valeur de CON de +1 et obtient un dé bonus aux tests de CON.",
+    "bonus": [
+      { "id": "PV", "valeur": 1 },
+      { "id": "DEF", "valeur": 1 },
+      { "id": "CON", "valeur": 1 }
+    ]
   },
   {
     "nom": "Peau d’acier",
-    "description": "Le barbare ne sent plus la douleur et ignore les égratignures, il réduit tous les DM subis de 3 points (RD 3). Une attaque lui inflige toujours au minimum 1 DM. * Ce bonus n’est pas un bonus de compétence, mais un bonus de magie qui ne peut donc pas se cumuler à un bonus fourni par un objet magique."
+    "description": "Le barbare ne sent plus la douleur et ignore les égratignures, il réduit tous les DM subis de 3 points (RD 3). Une attaque lui inflige toujours au minimum 1 DM. * Ce bonus n’est pas un bonus de compétence, mais un bonus de magie qui ne peut donc pas se cumuler à un bonus fourni par un objet magique.",
+    "bonus": [
+      { "id": "PV", "valeur": 1 }
+    ]
   }
 ]

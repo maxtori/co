@@ -1,7 +1,10 @@
 [
   {
     "nom": "Attaque en finesse",
-    "description": "Le voleur ajoute son AGI à son Init. et peut remplacer sa FOR par son AGI pour ses tests d’attaque au contact (mais pas aux DM) lorsqu’il utilise une arme légère à une main (dague, épée courte ou rapière). Enfin, il obtient un bonus égal à son rang + 2 aux tests d’intimidation."
+    "description": "Le voleur ajoute son AGI à son Init. et peut remplacer sa FOR par son AGI pour ses tests d’attaque au contact (mais pas aux DM) lorsqu’il utilise une arme légère à une main (dague, épée courte ou rapière). Enfin, il obtient un bonus égal à son rang + 2 aux tests d’intimidation.",
+    "bonus": [
+      { "id": "INI", "valeur": "AGI" }
+    ]
   },
   {
     "nom": "Esquive fatale",
