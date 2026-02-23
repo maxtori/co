@@ -124,33 +124,33 @@
           <div class="row mx-0">
             <div class="col border p-0 d-flex justify-content-around">
               <span class="flex-fill">AGI</span>
-              <span class="flex-fill text-bg-light" role="button" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.agilite, 1, 'Agilité')">{{ page.personnage.perso.caracteristiques.agilite }}</span>
+              <span class="flex-fill text-bg-light" role="button" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.agilite, 1, 'Agilité')">{{ (page.personnage.perso.caracteristiques.agilite > 0) ? '+' : ''}}{{ page.personnage.perso.caracteristiques.agilite }}</span>
             </div>
             <div class="col border p-0 d-flex justify-content-around">
               <span class="flex-fill">CON</span>
-              <span class="flex-fill text-bg-light" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.constitution, 1, 'Constitution')">{{ page.personnage.perso.caracteristiques.constitution }}</span>
+              <span class="flex-fill text-bg-light" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.constitution, 1, 'Constitution')">{{ (page.personnage.perso.caracteristiques.constitution > 0) ? '+' : ''}}{{ page.personnage.perso.caracteristiques.constitution }}</span>
             </div>
             <div class="col border p-0 d-flex justify-content-around">
               <span class="flex-fill">FOR</span>
-              <span class="flex-fill text-bg-light" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.force, 1, 'Force')">{{ page.personnage.perso.caracteristiques.force }}</span>
+              <span class="flex-fill text-bg-light" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.force, 1, 'Force')">{{ (page.personnage.perso.caracteristiques.force > 0) ? '+' : ''}}{{ page.personnage.perso.caracteristiques.force }}</span>
             </div>
           </div>
           <div class="row mx-0">
             <div class="col border p-0 d-flex justify-content-around">
               <span class="flex-fill">PER</span>
-              <span class="flex-fill text-bg-light" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.perception, 1, 'Perception')">{{ page.personnage.perso.caracteristiques.perception }}</span>
+              <span class="flex-fill text-bg-light" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.perception, 1, 'Perception')">{{ (page.personnage.perso.caracteristiques.perception > 0) ? '+' : ''}}{{ page.personnage.perso.caracteristiques.perception }}</span>
             </div>
             <div class="col border p-0 d-flex justify-content-around">
               <span class="flex-fill">CHA</span>
-              <span class="flex-fill text-bg-light" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.charisme, 1, 'Charisme')">{{ page.personnage.perso.caracteristiques.charisme }}</span>
+              <span class="flex-fill text-bg-light" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.charisme, 1, 'Charisme')">{{ (page.personnage.perso.caracteristiques.charisme > 0) ? '+' : ''}}{{ page.personnage.perso.caracteristiques.charisme }}</span>
             </div>
             <div class="col border p-0 d-flex justify-content-around">
               <span class="flex-fill">INT</span>
-              <span class="flex-fill text-bg-light" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.intelligence, 1, 'Intelligence')">{{ page.personnage.perso.caracteristiques.intelligence }}</span>
+              <span class="flex-fill text-bg-light" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.intelligence, 1, 'Intelligence')">{{ (page.personnage.perso.caracteristiques.intelligent > 0) ? '+' : ''}}{{ page.personnage.perso.caracteristiques.intelligence }}</span>
             </div>
             <div class="col border p-0 d-flex justify-content-around">
               <span class="flex-fill">VOL</span>
-              <span class="flex-fill text-bg-light" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.volonte, 1, 'Volonté')">{{ page.personnage.perso.caracteristiques.volonte }}</span>
+              <span class="flex-fill text-bg-light" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.volonte, 1, 'Volonté')">{{ (page.personnage.perso.caracteristiques.volonte > 0) ? '+' : ''}}{{ page.personnage.perso.caracteristiques.volonte }}</span>
             </div>
           </div>
 
@@ -270,11 +270,11 @@
                       </button>
                       <div :id="v[0]+'-'+String(i)" class="accordion-collapse collapse" :data-bs-parent="'#voie-accordeon-'+v[0]">
                         <div class="accordion-body p-0">
-                          <div v-if="c.action.length!=0 || c.sort" class="p-1 text-bg-light row mx-0">
-                            <div v-if="c.sort" class="col flex-fill">sort</div>
-                            <div v-if="c.action.length!=0" class="col flex-fill">action {{ c.action.join(',') }}</div>
+                          <div v-if="c.action.length!=0 || c.sort" class="text-bg-light row mx-0">
+                            <div v-if="c.sort" class="col">sort</div>
+                            <div v-if="c.action.length!=0" class="col">{{ c.action.join(' / ') }}</div>
                           </div>
-                          <p class="p-1">{{ c.description }}</p>
+                          <p class="p-2 mb-0">{{ c.description }}</p>
                         </div>
                       </div>
                     </div>
@@ -387,7 +387,11 @@
                       <span class="border border-secondary border-2 px-3">{{ i + 1 }}</span>
                       <strong class="flex-fill text-bg-light">{{ c.nom }}</strong>
                     </div>
-                    <p class="my-2 px-1">
+                    <div v-if="c.action.length!=0 || c.sort" class="row mx-0">
+                      <div v-if="c.sort" class="col border border-secondary">sort</div>
+                      <div v-if="c.action.length!=0" class="col border border-secondary">{{ c.action.join(' / ') }}</div>
+                    </div>
+                    <p class="mb-0 p-2">
                       {{ c.description }}
                     </p>
                   </li>
@@ -523,7 +527,11 @@
                             <span class="border border-secondary border-2 px-3">{{ i + 1 }}</span>
                             <strong class="flex-fill text-bg-light">{{ c.nom }}</strong>
                           </div>
-                          <p class="my-2">
+                          <div v-if="c.action.length!=0 || c.sort" class="row mx-0">
+                            <div v-if="c.sort" class="col border border-secondary">sort</div>
+                            <div v-if="c.action.length!=0" class="col border border-secondary">{{ c.action.join(' / ') }}</div>
+                          </div>
+                          <p class="mb-0 p-2">
                             {{ c.description }}
                           </p>
                         </li>

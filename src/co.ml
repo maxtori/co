@@ -496,10 +496,10 @@ let voie_type_to_str v = match Json_encoding.construct voie_type_enc v with `Str
 ]
 
 type action =
-  | Limitee [@enc.key "limitée"]
-  | Attaque
-  | Gratuite
-  | Mouvement
+  | Limitee [@key "limitée"]
+  | Attaque [@key "attaque"]
+  | Gratuite [@key "gratuite"]
+  | Mouvement [@key "mouvement"]
 [@@deriving encoding, jsoo]
 
 let actions_enc = Json_encoding.union [
