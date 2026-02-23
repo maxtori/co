@@ -113,7 +113,7 @@ type valeur = [
   let valeur_jsoo_conv = valeur_to_jsoo, valeur_of_jsoo
 ]
 
-type avec_valeur = { id: caracteristique_ou_bonus; valeur: valeur } [@@deriving encoding, jsoo]
+type avec_valeur = { id: caracteristique_ou_bonus; valeur: valeur; opt: bool option option } [@@deriving encoding, jsoo]
 type avec_nom = string * avec_valeur [@@deriving encoding, jsoo]
 
 type caracteristiques = {
@@ -644,7 +644,7 @@ let bonuses_peuple p c =
     | Nain -> "nain", [
         [ `CON, 1; `AGI, -1 ]; [ `VOL, 1; `AGI, -1 ];
       ] in
-  List.map (fun l -> List.map (fun (id, v) -> nom, {id; valeur=`int v}) l) l
+  List.map (fun l -> List.map (fun (id, v) -> nom, {id; valeur=`int v; opt=None}) l) l
 
 let verifie_caracteristiques c =
   let acc = [] in
@@ -667,7 +667,7 @@ let verifie_caracteristiques c =
   | _ -> false
 
 let ajoute_caracteristiques ?(factor=1) c l =
-  List.fold_left (fun acc (_, {id; valeur}) ->
+  List.fold_left (fun acc (_, {id; valeur; _}) ->
     match valeur with
     | `car _ -> acc
     | `int v ->
@@ -684,7 +684,7 @@ let ajoute_caracteristiques ?(factor=1) c l =
   ) c l
 
 let ajoute_bonus ?(factor=1) p l =
-  List.fold_left (fun acc (_, {id; valeur}) ->
+  List.fold_left (fun acc (_, {id; valeur; _}) ->
     let v = factor * (match valeur with
       | `int i -> i
       | `car c -> match c with
@@ -786,22 +786,23 @@ let verifie_voies p voies =
 let remplit_caracteristiques p def_equipement agi_max  =
   let caracteristiques = ajoute_caracteristiques p.caracteristiques_base p.bonuses in
   let p = { p with caracteristiques } in
-  let aux p = { courant=p; max=p } in
-  let points_de_vigueur = aux @@ p.caracteristiques.constitution + p.niveau * (match p.famille with
+  let aux p max = let courant = if p.courant = 0 || p.courant = p.max then max else p.courant in { courant; max } in
+  let points_de_vigueur = aux p.points_de_vigueur @@ p.caracteristiques.constitution + p.niveau * (match p.famille with
     | Aventuriers -> 8
     | Combattants -> 10
     | Mages -> 6
     | Mystiques -> 8) in
-  let des_de_recuperation = aux @@ 2 + p.caracteristiques.constitution + (match p.famille with
+  let des_de_recuperation = aux p.des_de_recuperation @@ 2 + p.caracteristiques.constitution + (match p.famille with
     | Mystiques -> 1 | _ -> 0) in
-  let points_de_chance = aux @@ 2 + p.caracteristiques.charisme + (match p.famille with
+  let points_de_chance = aux p.points_de_chance @@ 2 + p.caracteristiques.charisme + (match p.famille with
     | Aventuriers -> 1 | _ -> 0) in
   let initiative = 10 + p.caracteristiques.perception in
   let defense = 10 + min agi_max p.caracteristiques.agilite + def_equipement in
+  let points_de_mana0 = p.points_de_mana in
   let p = { p with points_de_vigueur; des_de_recuperation; points_de_chance;
-                   initiative; defense; points_de_mana=aux 0 } in
+                   initiative; defense; points_de_mana={courant=0; max=0} } in
   let p = ajoute_bonus p p.bonuses in
-  let points_de_mana = aux @@ if p.points_de_mana.max = 0 then 0 else p.points_de_mana.max + p.caracteristiques.volonte in
+  let points_de_mana = aux points_de_mana0 @@ if p.points_de_mana.max = 0 then 0 else p.points_de_mana.max + p.caracteristiques.volonte in
   { p with points_de_mana }
 
 let equipements_profil : profil -> equipement_nom list = function
@@ -826,7 +827,7 @@ let bonus_voies voies =
     | [] -> acc
     | (c: capacite) :: tl ->
       let acc = acc @ (List.map (fun x -> c.nom, x) c.bonus) in
-      let acc = if c.sort then acc @ [ c.nom, { id=`PM; valeur=`int 1 } ] else acc in
+      let acc = if c.sort then acc @ [ c.nom, { id=`PM; valeur=`int 1; opt=None } ] else acc in
       aux acc (i+1) rg tl in
    List.fold_left (fun acc (l, rg) ->
      aux acc 1 rg l

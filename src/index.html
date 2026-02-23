@@ -117,6 +117,7 @@
             </div>
           </div>
 
+          <!-- personnage caracteristiques -->
           <div class="row mx-0 mt-3">
             <div class="col p-0 text-bg-light">Caractéristiques</div>
           </div>
@@ -224,6 +225,7 @@
             </div>
           </div>
 
+          <!-- personnage equipements -->
           <div class="row mx-0 mt-3">
             <div class="col p-0 text-bg-light">Équipements</div>
           </div>
@@ -244,6 +246,7 @@
           </div>
           <!-- todo: other equipments -->
 
+          <!-- personnage voies -->
           <div class="row mx-0 mt-3">
             <div class="col p-0 text-bg-light">Capacités</div>
           </div>
@@ -266,8 +269,12 @@
                         <span class="me-3">{{ i+1 }}</span>
                       </button>
                       <div :id="v[0]+'-'+String(i)" class="accordion-collapse collapse" :data-bs-parent="'#voie-accordeon-'+v[0]">
-                        <div class="accordion-body p-1">
-                          {{ c.description }}
+                        <div class="accordion-body p-0">
+                          <div v-if="c.action.length!=0 || c.sort" class="p-1 text-bg-light row mx-0">
+                            <div v-if="c.sort" class="col flex-fill">sort</div>
+                            <div v-if="c.action.length!=0" class="col flex-fill">action {{ c.action.join(',') }}</div>
+                          </div>
+                          <p class="p-1">{{ c.description }}</p>
                         </div>
                       </div>
                     </div>
@@ -450,7 +457,7 @@
                 <div class="accordion-body">
                   <div class="d-flex justify-content-center">
                     <button class="btn btn-light" @click="page.edition.choix.niveau=page.edition.choix.niveau-1"><i class="bi bi-dash"></i></button>
-                    <input class="form-control text-center" v-model="page.edition.choix.niveau" style="width:60px"/>
+                    <input type="number" class="form-control text-center" v-model="page.edition.choix.niveau" style="width:60px"/>
                     <button class="btn btn-light" @click="page.edition.choix.niveau=page.edition.choix.niveau+1"><i class="bi bi-plus"></i></button>
                   </div>
                 </div>
@@ -639,11 +646,13 @@
                     <span class="text-bg-light px-2 flex-fill">Bonus</span>
                     <input class="form-control py-0" v-model="des.extra" type="number" style="max-width:100px"/>
                   </div>
-                  <div id="des-container" class="m-2" style="height: 180px">
+                  <div id="des-container" class="m-2" style="height:180px">
                   </div>
-                  <h2 v-if="des.resultat" class="text-center">
-                    {{ des.resultat }} {{ (des.bonus==0) ? '' : (des.bonus > 0) ? '+ '+String(des.bonus) : '- '+String(Math.abs(des.bonus)) }} {{ (des.extra==0) ? '' : (des.extra > 0) ? '+ '+String(des.extra) : '- '+String(Math.abs(des.extra)) }} {{ (des.bonus + des.extra == 0) ? '' : '= '+String(des.resultat + des.bonus + des.extra) }}
-                  </h2>
+                  <div style="height:50px">
+                    <h2 v-if="des.resultat" class="text-center">
+                      {{ des.resultat }} {{ (des.bonus==0) ? '' : (des.bonus > 0) ? '+ '+String(des.bonus) : '- '+String(Math.abs(des.bonus)) }} {{ (des.extra==0) ? '' : (des.extra > 0) ? '+ '+String(des.extra) : '- '+String(Math.abs(des.extra)) }} {{ (des.bonus + des.extra == 0) ? '' : '= '+String(des.resultat + des.bonus + des.extra) }}
+                    </h2>
+                  </div>
                 </div>
                 <div class="modal-footer">
                   <button class="btn btn-secondary mx-auto" @click="lance_de(des)">Lancer</button>
@@ -664,7 +673,7 @@
                 <div class="modal-body">
                   <div class="d-flex justify-content-center">
                     <button class="btn btn-light" @click="points.points.courant=points.points.courant-1"><i class="bi bi-dash"></i></button>
-                    <input class="form-control text-center" v-model="points.points.courant" style="width:60px"/>
+                    <input type="number" class="form-control text-center" v-model="points.points.courant" style="width:60px"/>
                     <button class="btn btn-light" @click="points.points.courant=points.points.courant+1"><i class="bi bi-plus"></i></button>
                   </div>
                   <div id="des-recuperation" class="m-2">

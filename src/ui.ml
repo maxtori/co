@@ -282,7 +282,7 @@ and edition app = match page_of_jsoo app##.page with
     let ids = List.map snd caracteristique_assoc @ List.map snd bonus_assoc in
     let choix = {
       niveau=p.niveau; caracteristiques=p.caracteristiques_base;
-      bonuses = p.bonuses; bonus = ("", {id=`AGI; valeur=`int 0});
+      bonuses = p.bonuses; bonus = ("", {id=`AGI; valeur=`int 0; opt=None});
       voies=p.voies; equipements=p.equipements; equipement=`autre "" } in
     let voies = voies_peuple p.peuple @ voies_profil p.profil in
     let edition = {
@@ -466,6 +466,7 @@ and charge_modal_des app de bonus nombre titre =
   ignore md##show
 
 and lance_de _app des =
+  des##.resultat := undefined;
   let d = des_of_jsoo des in
   lance_de "des-container" (to_string des##.de) d.nombre @@ fun r ->
   des##.resultat := def r
