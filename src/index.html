@@ -87,6 +87,31 @@
           </div>
         </div>
 
+        <div v-else-if="page.backup!==undefined">
+          <table class="table text-center" style="--bs-table-bg:none">
+            <thead>
+              <tr>
+                <th scope="col">Personnage</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Niveau</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="p in page.backup">
+                <td>{{ p[0] }}</td>
+                <td>{{ p[1].nom }}</td>
+                <td>{{ p[1].niveau }}</td>
+                <td>
+                  <button class="btn w-50 py-0" @click="telecharge_raw_personnage(p[0], p[1])">
+                    <i class="bi bi-download"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
         <!-- personnage -->
         <div v-else-if="page.personnage!==undefined" class="text-center">
           <div class="row mx-0 py-2">
@@ -229,21 +254,23 @@
           <div class="row mx-0 mt-3">
             <div class="col p-0 text-bg-light">Équipements</div>
           </div>
-          <div v-for="e in armes(page.personnage.perso.equipements)" class="row mx-0">
-            <span class="col border p-0 text-bg-light">{{ pp_equipement(e[0]) }}</span>
-            <template v-if="e[1].arme_au_contact!==undefined">
-              <span class="col border p-0" role="button" @click="charge_modal_des(e[1].arme_au_contact.dommage[1], page.personnage.perso.caracteristiques.force, e[1].arme_au_contact.dommage[0], 'Dommage')">
-                {{ e[1].arme_au_contact.dommage[0]}}{{e[1].arme_au_contact.dommage[1] }} {{ (page.personnage.perso.caracteristiques.force > 0) ? '+' : '' }}{{ page.personnage.perso.caracteristiques.force }}
-              </span>
-              <span class="col border p-0">
-                {{ e[1].arme_au_contact.type }}
-              </span>
-            </template>
-            <template v-else>
-              <span class="col border p-0" role="button" @click="charge_modal_des(e[1].arme_au_contact.dommage[1], 0, e[1].arme_au_contact.dommage[0], 'Dommage')">{{ e[1].arme_a_distance.dommage[0]}}{{e[1].arme_a_distance.dommage[1] }}</span>
-              <span class="col border p-0">{{ e[1].arme_a_distance.portee}} m, {{e[1].arme_a_distance.type }}</span>
-            </template>
-          </div>
+          <template v-for="e in equipements(page.personnage.perso.equipements, 'arme')">
+            <div v-for="a in e[1].arme.arme" class="row mx-0">
+              <span class="col border p-0 text-bg-light">{{ (a.nombre!==undefined && a.nombre!=1) ? String(a.nombre)+' ' : '' }}{{ pp_equipement(e[0]) }}</span>
+              <template v-if="a.Contact!==undefined">
+                <span class="col border p-0" role="button" @click="charge_modal_des(e[1].arme.dommage[1], page.personnage.perso.caracteristiques.force, e[1].arme.dommage[0], 'Dommage')">
+                  {{ e[1].arme.dommage[0]}}{{e[1].arme.dommage[1] }} {{ (page.personnage.perso.caracteristiques.force > 0) ? '+' : '' }}{{ page.personnage.perso.caracteristiques.force }}
+                </span>
+                <span class="col border p-0">
+                  {{ e[1].arme.type }}
+                </span>
+              </template>
+              <template v-else>
+                <span class="col border p-0" role="button" @click="charge_modal_des(e[1].arme.dommage[1], 0, e[1].arme.dommage[0], 'Dommage')">{{ e[1].arme.dommage[0]}}{{e[1].arme.dommage[1] }}</span>
+                <span class="col border p-0">{{ a.Distance.portee }} m, {{e[1].arme.type }}</span>
+              </template>
+            </div>
+          </template>
           <!-- todo: other equipments -->
 
           <!-- personnage voies -->
@@ -320,7 +347,7 @@
           <!-- creation caracteristiques -->
           <div v-else-if="page.creation.creation.caracteristiques!==undefined" class="text-center">
 
-            <div class="row mx-0 mt-4">
+            <div class="row mx-0 mt-3">
               <div class="col p-0 text-bg-light">Caractéristiques</div>
             </div>
 
@@ -357,7 +384,7 @@
               </div>
             </div>
 
-            <div class="row mx-0 mt-4">
+            <div class="row mx-0 mt-3">
               <div class="col p-0 text-bg-light">Bonus de peuple</div>
             </div>
 
@@ -373,6 +400,57 @@
             </ul>
 
           </div>
+
+          <!-- creation equipements -->
+          <div v-else-if="page.creation.creation.equipements!==undefined">
+
+            <div class="row mx-0 mt-3">
+              <div class="col text-bg-light">Equipements</div>
+            </div>
+            <ul class="list-group">
+              <li v-for="e in equipements(page.creation.perso.equipements, undefined)" class="list-group-item text-center p-0">
+                <div class="row mx-0">
+                  <span class="col border p-0 text-bg-light">{{ (e[1].arme.arme[0].nombre!==undefined && e[1].arme.arme[0].nombre!=1) ? String(e[1].arme.arme[0].nombre)+' ' : '' }}{{ pp_equipement(e[0]) }}</span>
+                  <template v-if="e[1].arme!==undefined && e[1].arme.arme[0].Contact!==undefined">
+                    <span class="col border p-0">
+                      {{ e[1].arme.dommage[0]}}{{e[1].arme.dommage[1] }} {{ (page.creation.perso.caracteristiques.force > 0) ? '+' : '' }}{{ page.creation.perso.caracteristiques.force }}
+                    </span>
+                    <span class="col border p-0">
+                      {{ e[1].arme.type }}
+                    </span>
+                  </template>
+                  <template v-else-if="e[1].arme!==undefined">
+                    <span class="col border p-0">{{ e[1].arme.dommage[0]}}{{e[1].arme.dommage[1] }}</span>
+                    <span class="col border p-0">{{ a.Distance.portee }} m, {{e[1].arme.type }}</span>
+                  </template>
+                  <template v-else-if="e[1].armure!==undefined">
+                    <span class="col border p-0">
+                      DEF+{{ e[1].armure.defense }}
+                    </span>
+                    <span class="col border p-0"></span>
+                  </template>
+                  <template v-else>
+                    <span class="col border p-0"></span>
+                    <span class="col border p-0"></span>
+                  </template>
+                </div>
+              </li>
+            </ul>
+
+            <div class="row mx-0 mt-3">
+              <div class="col text-bg-light">Equipements au choix</div>
+            </div>
+            <div v-for="(l, i) in page.creation.creation.equipements.possibilites" class="row mx-0 mt-3">
+              <ul class="list-group">
+                <li v-for="e in l" class="list-group-item p-0 text-center" :class="(page.creation.creation.equipements.choix[i][0]==e[0]) ? 'active' : ''">
+                  <button class="btn w-100" @click="page.creation.creation.equipements.choix[i]=e">
+                    {{ e[0] }}
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+
 
           <!-- creation voies -->
           <div v-else-if="page.creation.creation.voies!==undefined">
@@ -622,84 +700,84 @@
         </div>
 
         <!-- de modal -->
-          <div id="des-modal" class="modal">
-            <div class="modal-dialog modal-dialog-centered">
-              <div v-if="des" class="modal-content">
-                <div class="modal-header">
-                  <h2 class="modal-title mx-auto">
-                    <div v-if="des.titre">
-                      <span v-if="des.titre">
-                        <span>{{ des.titre }}</span>
-                        <span class="mx-4">|</span>
-                      </span>
-                      {{ des.nombre }}{{ des.de }}
-                      <span v-if="des.bonus && des.bonus > 0"> + {{ des.bonus }}</span>
-                      <span v-else-if="des.bonus"> - {{ Math.abs(des.bonus) }} </span>
-                    </div>
-                    <div v-else class="d-flex">
-                      <input class="form-control py-0 w-50" v-model="des.nombre"/>
-                      <select class="form-select py-0 w-50" v-model="des.de">
-                        <option value="d4">d4</option>
-                        <option value="d6">d6</option>
-                        <option value="d8">d8</option>
-                        <option value="d10">d10</option>
-                        <option value="d12">d12</option>
-                        <option value="d20">d20</option>
-                      </select>
-                    </div>
-                  </h2>
-                </div>
-                <div class="modal-body">
-                  <div class="text-center d-flex mx-auto w-75">
-                    <span class="text-bg-light px-2 flex-fill">Bonus</span>
-                    <input class="form-control py-0" v-model="des.extra" type="number" style="max-width:100px"/>
-                  </div>
-                  <div id="des-container" class="m-2" style="height:180px">
-                  </div>
-                  <div style="height:50px">
-                    <h2 v-if="des.resultat" class="text-center">
-                      {{ des.resultat }} {{ (des.bonus==0) ? '' : (des.bonus > 0) ? '+ '+String(des.bonus) : '- '+String(Math.abs(des.bonus)) }} {{ (des.extra==0) ? '' : (des.extra > 0) ? '+ '+String(des.extra) : '- '+String(Math.abs(des.extra)) }} {{ (des.bonus + des.extra == 0) ? '' : '= '+String(des.resultat + des.bonus + des.extra) }}
-                    </h2>
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button class="btn btn-secondary mx-auto" @click="lance_de(des)">Lancer</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- points modal -->
-          <div id="points-modal" class="modal">
-            <div class="modal-dialog modal-dialog-centered">
-              <div v-if="points" class="modal-content">
-                <div class="modal-header">
-                  <h2 class="modal-title mx-auto">{{ points.titre }}
-                    <span class="badge text-bg-light ms-4">/ {{ points.points.max }}</span>
-                  </h2>
-                </div>
-                <div class="modal-body">
-                  <div class="d-flex justify-content-center">
-                    <button class="btn btn-light" @click="points.points.courant=points.points.courant-1"><i class="bi bi-dash"></i></button>
-                    <input type="number" class="form-control text-center" v-model="points.points.courant" style="width:60px"/>
-                    <button class="btn btn-light" @click="points.points.courant=points.points.courant+1"><i class="bi bi-plus"></i></button>
-                  </div>
-                  <div id="des-recuperation" class="m-2">
-                  </div>
-                  <h4 v-if="points.genre=='des_de_recuperation'" class="text-center">
-                    <span>Points de vigueur: </span>
-                    <span v-if="points.resultat!==undefined">
-                      {{ page.personnage.perso.points_de_vigueur.courant - points.resultat }} + {{ points.resultat }} =
+        <div id="des-modal" class="modal">
+          <div class="modal-dialog modal-dialog-centered">
+            <div v-if="des" class="modal-content">
+              <div class="modal-header">
+                <h2 class="modal-title mx-auto">
+                  <div v-if="des.titre">
+                    <span v-if="des.titre">
+                      <span>{{ des.titre }}</span>
+                      <span class="mx-4">|</span>
                     </span>
-                    <span> {{ page.personnage.perso.points_de_vigueur.courant }} / {{ page.personnage.perso.points_de_vigueur.max }}</span>
-                  </h4>
+                    {{ des.nombre }}{{ des.de }}
+                    <span v-if="des.bonus && des.bonus > 0"> + {{ des.bonus }}</span>
+                    <span v-else-if="des.bonus"> - {{ Math.abs(des.bonus) }} </span>
+                  </div>
+                  <div v-else class="d-flex">
+                    <input class="form-control py-0 w-50" v-model="des.nombre"/>
+                    <select class="form-select py-0 w-50" v-model="des.de">
+                      <option value="d4">d4</option>
+                      <option value="d6">d6</option>
+                      <option value="d8">d8</option>
+                      <option value="d10">d10</option>
+                      <option value="d12">d12</option>
+                      <option value="d20">d20</option>
+                    </select>
+                  </div>
+                </h2>
+              </div>
+              <div class="modal-body">
+                <div class="text-center d-flex mx-auto w-75">
+                  <span class="text-bg-light px-2 flex-fill">Bonus</span>
+                  <input class="form-control py-0" v-model="des.extra" type="number" style="max-width:100px"/>
                 </div>
-                <div class="modal-footer">
-                  <button v-if="points.genre=='des_de_recuperation'" class="btn btn-secondary mx-auto" @click="lance_de_recuperation(points)">Lancer</button>
+                <div id="des-container" class="m-2" style="height:180px">
                 </div>
+                <div style="height:50px">
+                  <h2 v-if="des.resultat" class="text-center">
+                    {{ des.resultat }} {{ (des.bonus==0) ? '' : (des.bonus > 0) ? '+ '+String(des.bonus) : '- '+String(Math.abs(des.bonus)) }} {{ (des.extra==0) ? '' : (des.extra > 0) ? '+ '+String(des.extra) : '- '+String(Math.abs(des.extra)) }} {{ (des.bonus + des.extra == 0) ? '' : '= '+String(des.resultat + des.bonus + des.extra) }}
+                  </h2>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-secondary mx-auto" @click="lance_de(des)">Lancer</button>
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- points modal -->
+        <div id="points-modal" class="modal">
+          <div class="modal-dialog modal-dialog-centered">
+            <div v-if="points" class="modal-content">
+              <div class="modal-header">
+                <h2 class="modal-title mx-auto">{{ points.titre }}
+                  <span class="badge text-bg-light ms-4">/ {{ points.points.max }}</span>
+                </h2>
+              </div>
+              <div class="modal-body">
+                <div class="d-flex justify-content-center">
+                  <button class="btn btn-light" @click="points.points.courant=points.points.courant-1"><i class="bi bi-dash"></i></button>
+                  <input type="number" class="form-control text-center" v-model="points.points.courant" style="width:60px"/>
+                  <button class="btn btn-light" @click="points.points.courant=points.points.courant+1"><i class="bi bi-plus"></i></button>
+                </div>
+                <div id="des-recuperation" class="m-2">
+                </div>
+                <h4 v-if="points.genre=='des_de_recuperation'" class="text-center">
+                  <span>Points de vigueur: </span>
+                  <span v-if="points.resultat!==undefined">
+                    {{ page.personnage.perso.points_de_vigueur.courant - points.resultat }} + {{ points.resultat }} =
+                  </span>
+                  <span> {{ page.personnage.perso.points_de_vigueur.courant }} / {{ page.personnage.perso.points_de_vigueur.max }}</span>
+                </h4>
+              </div>
+              <div class="modal-footer">
+                <button v-if="points.genre=='des_de_recuperation'" class="btn btn-secondary mx-auto" @click="lance_de_recuperation(points)">Lancer</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
       </div>
     </div>

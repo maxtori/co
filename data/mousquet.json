@@ -1,6 +1,6 @@
 {
   "dommage": [ 2, "d6" ],
-  "portee": 50,
+  "arme": [ { "portee": 50 } ],
   "type": "perforants",
   "prix": "100 pa",
   "notes": "Armes à poudre, soumises à l’autorisation du MJ (voir encadré), nécessite une action limitée pour être rechargée, arme tenue à deux mains"

@@ -1,6 +1,6 @@
 {
   "dommage": [ 1, "d6" ],
-  "deux_mains": [ 1, "d10" ],
+  "arme": [ { "deux_mains": [ 1, "d10" ] }, { "portee": 10 } ],
   "type": "perforants",
   "prix": "4 pa",
   "notes": "Arme à une ou deux mains"

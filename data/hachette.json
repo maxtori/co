@@ -1,6 +1,6 @@
 {
   "dommage": [ 1, "d6" ],
-  "portee": 5,
+  "arme": [ { "portee": 5 } ],
   "type": "tranchants",
   "prix": "2 pa"
 }

@@ -1,6 +1,6 @@
 {
   "dommage": [ 1, "d6" ],
-  "portee": 10,
+  "arme": [ { "portee": 10 } ],
   "type": "perforants",
   "prix": "8 pa",
   "notes": "Action de mouvement pour être rechargée"

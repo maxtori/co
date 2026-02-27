@@ -1,6 +1,6 @@
 {
   "dommage": [ 1, "d6" ],
-  "portee": 30,
+  "arme": [ { "portee": 30 } ],
   "type": "perforants",
   "prix": "4 pa",
   "notes": "Arme tenue à deux mains"

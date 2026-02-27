@@ -1,6 +1,6 @@
 {
   "dommage": [ 1, "d3" ],
-  "portee": 10,
+  "arme": [ { "portee": 10 } ],
   "type": "contondants",
   "prix": "1 pc"
 }

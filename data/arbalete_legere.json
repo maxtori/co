@@ -1,6 +1,6 @@
 {
   "dommage": [ 2, "d4" ],
-  "portee": 30,
+  "arme": [ { "portee": 30 } ],
   "type": "perforants",
   "prix": "10 pa",
   "notes": "Nécessite une action de mouvement pour être rechargée, arme tenue à deux mains"

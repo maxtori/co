@@ -141,13 +141,15 @@ type dommage_type = [
   | `tranchants
 ] [@@deriving encoding, jsoo]
 
+type arme_type =
+  | Contact of { deux_mains: (int * de) option }
+  | Distance of { portee: int; nombre: int option }
+[@@deriving encoding, jsoo]
+
 type equipement =
-  | Arme_au_contact of {
-    dommage: int * de; deux_mains: (int * de) option;
+  | Arme of {
+    arme: arme_type list; [@dft [Contact {deux_mains=None}]] dommage: int * de;
     prix: string option; typ: dommage_type [@key "type"]; notes: string option }
-  | Arme_a_distance of {
-      dommage: int * de; portee: int; prix: string option;
-      typ: dommage_type [@key "type"]; notes: string option }
   | Armure of { defense: int; agilite_max: int option; prix: string option }
   | Autre of { description: string; prix: string option }
 [@@deriving encoding, jsoo {snake; remove_prefix=false; remove_undefined}]
@@ -534,6 +536,8 @@ type points_avec_max = {
   max: int;
 } [@@deriving encoding, jsoo]
 
+type equipement_et_nombre = equipement_nom * int option [@@deriving encoding, jsoo]
+
 type personnage = {
   nom: string;
   niveau: int;
@@ -548,7 +552,7 @@ type personnage = {
   points_de_mana: points_avec_max;
   initiative: int;
   defense: int;
-  equipements: equipement_nom list; [@dft []]
+  equipements: equipement_et_nombre list; [@dft []]
   ideal: ideal option;
   travers: travers option;
   description: description;
@@ -805,20 +809,42 @@ let remplit_caracteristiques p def_equipement agi_max  =
   let points_de_mana = aux points_de_mana0 @@ if p.points_de_mana.max = 0 then 0 else p.points_de_mana.max + p.caracteristiques.volonte in
   { p with points_de_mana }
 
-let equipements_profil : profil -> equipement_nom list = function
-  | `Arquebusier -> [ `petoire; `epee_longue; `dague; `cuir_renforce ]
-  | `Barde -> [ `rapiere; `dague; `autre "instrument_de_musique"; `cuir_simple ]
-  | `Rodeur -> [ `epee_longue; `arc_court; `dague; `cuir_renforce ]
-  | `Voleur -> [ `rapiere; `dague; `autre "outils de crochetage"; `cuir_simple; `autre "corde" ]
-  | `Barbare -> [ `hache_a_deux_mains; `javelot; `dague; `cuir_simple ]
-  | `Chevalier -> [ `epee_longue; `grand_bouclier; `lance_de_cavalerie; `cotte_de_mailles ]
-  | `Guerrier -> [ `epee_longue; `hache_a_deux_mains; `hachette; `grand_bouclier; `chemise_de_mailles ]
-  | `Ensorceleur -> [ `baton_ferre; `dague ]
-  | `Forgesort -> [ `dague; `baton_ferre; `marteau ]
-  | `Magicien | `Sorcier -> [ `dague; `baton_ferre; `autre "grimoire de sorts" ]
-  | `Druide -> [ `epieu; `dague; `arc_court; `cuir_simple ]
-  | `Moine -> [ `baton ]
-  | `Pretre -> [ `masse; `petit_bouclier; `chemise_de_mailles ]
+let equipements_profil : profil -> (equipement_nom * int option) list list = function
+  | `Arquebusier ->
+    [ [`petoire, None]; [`epee_longue, None]; [`dague, None]; [`cuir_renforce, None] ]
+  | `Barde ->
+    [ [`rapiere, None]; [`dague, None]; [`autre "instrument_de_musique", None]; [`cuir_simple, None] ]
+  | `Rodeur ->
+    [ [`epee_longue, None]; [`dague, None]; [`cuir_renforce, None];
+      [`arc_court, None; `epee_courte, None; `hachette, None; `lance, None] ]
+  | `Voleur ->
+    [ [`rapiere, None]; [`dague, Some 5 ]; [`autre "outils de crochetage", None];
+      [`cuir_simple, None]; [`autre "corde", None] ]
+  | `Barbare ->
+    [ [`hache_a_deux_mains, None; `hache, None; `epee_longue, None; `epee_batarde, None ];
+      [`javelot, Some 2]; [`dague, None]; [`cuir_simple, None] ]
+  | `Chevalier ->
+    [ [`epee_longue, None]; [`grand_bouclier, None]; [`lance_de_cavalerie, None];
+      [`cotte_de_mailles, None] ]
+  | `Guerrier ->
+    [ [`epee_longue, None; `epee_a_deux_mains, None; `hache_a_deux_mains, None];
+      [`dague, None; `hachette, None]; [`grand_bouclier, None]; [`chemise_de_mailles, None] ]
+  | `Ensorceleur ->
+    [ [`baton_ferre, None];
+      [`dague, None; `epee_courte, None; `fleau, None; `marteau, None;
+       `masse, None; `gourdin, None; `stylet, None; `arbalete_de_poing, None;
+       `arbalete_legere, None; `arc_court, None; `couteaux_de_lancer, None;
+       `fronde, None; `hachette, None; `javelot, None; `lance, None; `lance_pierre, None] ]
+  | `Forgesort ->
+    [ [`dague, None]; [`baton_ferre, None]; [`marteau, None] ]
+  | `Magicien ->
+    [ [`dague, None]; [`baton_ferre, None]; [`autre "grimoire de sorts", None] ]
+  | `Sorcier ->
+    [ [`dague, None]; [`baton_ferre, None]; [`autre "grimoire de sorts", None; `autre "parchemins anciens", None] ]
+  | `Druide ->
+    [ [`baton_ferre, None; `epieu, None]; [`dague, None]; [`arc_court, None]; [`cuir_simple, None] ]
+  | `Moine -> [ [`baton_ferre, None] ]
+  | `Pretre -> [ [`masse, None; `marteau, None; `baton_ferre, None]; [`petit_bouclier, None]; [`chemise_de_mailles, None] ]
 
 let bonus_voies voies =
   let rec aux acc i rg l =
