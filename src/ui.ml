@@ -172,7 +172,14 @@ let charge_voie v f =
 
 let charge_equipement e f =
   match e with
-  | `autre _ -> f None
+  | `autre _ ->
+    begin match List.assoc_opt e !equipements with
+      | Some e -> f (Some e)
+      | None ->
+        let equipement = Autre { description=""; prix=None } in
+        equipements := (e, equipement) :: !equipements;
+        f (Some equipement)
+    end
   | _ ->
     match List.assoc_opt e !equipements with
     | Some e -> f (Some e)
@@ -516,24 +523,17 @@ and lance_de _app des =
   des##.resultat := def r
 
 and equipements _app l kind =
-  js_log (unproxy l);
-  js_log kind;
   let l = to_listf equipement_et_nombre_of_jsoo l in
   let kind = to_optdef to_string kind in
-  let a = of_list @@ List.filter_map (fun (e, nombre) -> match List.assoc_opt e !equipements, kind with
+  of_list @@ List.filter_map (fun (e, nombre) -> match List.assoc_opt e !equipements, kind with
     | Some (Arme a), (None | Some "arme") ->
-      log_str "TEST0";
       let arme = List.map (function Distance {portee; _} -> Distance {portee; nombre} | a -> a) a.arme in
       Some (array [| Unsafe.inject (equipement_nom_to_jsoo e); Unsafe.inject (equipement_to_jsoo (Arme { a with arme })) |])
     | Some (Armure _ as eq), (None | Some "armure") ->
-      log_str "TEST1";
       Some (array [| Unsafe.inject (equipement_nom_to_jsoo e); Unsafe.inject (equipement_to_jsoo eq) |])
     | Some (Autre _ as eq), (None | Some "autre") ->
-      log_str "TEST2";
       Some (array [| Unsafe.inject (equipement_nom_to_jsoo e); Unsafe.inject (equipement_to_jsoo eq) |])
-    | _ -> log_str "TEST3"; None) l in
-  js_log a;
-  a
+    | _ -> None) l
 
 and edite app = match page_of_jsoo app##.page with
   | Edition e ->

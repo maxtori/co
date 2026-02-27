@@ -252,7 +252,7 @@
 
           <!-- personnage equipements -->
           <div class="row mx-0 mt-3">
-            <div class="col p-0 text-bg-light">Équipements</div>
+            <div class="col p-0 text-bg-light collapsed" role="button" data-bs-toggle="collapse" data-bs-target="#autres-equipements">Équipements</div>
           </div>
           <template v-for="e in equipements(page.personnage.perso.equipements, 'arme')">
             <div v-for="a in e[1].arme.arme" class="row mx-0">
@@ -271,7 +271,15 @@
               </template>
             </div>
           </template>
-          <!-- todo: other equipments -->
+          <div id="autres-equipements" class="collapse">
+            <div v-for="e in equipements(page.personnage.perso.equipements, 'armure')" class="row mx-0">
+              <span class="col border p-0 text-bg-light">{{ pp_equipement(e[0]) }}</span>
+              <span class="col border p-0">DEF+{{ e[1].armure.defense }}</span>
+            </div>
+            <div v-for="e in equipements(page.personnage.perso.equipements, 'autre')" class="row mx-0">
+              <span class="col border p-0">{{ pp_equipement(e[0]) }}</span>
+            </div>
+          </div>
 
           <!-- personnage voies -->
           <div class="row mx-0 mt-3">
