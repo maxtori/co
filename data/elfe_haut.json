@@ -20,7 +20,8 @@
     "description": "L’elfe augmente sa valeur de VOL de +1 et sa valeur d’INT ou de CHA de +1.",
     "bonus": [
       { "id": "VOL", "valeur": 1 },
-      { "id": "INT", "valeur": 1 }
+      { "id": "INT", "valeur": 1, "opt": null },
+      { "id": "CHA", "valeur": 1, "opt": null }
     ]
   }
 ]

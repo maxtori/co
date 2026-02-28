@@ -171,19 +171,15 @@ let charge_voie v f =
       f (Some voie)
 
 let charge_equipement e f =
-  match e with
-  | `autre _ ->
-    begin match List.assoc_opt e !equipements with
-      | Some e -> f (Some e)
-      | None ->
-        let equipement = Autre { description=""; prix=None } in
-        equipements := (e, equipement) :: !equipements;
-        f (Some equipement)
-    end
-  | _ ->
-    match List.assoc_opt e !equipements with
-    | Some e -> f (Some e)
-    | None ->
+  match List.assoc_opt e !equipements with
+  | Some e -> f (Some e)
+  | None ->
+    match e with
+    | `autre _ ->
+      let equipement = Autre { description=""; prix=None } in
+      equipements := (e, equipement) :: !equipements;
+      f (Some equipement)
+    | _ ->
       let e_str = equipement_to_str e in
       Format.printf "chargement equipement %s@." e_str;
       let url = Format.sprintf "data/%s.json" e_str in
@@ -276,13 +272,10 @@ let lance_de id de n f =
 
 let backup app =
   let st = Personnages.store ~mode:READONLY app##.db in
-  let a = new%js array_empty in
-  Personnages.Raw.iter st (fun label p ->
-    match Optdef.to_option p##.creation with
-    | None -> ignore (a##push (array [| Unsafe.inject label; Unsafe.inject p##.perso |]))
-    | Some _ -> ()
-  );
-  app##.page := page_to_jsoo (Backup a)
+  Personnages.Raw.fold st (fun label p acc ->
+    (array [| Unsafe.inject label; Unsafe.inject p##.perso; Unsafe.inject p##.creation |]) :: acc
+  ) [] @@ fun l ->
+  app##.page := page_to_jsoo (Backup (of_list (List.rev l)))
 
 let telecharge name s =
   let blob = File.blob_from_string ~contentType:"application/json" s in
@@ -313,7 +306,7 @@ and edition app = match page_of_jsoo app##.page with
     let ids = List.map snd caracteristique_assoc @ List.map snd bonus_assoc in
     let choix = {
       niveau=p.niveau; caracteristiques=p.caracteristiques_base;
-      bonuses = p.bonuses; bonus = ("", {id=`AGI; valeur=`int 0; opt=None});
+      bonuses = p.bonuses; bonus = ("", Bonus {id=`AGI; valeur=`int 0; opt=None});
       voies=p.voies; equipements=p.equipements; equipement=(`autre "", 1) } in
     let voies = voies_peuple p.peuple @ voies_profil p.profil in
     let edition = {
@@ -633,7 +626,6 @@ let () =
       begin match page_of_jsoo p with
         | Chargement -> init app
         | _ -> route app p
-        | exception _ -> init app
       end
     | None -> init app
   with exn ->

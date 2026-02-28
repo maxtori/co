@@ -113,9 +113,6 @@ type valeur = [
   let valeur_jsoo_conv = valeur_to_jsoo, valeur_of_jsoo
 ]
 
-type avec_valeur = { id: caracteristique_ou_bonus; valeur: valeur; opt: bool option option } [@@deriving encoding, jsoo]
-type avec_nom = string * avec_valeur [@@deriving encoding, jsoo]
-
 type caracteristiques = {
   agilite: int;
   constitution: int;
@@ -144,7 +141,7 @@ type dommage_type = [
 type arme_type =
   | Contact of { deux_mains: (int * de) option }
   | Distance of { portee: int; nombre: int option }
-[@@deriving encoding, jsoo]
+[@@deriving encoding, jsoo {snake}]
 
 type equipement =
   | Arme of {
@@ -509,6 +506,13 @@ let actions_enc = Json_encoding.union [
   Json_encoding.case (Json_encoding.list action_enc) Option.some Fun.id;
 ]
 
+type avec_valeur =
+  | Bonus of { id: caracteristique_ou_bonus; valeur: valeur; opt: bool option option }
+  | Voie of { voie: voie_type; rang: int }
+[@@deriving encoding, jsoo {snake}]
+
+type avec_nom = string * avec_valeur [@@deriving encoding, jsoo]
+
 type capacite = {
   nom: string;
   description: string;
@@ -648,7 +652,7 @@ let bonuses_peuple p c =
     | Nain -> "nain", [
         [ `CON, 1; `AGI, -1 ]; [ `VOL, 1; `AGI, -1 ];
       ] in
-  List.map (fun l -> List.map (fun (id, v) -> nom, {id; valeur=`int v; opt=None}) l) l
+  List.map (fun l -> List.map (fun (id, v) -> nom, Bonus {id; valeur=`int v; opt=None}) l) l
 
 let verifie_caracteristiques c =
   let acc = [] in
@@ -671,24 +675,29 @@ let verifie_caracteristiques c =
   | _ -> false
 
 let ajoute_caracteristiques ?(factor=1) c l =
-  List.fold_left (fun acc (_, {id; valeur; _}) ->
-    match valeur with
-    | `car _ -> acc
-    | `int v ->
-      let v = factor * v in
-      match id with
-      | `AGI -> { acc with agilite = acc.agilite + v }
-      | `CON -> { acc with constitution = acc.constitution + v }
-      | `FOR -> { acc with force = acc.force + v }
-      | `PER -> { acc with perception = acc.perception + v }
-      | `CHA -> { acc with charisme = acc.charisme + v }
-      | `INT -> { acc with intelligence = acc.intelligence + v }
-      | `VOL -> { acc with volonte = acc.volonte + v }
-      | _ -> acc
+  List.fold_left (fun acc (_, b) -> match b with
+    | Voie _ -> acc
+    | Bonus {id; valeur; _} ->
+      match valeur with
+      | `car _ -> acc
+      | `int v ->
+        let v = factor * v in
+        match id with
+        | `AGI -> { acc with agilite = acc.agilite + v }
+        | `CON -> { acc with constitution = acc.constitution + v }
+        | `FOR -> { acc with force = acc.force + v }
+        | `PER -> { acc with perception = acc.perception + v }
+        | `CHA -> { acc with charisme = acc.charisme + v }
+        | `INT -> { acc with intelligence = acc.intelligence + v }
+        | `VOL -> { acc with volonte = acc.volonte + v }
+        | _ -> acc
   ) c l
 
 let ajoute_bonus ?(factor=1) p l =
-  List.fold_left (fun acc (_, {id; valeur; _}) ->
+  List.fold_left (fun acc (_, b) ->
+    match b with
+    | Voie _ -> acc
+    | Bonus {id; valeur; _} ->
     let v = factor * (match valeur with
       | `int i -> i
       | `car c -> match c with
@@ -852,8 +861,10 @@ let bonus_voies voies =
     match l with
     | [] -> acc
     | (c: capacite) :: tl ->
-      let acc = acc @ (List.map (fun x -> c.nom, x) c.bonus) in
-      let acc = if c.sort then acc @ [ c.nom, { id=`PM; valeur=`int 1; opt=None } ] else acc in
+      let acc = acc @ (List.filter_map (function
+        | Bonus { opt = (None | Some Some true); _ } as b -> Some (c.nom, b)
+        | _ -> None) c.bonus) in
+      let acc = if c.sort then acc @ [ c.nom, Bonus { id=`PM; valeur=`int 1; opt=None } ] else acc in
       aux acc (i+1) rg tl in
    List.fold_left (fun acc (l, rg) ->
      aux acc 1 rg l

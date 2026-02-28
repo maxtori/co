@@ -103,6 +103,9 @@
                 <td>{{ p[1].nom }}</td>
                 <td>{{ p[1].niveau }}</td>
                 <td>
+                  <button class="btn w-50 py-0" @click="detruit_personnage(p[0])">
+                    <i class="bi bi-trash3"></i>
+                  </button>
                   <button class="btn w-50 py-0" @click="telecharge_raw_personnage(p[0], p[1])">
                     <i class="bi bi-download"></i>
                   </button>
@@ -257,7 +260,7 @@
           <template v-for="e in equipements(page.personnage.perso.equipements, 'arme')">
             <div v-for="a in e[1].arme.arme" class="row mx-0">
               <span class="col border p-0 text-bg-light">{{ (a.nombre!==undefined && a.nombre!=1) ? String(a.nombre)+' ' : '' }}{{ pp_equipement(e[0]) }}</span>
-              <template v-if="a.Contact!==undefined">
+              <template v-if="a.contact!==undefined">
                 <span class="col border p-0" role="button" @click="charge_modal_des(e[1].arme.dommage[1], page.personnage.perso.caracteristiques.force, e[1].arme.dommage[0], 'Dommage')">
                   {{ e[1].arme.dommage[0]}}{{e[1].arme.dommage[1] }} {{ (page.personnage.perso.caracteristiques.force > 0) ? '+' : '' }}{{ page.personnage.perso.caracteristiques.force }}
                 </span>
@@ -267,7 +270,7 @@
               </template>
               <template v-else>
                 <span class="col border p-0" role="button" @click="charge_modal_des(e[1].arme.dommage[1], 0, e[1].arme.dommage[0], 'Dommage')">{{ e[1].arme.dommage[0]}}{{e[1].arme.dommage[1] }}</span>
-                <span class="col border p-0">{{ a.Distance.portee }} m, {{e[1].arme.type }}</span>
+                <span class="col border p-0">{{ a.distance.portee }} m, {{e[1].arme.type }}</span>
               </template>
             </div>
           </template>
@@ -400,8 +403,8 @@
               <li v-for="(p, i) in page.creation.creation.caracteristiques.bonuses" class="list-group-item p-0" :class="(page.creation.creation.caracteristiques.choix_bonus && page.creation.creation.caracteristiques.choix_bonus[1]==i) ? 'active' : ''">
                 <div @click="function() { page.creation.creation.caracteristiques.choix_bonus = [ p, i ] }" class="row mx-0" role="button">
                   <div v-for="b in p" class="col border p-0 d-flex justify-content">
-                    <span class="flex-fill">{{ b[1].id }}</span>
-                    <span class="flex-fill text-bg-light">{{ b[1].valeur }}</span>
+                    <span class="flex-fill">{{ b[1].bonus.id }}</span>
+                    <span class="flex-fill text-bg-light">{{ b[1].bonus.valeur }}</span>
                   </div>
                 </div>
               </li>
@@ -419,7 +422,7 @@
               <li v-for="e in equipements(page.creation.perso.equipements, undefined)" class="list-group-item text-center p-0">
                 <div class="row mx-0">
                   <span class="col border p-0 text-bg-light">{{ (e[1].arme.arme[0].nombre!==undefined && e[1].arme.arme[0].nombre!=1) ? String(e[1].arme.arme[0].nombre)+' ' : '' }}{{ pp_equipement(e[0]) }}</span>
-                  <template v-if="e[1].arme!==undefined && e[1].arme.arme[0].Contact!==undefined">
+                  <template v-if="e[1].arme!==undefined && e[1].arme.arme[0].contact!==undefined">
                     <span class="col border p-0">
                       {{ e[1].arme.dommage[0]}}{{e[1].arme.dommage[1] }} {{ (page.creation.perso.caracteristiques.force > 0) ? '+' : '' }}{{ page.creation.perso.caracteristiques.force }}
                     </span>
@@ -429,7 +432,7 @@
                   </template>
                   <template v-else-if="e[1].arme!==undefined">
                     <span class="col border p-0">{{ e[1].arme.dommage[0]}}{{e[1].arme.dommage[1] }}</span>
-                    <span class="col border p-0">{{ a.Distance.portee }} m, {{e[1].arme.type }}</span>
+                    <span class="col border p-0">{{ a.distance.portee }} m, {{e[1].arme.type }}</span>
                   </template>
                   <template v-else-if="e[1].armure!==undefined">
                     <span class="col border p-0">
@@ -662,24 +665,26 @@
               <div id="edition-bonuses" class="accordion-collapse collapse" data-bs-parent="#edition-accordeon">
                 <div class="accordion-body p-0">
                   <div v-for="(b, i) in page.edition.choix.bonuses" class="row mx-0 text-center">
-                    <div class="col p-0 border">{{ b[0] }}</div>
-                    <div class="col p-0 border">{{ b[1].id }}</div>
-                    <div class="col p-0 border">{{ b[1].valeur }}</div>
-                    <div class="col p-0 border">
-                      <button class="btn py-0 w-100 h-100" @click="page.edition.choix.bonuses.splice(i, 1)"><i class="bi bi-trash3"></i></button>
-                    </div>
+                    <template v-if="b[1].bonus!==undefined">
+                      <div class="col p-0 border">{{ b[0] }}</div>
+                      <div class="col p-0 border">{{ b[1].bonus.id }}</div>
+                      <div class="col p-0 border">{{ b[1].bonus.valeur }}</div>
+                      <div class="col p-0 border">
+                        <button class="btn py-0 w-100 h-100" @click="page.edition.choix.bonuses.splice(i, 1)"><i class="bi bi-trash3"></i></button>
+                      </div>
+                    </template>
                   </div>
                   <div class="row mx-0">
                     <div class="col p-0 border">
                       <input class="form-control py-0" v-model="page.edition.choix.bonus[0]"/>
                     </div>
                     <div class="col p-0 border">
-                      <select class="form-select py-0" v-model="page.edition.choix.bonus[1].id">
+                      <select class="form-select py-0" v-model="page.edition.choix.bonus[1].bonus.id">
                         <option v-for="id in page.edition.ids" :value="id">{{ id }}</option>
                       </select>
                     </div>
                     <div class="col p-0 border">
-                      <input class="form-control py-0" v-model="page.edition.choix.bonus[1].valeur"/>
+                      <input class="form-control py-0" v-model="page.edition.choix.bonus[1].bonus.valeur"/>
                     </div>
                     <div class="col p-0 border">
                       <button class="btn py-0 w-100" @click="ajoute_bonus()"><i class="bi bi-plus"></i></button>
