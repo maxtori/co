@@ -256,7 +256,7 @@ let creation_box_de id =
     val origin = string "https://unpkg.com/@3d-dice/dice-box@1.1.3/dist/"
     val container = string ("#" ^ id)
     val scale = 18
-    val themeColor = string "#ff0000"
+    val themeColor = string "#990000"
   end in
   new%js cs options
 
