@@ -212,6 +212,7 @@ let alert app s =
   ignore md##show
 
 let route app p =
+  app##.page := page_to_jsoo Chargement;
   let p0, p1 = unproxy app##.page, unproxy p in
   Firebug.console##log_3 p0 (string "-->") p1;
   let state p = some @@ Unsafe.coerce p  in
@@ -629,5 +630,5 @@ let () =
       end
     | None -> init app
   with exn ->
-    log "initialisation erreur: %s" (Printexc.to_string exn);
+    alert app (Format.sprintf "initialisation erreur: %s" (Printexc.to_string exn));
     backup app
