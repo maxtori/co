@@ -621,7 +621,8 @@ let () =
   let%data db : Ezjs_idb.Types.iDBDatabase t = db [@@noconv] in
   let app = [%app {conv; mount; unhide; export}] in
   Dom_html.window##.onpopstate := Dom_html.handler (fun (e : Dom_html.popStateEvent t) ->
-    route app (Unsafe.coerce e##.state); _false);
+    (try route app (Unsafe.coerce e##.state)
+    with _exn -> try init app with _exn -> backup app); _false);
   try match Opt.to_option (Unsafe.coerce Dom_html.window##.history)##.state with
     | Some p ->
       begin match page_of_jsoo p with
