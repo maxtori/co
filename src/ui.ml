@@ -90,6 +90,7 @@ let%data page : page = Chargement
 and modal_erreur : string option = None
 and points : points option = None
 and des : des option = None
+and tsp : int = Int32.to_int (to_int32 date##now) / 1000
 
 let genre_de_titre = function
   | `points_de_vigueur -> "Points de vigeur"
@@ -113,9 +114,18 @@ let ouverture_fichier fichier f =
     _true);
   reader##(readAsText fichier)
 
+let backup app =
+  let st = Personnages.store ~mode:READONLY app##.db in
+  Personnages.Raw.fold st (fun label p acc ->
+    (array [| Unsafe.inject label; Unsafe.inject p##.perso; Unsafe.inject p##.creation |]) :: acc
+  ) [] @@ fun l ->
+  app##.page := page_to_jsoo (Backup (of_list (List.rev l)))
+
 let chargement_personnages app f =
   let st = Personnages.store ~mode:READONLY app##.db in
-  Personnages.fold st (fun label {perso; creation} acc -> {label; perso; creation} :: acc) [] @@ fun l ->
+  let error _ = backup app in
+  Personnages.fold ~error st (fun label {perso; creation} acc ->
+    {label; perso; creation} :: acc) [] @@ fun l ->
   f app (List.rev l)
 
 let ajout_personnage ?creation app label perso f =
@@ -213,6 +223,7 @@ let alert app s =
 
 let route app p =
   app##.page := page_to_jsoo Chargement;
+  app##.tsp := Int32.to_int (to_int32 date##now) / 1000;
   let p0, p1 = unproxy app##.page, unproxy p in
   Firebug.console##log_3 p0 (string "-->") p1;
   let state p = some @@ Unsafe.coerce p  in
@@ -271,13 +282,6 @@ let lance_de id de n f =
   let v = Array.fold_left (fun acc r -> acc + r##.value) 0 @@ to_array r in
   f v
 
-let backup app =
-  let st = Personnages.store ~mode:READONLY app##.db in
-  Personnages.Raw.fold st (fun label p acc ->
-    (array [| Unsafe.inject label; Unsafe.inject p##.perso; Unsafe.inject p##.creation |]) :: acc
-  ) [] @@ fun l ->
-  app##.page := page_to_jsoo (Backup (of_list (List.rev l)))
-
 let telecharge name s =
   let blob = File.blob_from_string ~contentType:"application/json" s in
   let href = Dom_html.window##._URL##createObjectURL blob in
@@ -288,7 +292,7 @@ let telecharge name s =
 
 let%meth commence_creation app =
   let profils = profils () in
-  let label = Format.sprintf "perso_%ld" (to_int32 @@ date##now) in
+  let label = Format.sprintf "perso_%ld" (to_int32 date##now) in
   let p = Creation { label; perso=personnage_vide; creation=Profil {profils; choix=None} } in
   route app (page_to_jsoo p)
 
@@ -621,8 +625,11 @@ let () =
   let%data db : Ezjs_idb.Types.iDBDatabase t = db [@@noconv] in
   let app = [%app {conv; mount; unhide; export}] in
   Dom_html.window##.onpopstate := Dom_html.handler (fun (e : Dom_html.popStateEvent t) ->
-    (try route app (Unsafe.coerce e##.state)
-    with _exn -> try init app with _exn -> backup app); _false);
+    (try route app (Unsafe.coerce e##.state) with _exn -> init app); _false);
+  (Unsafe.coerce Dom_html.window)##.onfocus := Dom_html.handler (fun (_e : Dom_html.popStateEvent t) ->
+    let now = Int32.to_int (to_int32 date##now) / 1000 in
+    if now > app##.tsp + 3600 then route app app##.page;
+    _false);
   try match Opt.to_option (Unsafe.coerce Dom_html.window##.history)##.state with
     | Some p ->
       begin match page_of_jsoo p with
@@ -631,5 +638,5 @@ let () =
       end
     | None -> init app
   with exn ->
-    alert app (Format.sprintf "initialisation erreur: %s" (Printexc.to_string exn));
+    log "initialisation erreur: %s" (Printexc.to_string exn);
     backup app
