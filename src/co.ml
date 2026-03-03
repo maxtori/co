@@ -200,7 +200,7 @@ type equipement_nom = [
   | `autre of string
 ] [@@deriving encoding {assoc}, jsoo]
 
-let equiepement_of_str s = Json_encoding.destruct equipement_nom_enc (`String s)
+let equipement_of_str s = Json_encoding.destruct equipement_nom_enc (`String s)
 let equipement_to_str e = match Json_encoding.construct equipement_nom_enc e with `String s -> s | _ -> assert false
 
 type ideal =
@@ -226,6 +226,9 @@ type ideal =
   | Verite
 [@@deriving encoding {assoc}, jsoo]
 
+let ideal_of_str s = List.assoc s ideal_assoc
+let ideal_to_str i = List.assoc i @@ List.map (fun (a, b) -> b, a) ideal_assoc
+
 type travers =
   | Alcoolique
   | Couard
@@ -249,15 +252,8 @@ type travers =
   | Voleur
 [@@deriving encoding {assoc}, jsoo]
 
-type description = Json_repr.ezjsonm
-[@@deriving encoding]
-
-[@@@jsoo
-  type description_jsoo = Ezjs_min.Unsafe.top
-  let description_to_jsoo = Js_json.js_of_json
-  let description_of_jsoo = Js_json.json_of_js
-  let description_jsoo_conv = description_to_jsoo, description_of_jsoo
-]
+let travers_of_str s = List.assoc s travers_assoc
+let travers_to_str i = List.assoc i @@ List.map (fun (a, b) -> b, a) travers_assoc
 
 type voie_arquebusier = [
   | `Artilleur
@@ -559,7 +555,8 @@ type personnage = {
   equipements: equipement_et_nombre list; [@dft []]
   ideal: ideal option;
   travers: travers option;
-  description: description;
+  description: string; [@dft ""]
+  image: string option;
   voies: (voie_type * int) list; [@dft []]
   bonuses: avec_nom list;
 } [@@deriving encoding, jsoo]
@@ -602,8 +599,8 @@ let personnage_vide = {
   caracteristiques_base=caracteristiques_par_defaut (Some Demi_elfe);
   points_de_vigueur=points_vide;
   des_de_recuperation=points_vide; points_de_chance=points_vide; points_de_mana=points_vide;
-  initiative=0; defense=0; equipements=[]; ideal=None; travers=None; description=`Null;
-  voies=[]; bonuses=[];
+  initiative=0; defense=0; equipements=[]; ideal=None; travers=None; description="";
+  image=None; voies=[]; bonuses=[];
 }
 
 let profils () =

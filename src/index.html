@@ -118,7 +118,7 @@
         <!-- personnage -->
         <div v-else-if="page.personnage!==undefined" class="text-center">
           <div class="row mx-0 py-2">
-            <div class="col px-0">
+            <div class="col px-0 collapsed" role="button" data-bs-toggle="collapse" data-bs-target="#perso-description">
               <h1>{{ page.personnage.perso.nom }}</h1>
             </div>
             <div class="col px-0">
@@ -126,6 +126,10 @@
                 <span class="px-3 border border-5 border-light">{{ page.personnage.perso.niveau }}</span>
               </h1>
             </div>
+          </div>
+          <div id="perso-description" class="p-2 collapse">
+            <img v-if="image!==undefined" :src="image" class="w-50">
+            <p class="mt-0" v-if="page.personnage.perso.description">{{ page.personnage.perso.description }}</p>
           </div>
 
           <div class="row mx-0">
@@ -462,7 +466,6 @@
             </div>
           </div>
 
-
           <!-- creation voies -->
           <div v-else-if="page.creation.creation.voies!==undefined">
             <ul class="list-group">
@@ -492,6 +495,10 @@
           <!-- creation nom -->
           <div class="text-center" v-else-if="page.creation.creation.enregistrement!==undefined">
             <div class="row mx-0">
+              <div class="col p-0 text-bg-light">Nom du personnage</div>
+              <div class="col p-0"><input class="form-control py-0" v-model="page.creation.creation.enregistrement.nom"/></div>
+            </div>
+            <div class="row mx-0">
               <div class="col p-0 text-bg-light">Idéal</div>
               <div class="col p-0">
                 <select class="form-control py-0" v-model="page.creation.creation.enregistrement.ideal">
@@ -507,11 +514,20 @@
                 </select>
               </div>
             </div>
-            <div class="row mx-0">
-              <div class="col p-0 text-bg-light">Nom du personnage</div>
-              <div class="col p-0"><input class="form-control py-0" v-model="page.creation.creation.enregistrement.nom"/></div>
+            <div class="row mx-0 mt-2">
+              <div class="col text-bg-light">Description</div>
             </div>
-            <div class="row mx-0">
+            <textarea class="form-control" v-model="page.creation.creation.enregistrement.description"></textarea>
+            <div v-if="has_storage" class="row mx-0 mt-2">
+              <div class="col p-0 text-bg-light">Image</div>
+              <div class="col p-0">
+                <input class="form-control py-0" type="file" @change="charge_image" accept="image/*, application/pdf"/>
+              </div>
+              <div v-if="page.creation.creation.enregistrement.image_url!==undefined" class="p-2">
+                <img :src="page.creation.creation.enregistrement.image_url" alt="image" class="w-50">
+              </div>
+            </div>
+            <div class="row mx-0 mt-2">
               <div class="col p-0 text-bg-light">Nom de la sauvegarde</div>
               <div class="col p-0"><input class="form-control py-0" v-model="page.creation.creation.enregistrement.label"/></div>
             </div>
@@ -529,11 +545,13 @@
         <div v-else-if="page.importation!==undefined">
           <div class="row mx-0 text-center mt-5">
             <div class="col p-0 text-bg-light">Nom de l'importation</div>
-            <div class="col p-0"><input class="form-control py-0" v-model="page.importation"/></div>
+            <div class="col p-0">
+              <input class="form-control py-0" v-model="page.importation"/>
+            </div>
           </div>
           <div class="row mx-0 mt-3">
             <div class="col p-0">
-              <input class="form-control" type="file" @change="importation"/>
+              <input class="form-control" type="file" @change="importation" accept="application/json"/>
             </div>
           </div>
         </div>
@@ -689,6 +707,49 @@
                     </div>
                     <div class="col p-0 border">
                       <button class="btn py-0 w-100" @click="ajoute_bonus()"><i class="bi bi-plus"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- edition nom, etc -->
+            <div class="accordion-item">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#edition-nom">
+                Description
+              </button>
+              <div id="edition-nom" class="accordion-collapse collapse" data-bs-parent="#edition-accordeon">
+                <div class="accordion-body p-0">
+                  <div class="row mx-0">
+                    <div class="col py-0 text-bg-light">Nom du personnage</div>
+                    <div class="col p-0"><input class="form-control py-0" v-model="page.edition.choix.nom"/></div>
+                  </div>
+                  <div class="row mx-0">
+                    <div class="col py-0 text-bg-light">Idéal</div>
+                    <div class="col p-0">
+                      <select class="form-control py-0" v-model="page.edition.choix.ideal">
+                        <option v-for="i in page.edition.ideaux" :value="i">{{ i }}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row mx-0">
+                    <div class="col py-0 text-bg-light">Travers</div>
+                    <div class="col p-0">
+                      <select class="form-control py-0" v-model="page.edition.choix.travers">
+                        <option v-for="i in page.edition.travers_options" :value="i">{{ i }}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row mx-0 mt-2">
+                    <div class="col text-bg-light">Description</div>
+                  </div>
+                  <textarea class="form-control" v-model="page.edition.choix.description"></textarea>
+                  <div v-if="has_storage" class="row mx-0 mt-2">
+                    <div class="col py-0 text-bg-light">Image</div>
+                    <div class="col p-0">
+                      <input class="form-control py-0" type="file" @change="charge_image" accept="image/*, application/pdf"/>
+                    </div>
+                    <div v-if="page.edition.choix.image_url!==undefined" class="p-2 text-center">
+                      <img :src="page.edition.choix.image_url" alt="image" class="w-50">
                     </div>
                   </div>
                 </div>

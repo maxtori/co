@@ -16,6 +16,7 @@ type phase =
   | Enregistrement of {
       ideaux: string list; travers_options: string list;
       nom: string; label: string; ideal: string; travers: string;
+      description: string; image: string option; image_url: string option;
     }
 [@@deriving jsoo {remove_undefined; snake}]
 
@@ -62,6 +63,12 @@ type choix_edition = {
   voies: (voie_type * int) list;
   equipements: equipement_et_nombre list;
   equipement: equipement_nom * int;
+  description: string;
+  image: string option;
+  image_url: string option;
+  nom: string;
+  ideal: string;
+  travers: string;
 } [@@deriving jsoo]
 
 type edition = {
@@ -71,6 +78,8 @@ type edition = {
   equipements: equipement_et_nombre list;
   choix: choix_edition;
   ids: caracteristique_ou_bonus list;
+  ideaux: string list;
+  travers_options: string list;
 } [@@deriving jsoo]
 
 type page =
@@ -91,6 +100,8 @@ and modal_erreur : string option = None
 and points : points option = None
 and des : des option = None
 and tsp : int = Int32.to_int (to_int32 date##now) / 1000
+and image : string option = None
+and has_storage : bool = Option.is_some (Optdef.to_option Unsafe.global##.navigator##.storage)
 
 let genre_de_titre = function
   | `points_de_vigueur -> "Points de vigeur"
@@ -98,12 +109,11 @@ let genre_de_titre = function
   | `points_de_chance -> "Points de chance"
   | `points_de_mana -> "Points de mana"
 
-let upgrade db e =
-  if e.new_version = 1 && e.old_version = 0 then ignore (Personnages.create db)
-  else if e.old_version = 1 && e.new_version = 0 then db##deleteObjectStore (string "personnages")
-
-let open_db f =
+let ouvre_db f =
   Personnages.set_name "personnages";
+  let upgrade db e =
+    if e.new_version = 1 && e.old_version = 0 then ignore (Personnages.create db)
+    else if e.old_version = 1 && e.new_version = 0 then db##deleteObjectStore (string "personnages") in
   openDB "co" ~upgrade ~version:1 f
 
 let ouverture_fichier fichier f =
@@ -113,6 +123,14 @@ let ouverture_fichier fichier f =
       Opt.iter (File.CoerceTo.string (reader##.result)) (fun s -> f (to_string s));
     _true);
   reader##(readAsText fichier)
+
+let ouverture_image fichier f =
+  let reader = new%js File.fileReader in
+  reader##.onloadend := Dom.handler (fun _evt ->
+    if reader##.readyState = File.DONE then
+      Opt.iter (File.CoerceTo.arrayBuffer (reader##.result)) (fun a -> f a);
+    _true);
+  reader##(readAsArrayBuffer fichier)
 
 let backup app =
   let st = Personnages.store ~mode:READONLY app##.db in
@@ -243,7 +261,17 @@ let route app p =
   | Personnage {perso; _} ->
     chargement_voies (List.map fst perso.voies) @@ fun _ ->
     chargement_equipements (List.map fst perso.equipements) @@ fun _ ->
-    f app
+    begin match perso.image with
+      | None -> f app
+      | Some nom_fichier ->
+        let st = Unsafe.global##.navigator##.storage in
+        Promise.jthen st##getDirectory @@ fun dir ->
+        Promise.jthen (dir##getFileHandle (string nom_fichier)) @@ fun fh ->
+        Promise.jthen fh##getFile @@ fun fi ->
+        let url = Dom_html.window##._URL##createObjectURL fi in
+        app##.image := def url;
+        f app
+    end
   | Creation { creation = Voies {voies; _}; _ } ->
     chargement_voies voies @@ fun _ ->
     f app
@@ -307,16 +335,23 @@ and dir app p = route app p
 
 and home app = init app
 and edition app = match page_of_jsoo app##.page with
-  | Personnage { label; perso=p } ->
+  | Personnage { label; perso=p; _ } ->
     let ids = List.map snd caracteristique_assoc @ List.map snd bonus_assoc in
+    let ideal = match p.ideal with None -> "" | Some ideal -> ideal_to_str ideal in
+    let travers = match p.travers with None -> "" | Some t -> travers_to_str t in
     let choix = {
       niveau=p.niveau; caracteristiques=p.caracteristiques_base;
       bonuses = p.bonuses; bonus = ("", Bonus {id=`AGI; valeur=`int 0; opt=None});
-      voies=p.voies; equipements=p.equipements; equipement=(`autre "", 1) } in
+      voies=p.voies; equipements=p.equipements; equipement=(`autre "", 1);
+      description=p.description; image_url=to_optdef to_string app##.image; image=p.image;
+      nom=p.nom; ideal; travers;
+    } in
     let voies = voies_peuple p.peuple @ voies_profil p.profil in
     let edition = {
       label; perso=p; voies; choix; ids;
-      equipements=List.map (fun (_, e) -> e, None) equipement_nom_assoc } in
+      equipements=List.map (fun (_, e) -> e, None) equipement_nom_assoc;
+      ideaux = "" :: (List.map fst ideal_assoc);
+      travers_options = "" :: (List.map fst travers_assoc) } in
     route app (page_to_jsoo (Edition edition))
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"
 
@@ -403,17 +438,19 @@ and phase_suivante app =
             let perso = remplit_caracteristiques perso def_equipement agi_max in
             let ideaux = "" :: (List.map fst ideal_assoc) in
             let travers_options = "" :: (List.map fst travers_assoc) in
-            let creation = Enregistrement {ideaux; travers_options; nom=""; label=""; ideal=""; travers=""} in
+            let creation = Enregistrement {
+              ideaux; travers_options; nom=""; label=""; ideal=""; travers="";
+              description=""; image=None; image_url=None } in
             edition_personnage ~creation app label perso;
             let p = Creation { perso; creation; label } in
             route app (page_to_jsoo p)
           | Some e -> alert app e
         end
-      | Enregistrement {nom; label=lbl; ideal; travers; _} ->
+      | Enregistrement {nom; label=lbl; ideal; travers; description; image; _} ->
         if nom = "" then alert app "nom vide" else
         let ideal = List.assoc_opt ideal ideal_assoc in
         let travers = List.assoc_opt travers travers_assoc in
-        let perso = { perso with nom; ideal; travers } in
+        let perso = { perso with nom; ideal; travers; description; image } in
         let lbl = if lbl = "" then Format.sprintf "%s_%d" nom perso.niveau else lbl in
         ajout_personnage app lbl perso @@ fun app {perso; _} ->
         suppression_personnage app label;
@@ -536,8 +573,13 @@ and equipements _app l kind =
 and edite app = match page_of_jsoo app##.page with
   | Edition e ->
     if not (verifie_caracteristiques e.choix.caracteristiques) then alert app "caracteristiques non valables" else
-    let p = { e.perso with niveau = e.choix.niveau; equipements=e.choix.equipements;
-                           bonuses=e.choix.bonuses } in
+    let ideal = if e.choix.ideal="" then None else Some (ideal_of_str e.choix.ideal) in
+    let travers = if e.choix.travers="" then None else Some (travers_of_str e.choix.travers) in
+    let p = {
+      e.perso with
+      niveau = e.choix.niveau; equipements=e.choix.equipements;
+      bonuses=e.choix.bonuses; image=e.choix.image; description=e.choix.description;
+      nom = e.choix.nom; ideal; travers } in
     begin match verifie_voies p e.choix.voies with
       | None ->
         let p = { p with voies=e.choix.voies } in
@@ -595,6 +637,35 @@ and pp_voie _app v =
   let b = String.starts_with ~prefix:"demi_" s in
   string @@ String.capitalize_ascii @@ String.map (function '_' -> if b then '-' else ' ' | c -> c) s
 
+and [@noconv] charge_image app (ev: Dom_html.inputElement Dom.event t) =
+  let aux ~nom ~label target f =
+    let fichier = List.hd @@ Dom.list_of_nodeList target##.files in
+    ouverture_image fichier @@ fun a ->
+    let st = Unsafe.global##.navigator##.storage in
+    Promise.jthen st##persist @@ fun b ->
+    if not (to_bool b) then () else
+    Promise.jthen st##getDirectory @@ fun dir ->
+    let nom = if nom = "" then label else nom in
+    let ext = Filename.extension (to_string fichier##.name) in
+    let nom_fichier = String.lowercase_ascii (nom ^ ext) in
+    Promise.jthen (dir##getFileHandle_1 (string nom_fichier) (object%js val create= _true end)) @@ fun fh ->
+    Promise.jthen fh##createWritable @@ fun wr ->
+    Promise.jthen (wr##write a) @@ fun () ->
+    Promise.jthen wr##close @@ fun () ->
+    Promise.jthen fh##getFile @@ fun fi ->
+    let url = Dom_html.window##._URL##createObjectURL fi in
+    f nom_fichier url in
+  match Opt.to_option ev##.target, page_of_jsoo app##.page with
+  | Some target, Creation { label; creation=Enregistrement {nom; _}; _ } ->
+    aux ~nom ~label target @@ fun nom_fichier url ->
+    (Unsafe.coerce app)##.page##.creation##.creation##.enregistrement##.image_url_ := def url;
+    (Unsafe.coerce app)##.page##.creation##.creation##.enregistrement##.image := def (string nom_fichier)
+  | Some target, Edition { label; perso={ nom; _ }; _ } ->
+    aux ~nom ~label target @@ fun nom_fichier url ->
+    (Unsafe.coerce app)##.page##.edition##.choix##.image_url_ := def url;
+    (Unsafe.coerce app)##.page##.edition##.choix##.image := def (string nom_fichier)
+  | _ -> ()
+
 [%%mounted fun app ->
   let elt_erreur = Dom_html.getElementById "erreur-modal" in
   let elt_des = Dom_html.getElementById "des-modal" in
@@ -621,7 +692,7 @@ and pp_voie _app v =
 ]
 
 let () =
-  open_db @@ fun db ->
+  ouvre_db @@ fun db ->
   let%data db : Ezjs_idb.Types.iDBDatabase t = db [@@noconv] in
   let app = [%app {conv; mount; unhide; export}] in
   Dom_html.window##.onpopstate := Dom_html.handler (fun (e : Dom_html.popStateEvent t) ->
