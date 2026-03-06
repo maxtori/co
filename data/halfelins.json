@@ -16,7 +16,10 @@
   },
   {
     "nom": "Petit veinard",
-    "description": "Le halfelin gagne 1 PC supplémentaire. De plus, il peut esquiver une attaque de son choix par combat (avant d’avoir pris connaissance des DM, mais pas un critique)."
+    "description": "Le halfelin gagne 1 PC supplémentaire. De plus, il peut esquiver une attaque de son choix par combat (avant d’avoir pris connaissance des DM, mais pas un critique).",
+    "bonus": [
+      { "id": "PC", "valeur": 1 }
+    ]
   },
   {
     "nom": "Vif et bien nourri",

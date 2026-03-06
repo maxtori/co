@@ -1,7 +1,11 @@
 [
   {
     "nom": "Diversité",
-    "description": "Un humain obtient un bonus de +3 aux tests de deux domaines associés à son origine géographique ou sociale (voir ci-dessous). De plus, il gagne 1 PC supplémentaire."
+    "description": "Un humain obtient un bonus de +3 aux tests de deux domaines associés à son origine géographique ou sociale (voir ci-dessous). De plus, il gagne 1 PC supplémentaire.",
+    "bonus": [
+      { "id": "PC", "valeur": 1 }
+    ],
+    "html":"<div class=\"mx-2 mb-2\"><div class=\"mx-0 row\"><div class=\"col-3 p-0 text-bg-light\">Montagnard</div><div class=\"col-9 p-0\">escalade et résistance au froid</div></div><div class=\"mx-0 row\"><div class=\"col-3 p-0 text-bg-light\">Citadin</div><div class=\"col-9 p-0\">commerce et résistance aux maladies</div></div><div class=\"mx-0 row\"><div class=\"col-3 p-0 text-bg-light\">Campagnard</div><div class=\"col-9 p-0\">météorologie et équitation</div></div><div class=\"mx-0 row\"><div class=\"col-3 p-0 text-bg-light\">Riverain</div><div class=\"col-9 p-0\">natation et navigation</div></div><div class=\"mx-0 row\"><div class=\"col-3 p-0 text-bg-light\">Sauvage</div><div class=\"col-9 p-0\">chasser et pister</div></div><div class=\"mx-0 row\"><div class=\"col-3 p-0 text-bg-light\">Nomade</div><div class=\"col-9 p-0\">orientation et résistance à la chaleur ou au froid</div></div></div>"
   },
   {
     "nom": "Instinct de survie",
@@ -9,7 +13,8 @@
   },
   {
     "nom": "Touche-à-tout",
-    "description": "Le personnage obtient une capacité de rang 1 ou 2 de n’importe quel profil au choix du joueur. Si la capacité est de rang 2 ou accorde un bonus de DEF, il doit respecter les limitations d’armure."
+    "description": "Le personnage obtient une capacité de rang 1 ou 2 de n’importe quel profil au choix du joueur. Si la capacité est de rang 2 ou accorde un bonus de DEF, il doit respecter les limitations d’armure.",
+    "voie": { "rang": 2 }
   },
   {
     "nom": "Loup parmi les loups",

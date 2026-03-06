@@ -12,7 +12,7 @@ type phase_creation =
   | Equipements of {
       possibilites: equipement_et_nombre list list;
       choix: equipement_et_nombre list }
-  | Voies of { voies: voie_type list; choix: voie_et_rang list }
+  | Voies of { voies: voie_et_rang list; choix: voie_et_rang list }
   | Enregistrement of {
       ideaux: string list; travers_options: string list;
       nom: string; label: string; ideal: string; travers: string;
@@ -273,7 +273,7 @@ let route ?(loading=true) app p =
         f app
     end
   | Creation { creation = Voies {voies; _}; _ } ->
-    chargement_voies voies @@ fun _ ->
+    chargement_voies (List.map fst voies) @@ fun _ ->
     f app
   | Creation { creation = Equipements {possibilites; _}; perso = {equipements; _}; _ } ->
     chargement_equipements (List.map fst (equipements @ List.flatten possibilites)) @@ fun _ ->
@@ -452,7 +452,8 @@ and phase_suivante app =
           let perso = remplit_caracteristiques perso def_equipement agi_max in
           let creation = match possibilites with
             | [] ->
-              let voies = voies_peuple perso.peuple @ voies_profil perso.profil in
+              let voies = List.map (fun v -> v, 5) @@
+                voies_peuple perso.peuple @ voies_profil perso.profil in
               Voies { voies; choix=[] }
             | _ ->
               let choix = List.map List.hd possibilites in
@@ -463,7 +464,7 @@ and phase_suivante app =
         else alert app "caracteristiques non valables"
       | Equipements { choix; _ } ->
         let equipements = perso.equipements @ choix in
-        let voies = voies_peuple perso.peuple @ voies_profil perso.profil in
+        let voies = List.map (fun v -> v, 5) @@ voies_peuple perso.peuple @ voies_profil perso.profil in
         let perso = { perso with equipements } in
         let creation = Voies { voies; choix=[] } in
         edition_personnage ~creation app label perso;
@@ -540,7 +541,7 @@ and choisit_capacite app vt rg =
     let l1 = List.map (fun (vt, v) -> vt, v, List.assoc vt l1) l in
     let voies = List.map (fun x -> x, 5) (voies_peuple peuple @ voies_profil profil) @
                 (voies_capacites l1) in
-    Format.printf "TEST0 %d@." (List.length voies);
+    chargement_voies (List.map fst voies) @@ fun _ ->
     x##.voies := of_listf voie_et_rang_to_jsoo voies in
   match page_of_jsoo app##.page with
   | Creation { creation; perso; _ } ->
@@ -549,7 +550,7 @@ and choisit_capacite app vt rg =
         let c = (Unsafe.coerce app)##.page##.creation##.creation##.voies##.choix in
         let _vt, _rg0, _rg = aux c choix in
         let l1 = to_listf voie_et_rang_of_jsoo c in
-        rafraichit_voies (Unsafe.coerce app)##.page##.creation##.voies perso.peuple perso.profil l1
+        rafraichit_voies (Unsafe.coerce app)##.page##.creation##.creation##.voies perso.peuple perso.profil l1
       | _ -> ()
     end
   | Edition { choix={voies; _}; perso; _} ->

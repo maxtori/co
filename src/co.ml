@@ -374,7 +374,8 @@ type voie_magicien = [
   | `Magie_elementaire
   | `Magie_protectrice
   | `Magie_universelle
-] [@@deriving encoding {lower; assoc}, jsoo]
+] [@remove_prefix 0]
+[@@deriving encoding {lower; assoc}, jsoo]
 
 type voie_sorcier = [
   | `Demon
@@ -509,7 +510,7 @@ type bonus = {
 } [@@deriving encoding, jsoo]
 
 type voie_bonus = {
-  profils: profil list;
+  profils: profil list; [@dft []]
   rang: int;
 } [@@deriving encoding, jsoo]
 
@@ -746,11 +747,19 @@ let voies_profil = function
   | `Moine -> List.map snd voie_moine_assoc
   | `Pretre -> List.map snd voie_pretre_assoc
 
+let toutes_voies () = List.map snd @@
+  voie_arquebusier_assoc @ voie_barde_assoc @ voie_rodeur_assoc @ voie_voleur_assoc @
+  voie_barbare_assoc @ voie_chevalier_assoc @ voie_guerrier_assoc @ voie_ensorceleur_assoc @
+  voie_forgesort_assoc @ voie_magicien_assoc @ voie_sorcier_assoc @ voie_druide_assoc @
+  voie_moine_assoc @ voie_pretre_assoc
+
 let voies_capacite v rg =
   let l, _ = List.fold_left (fun (acc, irg) (c: capacite) ->
     if irg > rg then (acc, irg+1) else
     let acc = match c.voie with
-      | Some {profils; rang} -> acc @ (List.map (fun v -> v, rang) @@ List.flatten @@ List.map voies_profil profils)
+      | Some {profils; rang} ->
+        let voies = match profils with [] -> toutes_voies () | _ -> List.flatten @@ List.map voies_profil profils in
+        acc @ (List.map (fun v -> v, rang) @@ voies)
       | _ -> acc in
     acc, irg+1
   ) ([], 1) v in
