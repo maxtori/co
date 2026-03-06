@@ -522,6 +522,7 @@ type capacite = {
   sort: bool; [@dft false]
   bonus: bonus list; [@dft []]
   voie: voie_bonus option;
+  html: string option;
 } [@@deriving encoding, jsoo]
 
 type voie = capacite list [@@deriving encoding, jsoo]
