@@ -9,8 +9,7 @@
   },
   {
     "nom": "Lien empathique",
-    "description": "Le rôdeur peut communiquer avec son loup par télépathie et le guérir à distance en dépensant ses propres PV (1 PV du rôdeur pour 1 PV octroyé au loup, sans limitation de quantité) au prix d’une
-action limitée.",
+    "description": "Le rôdeur peut communiquer avec son loup par télépathie et le guérir à distance en dépensant ses propres PV (1 PV du rôdeur pour 1 PV octroyé au loup, sans limitation de quantité) au prix d’une action limitée.",
     "action": "limitée"
   },
   {

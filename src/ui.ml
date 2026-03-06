@@ -2,17 +2,17 @@ open Ezjs_min
 open Ezjs_idb
 open Co
 
-type phase =
+type phase_creation =
   | Profil of { profils: (famille * profil list) list; choix: (famille * profil) option }
   | Peuple of { peuples: peuple list; choix: peuple option }
   | Caracteristiques of {
-      bonuses: avec_nom list list;
-      choix: caracteristiques; choix_bonus: (avec_nom list * int) option
+      bonuses: bonus_avec_nom list list;
+      choix: caracteristiques; choix_bonus: (bonus_avec_nom list * int) option
     }
   | Equipements of {
       possibilites: equipement_et_nombre list list;
       choix: equipement_et_nombre list }
-  | Voies of { voies: voie_type list; choix: (voie_type * int) list }
+  | Voies of { voies: voie_type list; choix: voie_et_rang list }
   | Enregistrement of {
       ideaux: string list; travers_options: string list;
       nom: string; label: string; ideal: string; travers: string;
@@ -22,13 +22,13 @@ type phase =
 
 type avec_phase = {
   perso: personnage;
-  creation: phase option;
+  creation: phase_creation option;
 } [@@deriving jsoo]
 
 type avec_label = {
   label: string;
   perso: personnage;
-  creation: phase option;
+  creation: phase_creation option;
 } [@@deriving jsoo]
 
 module Personnages = Store(StringTr)(struct
@@ -58,9 +58,9 @@ type des = {
 type choix_edition = {
   niveau: int;
   caracteristiques: caracteristiques;
-  bonuses: avec_nom list;
-  bonus: avec_nom;
-  voies: (voie_type * int) list;
+  bonuses: bonus_avec_nom list;
+  bonus: bonus_avec_nom;
+  voies: voie_et_rang list;
   equipements: equipement_et_nombre list;
   equipement: equipement_nom * int;
   description: string;
@@ -74,7 +74,7 @@ type choix_edition = {
 type edition = {
   label: string;
   perso: personnage;
-  voies: voie_type list;
+  voies: voie_et_rang list;
   equipements: equipement_et_nombre list;
   choix: choix_edition;
   ids: caracteristique_ou_bonus list;
@@ -87,7 +87,7 @@ type page =
   | Personnages of avec_label list
   | Personnage of { label: string; perso: personnage }
   | Importation of string
-  | Creation of { label: string; perso: personnage; creation: phase }
+  | Creation of { label: string; perso: personnage; creation: phase_creation }
   | Edition of edition
   | Backup of (Unsafe.any js_array t js_array t [@ignore])
 [@@deriving jsoo {remove_undefined; snake}]
@@ -219,10 +219,10 @@ let charge_equipement e f =
         f (Some equipement)
 
 let chargement_voies l f =
-  let rec aux = function
-    | [] -> f ()
-    | v :: tl -> charge_voie v (fun _ -> aux tl) in
-  aux l
+  let rec aux acc = function
+    | [] -> f (List.rev acc)
+    | vt :: tl -> charge_voie vt (function None -> aux acc tl | Some v -> aux ((vt, v) :: acc) tl) in
+  aux [] l
 
 let chargement_equipements l f =
   let rec aux = function
@@ -239,10 +239,10 @@ let alert app s =
   let md = new%js cs (string "#erreur-modal") in
   ignore md##show
 
-let route app p =
-  app##.page := page_to_jsoo Chargement;
+let route ?(loading=true) app p =
   app##.tsp := Int32.to_int (to_int32 date##now) / 1000;
   let p0, p1 = unproxy app##.page, unproxy p in
+  if loading then (app##.page := page_to_jsoo Chargement);
   Firebug.console##log_3 p0 (string "-->") p1;
   let state p = some @@ Unsafe.coerce p  in
   Dom_html.window##.history##replaceState (state p0) (string "") null;
@@ -254,7 +254,7 @@ let route app p =
     let rec aux = function
       | [] -> f app
       | ({perso; _}: avec_label) :: tl ->
-        chargement_voies (List.map fst perso.voies) @@ fun () ->
+        chargement_voies (List.map fst perso.voies) @@ fun _ ->
         chargement_equipements (List.map fst perso.equipements) @@ fun _ ->
         aux tl in
     aux l
@@ -279,7 +279,7 @@ let route app p =
     chargement_equipements (List.map fst (equipements @ List.flatten possibilites)) @@ fun _ ->
     f app
   | Edition { voies; equipements=l; choix={equipements; _}; _ } ->
-    chargement_voies voies @@ fun _ ->
+    chargement_voies (List.map fst voies) @@ fun _ ->
     chargement_equipements (List.map fst equipements) @@ fun _ ->
     chargement_equipements_async (List.map fst l);
     f app
@@ -318,6 +318,32 @@ let telecharge name s =
   elt##.download := string (Format.sprintf "%s.json" name);
   elt##click
 
+let sauvergarde_fichier_persistent nom a f =
+  let st = Unsafe.global##.navigator##.storage in
+  Promise.jthen st##persist @@ fun b ->
+  if not (to_bool b) then () else
+    Promise.jthen st##getDirectory @@ fun dir ->
+    Promise.jthen (dir##getFileHandle_1 (string nom) (object%js val create= _true end)) @@ fun fh ->
+    Promise.jthen fh##createWritable @@ fun wr ->
+    Promise.jthen (wr##write a) @@ fun () ->
+    Promise.jthen wr##close @@ fun () ->
+    Promise.jthen fh##getFile @@ fun fi ->
+    let url = Dom_html.window##._URL##createObjectURL fi in
+    f nom url
+
+let capacites l =
+  let sub n l =
+    let rec aux acc n = function
+      | [] -> List.rev acc
+      | _ when n = 0 -> List.rev acc
+      | h :: tl -> aux (h :: acc) (n-1) tl in
+    aux [] n l in
+  List.flatten @@ List.map (fun (vt, rg) ->
+    let v = List.assoc vt !voies in
+    sub rg v) l
+
+(* methods *)
+
 let%meth commence_creation app =
   let profils = profils () in
   let label = Format.sprintf "perso_%ld" (to_int32 date##now) in
@@ -335,20 +361,23 @@ and dir app p = route app p
 
 and home app = init app
 and edition app = match page_of_jsoo app##.page with
-  | Personnage { label; perso=p; _ } ->
-    let ids = List.map snd caracteristique_assoc @ List.map snd bonus_assoc in
-    let ideal = match p.ideal with None -> "" | Some ideal -> ideal_to_str ideal in
-    let travers = match p.travers with None -> "" | Some t -> travers_to_str t in
+  | Personnage { label; perso; _ } ->
+    let ids = List.map snd caracteristique_assoc @ List.map snd bonus_type_assoc in
+    let ideal = match perso.ideal with None -> "" | Some ideal -> ideal_to_str ideal in
+    let travers = match perso.travers with None -> "" | Some t -> travers_to_str t in
     let choix = {
-      niveau=p.niveau; caracteristiques=p.caracteristiques_base;
-      bonuses = p.bonuses; bonus = ("", Bonus {id=`AGI; valeur=`int 0; opt=None});
-      voies=p.voies; equipements=p.equipements; equipement=(`autre "", 1);
-      description=p.description; image_url=to_optdef to_string app##.image; image=p.image;
-      nom=p.nom; ideal; travers;
+      niveau=perso.niveau; caracteristiques=perso.caracteristiques_base;
+      bonuses = perso.bonuses; bonus = ("", {id=`AGI; valeur=`int 0; opt=None});
+      voies=perso.voies; equipements=perso.equipements; equipement=(`autre "", 1);
+      description=perso.description; image_url=to_optdef to_string app##.image; image=perso.image;
+      nom=perso.nom; ideal; travers;
     } in
-    let voies = voies_peuple p.peuple @ voies_profil p.profil in
+    chargement_voies (List.map fst perso.voies) @@ fun l ->
+    let l = List.map (fun (vt, v) -> vt, v, List.assoc vt perso.voies) l in
+    let voies = List.map (fun x -> x, 5) (voies_peuple perso.peuple @ voies_profil perso.profil) @
+                (voies_capacites l) in
     let edition = {
-      label; perso=p; voies; choix; ids;
+      label; perso; voies; choix; ids;
       equipements=List.map (fun (_, e) -> e, None) equipement_nom_assoc;
       ideaux = "" :: (List.map fst ideal_assoc);
       travers_options = "" :: (List.map fst travers_assoc) } in
@@ -363,10 +392,26 @@ and [@noconv] importation app (ev: Dom_html.inputElement Dom.event t) =
     route app (page_to_jsoo (Personnage {label=p.label; perso=p.perso}))
   | _ -> ()
 
-and voie _app v =
+and voie app v rg =
   match List.assoc_opt (voie_type_of_jsoo v) !voies with
   | None -> log_str "voie non trouvée"; undefined
-  | Some v -> def (voie_to_jsoo v)
+  | Some v ->
+    let rg = Option.value ~default:5 @@ Optdef.to_option rg in
+    let perso_bonuses = match page_of_jsoo app##.page with
+      | Personnage { perso; _ } -> perso.bonuses
+      | _ -> [] in
+    let v, _ = List.fold_left (fun (acc, i) (c: capacite) ->
+      if i > rg then (acc, i+1) else
+      let bonus = List.filter_map (fun b -> match b.opt with
+        | None -> None
+        | Some _ ->
+          if List.exists (fun (n2, b2) -> n2 = c.nom && b.id = b2.id) perso_bonuses then
+            Some { b with opt=Some (Some true) }
+          else Some { b with opt=Some (Some false) }
+      ) c.bonus in
+      acc @ [ { c with bonus } ], i+1
+    ) ([], 1) v in
+    def (voie_to_jsoo v)
 
 and phase_suivante app =
   match page_of_jsoo app##.page with
@@ -425,10 +470,11 @@ and phase_suivante app =
         let p = Creation { perso; creation; label } in
         route app (page_to_jsoo p)
       | Voies { choix=l; _ } ->
-        begin match verifie_voies perso l with
+        let capacites = capacites l in
+        begin match verifie_voies ~capacites { perso with voies=l } with
           | None ->
             let perso = { perso with voies=l } in
-            let bonus_voies = bonus_voies @@ List.filter_map (fun (v, rg) -> Option.map (fun v -> v, rg) @@ List.assoc_opt v !voies) l in
+            let bonus_voies = bonus_capacites @@ List.filter_map (fun (v, rg) -> Option.map (fun v -> v, rg) @@ List.assoc_opt v !voies) l in
             let def_equipement, agi_max = List.fold_left (fun (def, agi) (e, _) ->
               match List.assoc_opt e !equipements with
               | Some Armure { defense; agilite_max; _ } ->
@@ -476,29 +522,41 @@ and choisit_capacite app vt rg =
     | [] -> None
     | h :: _ when f h -> Some (i, h)
     | _ :: q -> findi f (i+1) q in
-  let splice choix start dcount x =
+  let splice arr start dcount x =
     match x with
-    | None -> ignore ((Unsafe.coerce choix)##splice start dcount)
+    | None -> ignore ((Unsafe.coerce arr)##splice start dcount)
     | Some rg ->
-      ignore (choix##splice start dcount (array [|Unsafe.inject vt; Unsafe.inject rg|])) in
+      ignore (arr##splice start dcount (array [|Unsafe.inject vt; Unsafe.inject rg|])) in
   let aux c choix =  match findi (fun (c, _i) -> c = voie_type_of_jsoo vt) 0 choix with
-    | None -> splice c (List.length choix) 0 (Some rg)
-    | Some (i, (_, rg0)) ->
+    | None -> splice c (List.length choix) 0 (Some rg); voie_type_of_jsoo vt, 0, rg
+    | Some (i, (vt, rg0)) ->
       if rg0 < rg then splice c i 1 (Some rg)
       else if rg0 = rg && rg = 1 then splice c i 1 None
       else if rg0 = rg then splice c i 1 (Some (rg-1))
-      else splice c i 1 (Some rg) in
+      else splice c i 1 (Some rg);
+      vt, rg0, rg in
+  let rafraichit_voies x peuple profil l1 =
+    chargement_voies (List.map fst l1) @@ fun l ->
+    let l1 = List.map (fun (vt, v) -> vt, v, List.assoc vt l1) l in
+    let voies = List.map (fun x -> x, 5) (voies_peuple peuple @ voies_profil profil) @
+                (voies_capacites l1) in
+    Format.printf "TEST0 %d@." (List.length voies);
+    x##.voies := of_listf voie_et_rang_to_jsoo voies in
   match page_of_jsoo app##.page with
-  | Creation { creation; _ } ->
+  | Creation { creation; perso; _ } ->
     begin match creation with
       | Voies { choix; _ } ->
         let c = (Unsafe.coerce app)##.page##.creation##.creation##.voies##.choix in
-        aux c choix
+        let _vt, _rg0, _rg = aux c choix in
+        let l1 = to_listf voie_et_rang_of_jsoo c in
+        rafraichit_voies (Unsafe.coerce app)##.page##.creation##.voies perso.peuple perso.profil l1
       | _ -> ()
     end
-  | Edition { choix={voies; _}; _} ->
+  | Edition { choix={voies; _}; perso; _} ->
     let c = (Unsafe.coerce app)##.page##.edition##.choix##.voies in
-    aux c voies
+    let _vt, _rg0, _rg = aux c voies in
+    let l1 = to_listf voie_et_rang_of_jsoo c in
+    rafraichit_voies (Unsafe.coerce app)##.page##.edition perso.peuple perso.profil l1
   | _ -> ()
 
 and detruit_personnage app n =
@@ -580,10 +638,11 @@ and edite app = match page_of_jsoo app##.page with
       niveau = e.choix.niveau; equipements=e.choix.equipements;
       bonuses=e.choix.bonuses; image=e.choix.image; description=e.choix.description;
       nom = e.choix.nom; ideal; travers } in
-    begin match verifie_voies p e.choix.voies with
+    let capacites = capacites e.choix.voies in
+    begin match verifie_voies ~capacites { p with voies = e.choix.voies } with
       | None ->
         let p = { p with voies=e.choix.voies } in
-        let bonus_voies = bonus_voies @@ List.filter_map (fun (v, rg) -> Option.map (fun v -> v, rg) @@ List.assoc_opt v !voies) e.choix.voies in
+        let bonus_voies = bonus_capacites @@ List.filter_map (fun (v, rg) -> Option.map (fun v -> v, rg) @@ List.assoc_opt v !voies) e.choix.voies in
         let bonuses = List.fold_left (fun acc (n, b) ->
           match List.find_opt (fun (n2, _) -> n = n2) acc with
           | None -> acc @ [ n, b ]
@@ -620,7 +679,7 @@ and ajoute_equipement app = match page_of_jsoo app##.page with
 and ajoute_bonus app = match page_of_jsoo app##.page with
   | Edition { choix = { bonuses; bonus; _ }; _ } ->
     let bonuses = bonuses @ [ bonus ] in
-    (Unsafe.coerce app)##.page##.edition##.choix##.bonuses := of_listf avec_nom_to_jsoo bonuses
+    (Unsafe.coerce app)##.page##.edition##.choix##.bonuses := of_listf bonus_avec_nom_to_jsoo bonuses
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"
 
 and pp_equipement _app e =
@@ -641,20 +700,10 @@ and [@noconv] charge_image app (ev: Dom_html.inputElement Dom.event t) =
   let aux ~nom ~label target f =
     let fichier = List.hd @@ Dom.list_of_nodeList target##.files in
     ouverture_image fichier @@ fun a ->
-    let st = Unsafe.global##.navigator##.storage in
-    Promise.jthen st##persist @@ fun b ->
-    if not (to_bool b) then () else
-    Promise.jthen st##getDirectory @@ fun dir ->
     let nom = if nom = "" then label else nom in
     let ext = Filename.extension (to_string fichier##.name) in
     let nom_fichier = String.lowercase_ascii (nom ^ ext) in
-    Promise.jthen (dir##getFileHandle_1 (string nom_fichier) (object%js val create= _true end)) @@ fun fh ->
-    Promise.jthen fh##createWritable @@ fun wr ->
-    Promise.jthen (wr##write a) @@ fun () ->
-    Promise.jthen wr##close @@ fun () ->
-    Promise.jthen fh##getFile @@ fun fi ->
-    let url = Dom_html.window##._URL##createObjectURL fi in
-    f nom_fichier url in
+    sauvergarde_fichier_persistent nom_fichier a f in
   match Opt.to_option ev##.target, page_of_jsoo app##.page with
   | Some target, Creation { label; creation=Enregistrement {nom; _}; _ } ->
     aux ~nom ~label target @@ fun nom_fichier url ->
@@ -665,6 +714,41 @@ and [@noconv] charge_image app (ev: Dom_html.inputElement Dom.event t) =
     (Unsafe.coerce app)##.page##.edition##.choix##.image_url_ := def url;
     (Unsafe.coerce app)##.page##.edition##.choix##.image := def (string nom_fichier)
   | _ -> ()
+
+and [@noconv] choisit_bonus_capacite app (ev: Dom_html.inputElement Dom.event t) nom b =
+  let aux ~label ~checked (perso: personnage) =
+    let nom = to_string nom in
+    let b = bonus_of_jsoo b in
+    let bonuses =
+      if checked then
+        let b = { b with opt=Some (Some true) } in
+        perso.bonuses @ [ nom, b ]
+      else
+        List.filter (fun (n, b2) -> not (n = nom && b.id = b2.id)) perso.bonuses in
+    let perso = { perso with bonuses } in
+    let def_equipement, agi_max = List.fold_left (fun (def, agi) (e, _) ->
+      match List.assoc_opt e !equipements with
+      | Some Armure { defense; agilite_max; _ } ->
+        def + defense, Option.fold ~none:agi ~some:(fun a -> min a agi) agilite_max
+      | _ -> def, agi) (0, 8) perso.equipements in
+    let perso = remplit_caracteristiques perso def_equipement agi_max in
+    edition_personnage app label perso;
+    perso in
+  match Opt.to_option ev##.target with
+  | None -> ()
+  | Some target ->
+    let checked = to_bool target##.checked in
+    match page_of_jsoo app##.page with
+    | Personnage {perso; label} ->
+      let perso = aux ~label ~checked perso in
+      let p = Personnage {label; perso} in
+      route ~loading:false app (page_to_jsoo p)
+    (* | Edition e -> *)
+    (*   let perso = aux ~label:e.label ~checked e.perso in *)
+    (*   let choix = { e.choix with bonuses = perso.bonuses } in *)
+    (*   let p = Edition { e with choix; perso } in *)
+    (*   route ~loading:false app (page_to_jsoo p) *)
+    | _ -> ()
 
 [%%mounted fun app ->
   let elt_erreur = Dom_html.getElementById "erreur-modal" in

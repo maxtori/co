@@ -305,7 +305,7 @@
                 <div class="accordion-body p-0">
 
                   <div class="accordion" :id="'voie-accordeon-'+v[0]">
-                    <div v-for="(c, i) in voie(v[0]).slice(0,v[1])" class="accordion-item">
+                    <div v-for="(c, i) in voie(v[0], v[1])" class="accordion-item">
                       <button class="accordion-button d-flex collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#'+v[0]+'-'+String(i)">
                         <span class="flex-fill">{{ c.nom }}</span>
                         <span class="me-3">{{ i+1 }}</span>
@@ -317,6 +317,14 @@
                             <div v-if="c.action.length!=0" class="col">{{ c.action.join(' / ') }}</div>
                           </div>
                           <p class="p-2 mb-0">{{ c.description }}</p>
+                          <div class="d-flex flex-wrap justify-content-center">
+                            <div v-for="(b, j) in c.bonus" class="p-2">
+                              <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" v-model="b.opt" @change="function (ev) { choisit_bonus_capacite(ev, c.nom, b) }" :id="'personnage-voies-bonus-'+String(i)+'-'+String(j)"/>
+                                <label class="form-check-label" :for="'personnage-voies-bonus-'+String(i)+'-'+String(j)">{{ b.id }}+{{ b.valeur }}</label>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -407,8 +415,8 @@
               <li v-for="(p, i) in page.creation.creation.caracteristiques.bonuses" class="list-group-item p-0" :class="(page.creation.creation.caracteristiques.choix_bonus && page.creation.creation.caracteristiques.choix_bonus[1]==i) ? 'active' : ''">
                 <div @click="function() { page.creation.creation.caracteristiques.choix_bonus = [ p, i ] }" class="row mx-0" role="button">
                   <div v-for="b in p" class="col border p-0 d-flex justify-content">
-                    <span class="flex-fill">{{ b[1].bonus.id }}</span>
-                    <span class="flex-fill text-bg-light">{{ b[1].bonus.valeur }}</span>
+                    <span class="flex-fill">{{ b[1].id }}</span>
+                    <span class="flex-fill text-bg-light">{{ b[1].valeur }}</span>
                   </div>
                 </div>
               </li>
@@ -425,7 +433,7 @@
             <ul class="list-group">
               <li v-for="e in equipements(page.creation.perso.equipements, undefined)" class="list-group-item text-center p-0">
                 <div class="row mx-0">
-                  <span class="col border p-0 text-bg-light">{{ (e[1].arme.arme[0].nombre!==undefined && e[1].arme.arme[0].nombre!=1) ? String(e[1].arme.arme[0].nombre)+' ' : '' }}{{ pp_equipement(e[0]) }}</span>
+                  <span class="col border p-0 text-bg-light">{{ (e[1].arme!==undefined && e[1].arme.arme[0].nombre!==undefined && e[1].arme.arme[0].nombre!=1) ? String(e[1].arme.arme[0].nombre)+' ' : '' }}{{ pp_equipement(e[0]) }}</span>
                   <template v-if="e[1].arme!==undefined && e[1].arme.arme[0].contact!==undefined">
                     <span class="col border p-0">
                       {{ e[1].arme.dommage[0]}}{{e[1].arme.dommage[1] }} {{ (page.creation.perso.caracteristiques.force > 0) ? '+' : '' }}{{ page.creation.perso.caracteristiques.force }}
@@ -459,7 +467,7 @@
               <ul class="list-group">
                 <li v-for="e in l" class="list-group-item p-0 text-center" :class="(page.creation.creation.equipements.choix[i][0]==e[0]) ? 'active' : ''">
                   <button class="btn w-100" @click="page.creation.creation.equipements.choix[i]=e">
-                    {{ e[0] }}
+                    {{ pp_equipement(e[0]) }}
                   </button>
                 </li>
               </ul>
@@ -474,7 +482,7 @@
                   {{ pp_voie(vt) }}
                 </button>
                 <ul class="list-group collapse" :id="vt">
-                  <li v-for="(c, i) in voie(vt)" class="list-group-item list-group-item-action p-0" :class="(capacite_choisie(vt, i+1)) ? 'active' : ''" @click="choisit_capacite(vt, i+1)" role="button">
+                  <li v-for="(c, i) in voie(vt, undefined)" class="list-group-item list-group-item-action p-0" :class="(capacite_choisie(vt, i+1)) ? 'active' : ''" @click="choisit_capacite(vt, i+1)" role="button">
                     <div class="w-100 d-flex">
                       <span class="border border-secondary border-2 px-3">{{ i + 1 }}</span>
                       <strong class="flex-fill text-bg-light">{{ c.nom }}</strong>
@@ -625,11 +633,11 @@
                 <div class="accordion-body p-0">
                   <ul class="list-group">
                     <li v-for="vt in page.edition.voies" class="list-group-item p-0 text-center">
-                      <button class="btn w-100" data-bs-toggle="collapse" :data-bs-target="'#edition-'+vt" aria-expanded="false">
-                        {{ pp_voie(vt) }}
+                      <button class="btn w-100" data-bs-toggle="collapse" :data-bs-target="'#edition-'+vt[0]" aria-expanded="false">
+                        {{ pp_voie(vt[0]) }}
                       </button>
-                      <ul class="list-group collapse" :id="'edition-'+vt">
-                        <li v-for="(c, i) in voie(vt)" class="list-group-item list-group-item-action p-0" :class="(capacite_choisie(vt, i+1)) ? 'active' : ''" @click="choisit_capacite(vt, i+1)">
+                      <ul class="list-group collapse" :id="'edition-'+vt[0]">
+                        <li v-for="(c, i) in voie(vt[0], vt[1])" class="list-group-item list-group-item-action p-0" :class="(capacite_choisie(vt[0], i+1)) ? 'active' : ''" role="button" @click="choisit_capacite(vt[0], i+1)">
                           <div class="w-100 d-flex">
                             <span class="border border-secondary border-2 px-3">{{ i + 1 }}</span>
                             <strong class="flex-fill text-bg-light">{{ c.nom }}</strong>
@@ -684,26 +692,24 @@
               <div id="edition-bonuses" class="accordion-collapse collapse" data-bs-parent="#edition-accordeon">
                 <div class="accordion-body p-0">
                   <div v-for="(b, i) in page.edition.choix.bonuses" class="row mx-0 text-center">
-                    <template v-if="b[1].bonus!==undefined">
-                      <div class="col p-0 border">{{ b[0] }}</div>
-                      <div class="col p-0 border">{{ b[1].bonus.id }}</div>
-                      <div class="col p-0 border">{{ b[1].bonus.valeur }}</div>
-                      <div class="col p-0 border">
-                        <button class="btn py-0 w-100 h-100" @click="page.edition.choix.bonuses.splice(i, 1)"><i class="bi bi-trash3"></i></button>
-                      </div>
-                    </template>
+                    <div class="col p-0 border">{{ b[0] }}</div>
+                    <div class="col p-0 border">{{ b[1].id }}</div>
+                    <div class="col p-0 border">{{ b[1].valeur }}</div>
+                    <div class="col p-0 border">
+                      <button class="btn py-0 w-100 h-100" @click="page.edition.choix.bonuses.splice(i, 1)"><i class="bi bi-trash3"></i></button>
+                    </div>
                   </div>
                   <div class="row mx-0">
                     <div class="col p-0 border">
                       <input class="form-control py-0" v-model="page.edition.choix.bonus[0]"/>
                     </div>
                     <div class="col p-0 border">
-                      <select class="form-select py-0" v-model="page.edition.choix.bonus[1].bonus.id">
+                      <select class="form-select py-0" v-model="page.edition.choix.bonus[1].id">
                         <option v-for="id in page.edition.ids" :value="id">{{ id }}</option>
                       </select>
                     </div>
                     <div class="col p-0 border">
-                      <input class="form-control py-0" v-model="page.edition.choix.bonus[1].bonus.valeur"/>
+                      <input class="form-control py-0" v-model="page.edition.choix.bonus[1].valeur"/>
                     </div>
                     <div class="col p-0 border">
                       <button class="btn py-0 w-100" @click="ajoute_bonus()"><i class="bi bi-plus"></i></button>

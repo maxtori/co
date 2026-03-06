@@ -74,7 +74,7 @@ type caracteristique = [
   | `VOL
 ] [@@deriving encoding {assoc}, jsoo]
 
-type bonus = [
+type bonus_type = [
   | `DEF
   | `INI
   | `WEA
@@ -84,16 +84,16 @@ type bonus = [
   | `PM
 ] [@@deriving encoding {assoc}, jsoo]
 
-type caracteristique_ou_bonus = [ caracteristique | bonus ] [@@deriving encoding]
+type caracteristique_ou_bonus = [ caracteristique | bonus_type ] [@@deriving encoding]
 
 [@@@jsoo
   class type caracteristique_ou_bonus_jsoo = Ezjs_min.js_string
   let caracteristique_ou_bonus_to_jsoo : caracteristique_ou_bonus -> caracteristique_ou_bonus_jsoo Ezjs_min.t = function
     | #caracteristique as v -> caracteristique_to_jsoo v
-    | #bonus as v -> bonus_to_jsoo v
+    | #bonus_type as v -> bonus_type_to_jsoo v
   let caracteristique_ou_bonus_of_jsoo : caracteristique_ou_bonus_jsoo Ezjs_min.t -> caracteristique_ou_bonus = fun v ->
     try (caracteristique_of_jsoo v :> caracteristique_ou_bonus) with _ ->
-    (bonus_of_jsoo v :> caracteristique_ou_bonus)
+    (bonus_type_of_jsoo v :> caracteristique_ou_bonus)
   let caracteristique_ou_bonus_jsoo_conv = caracteristique_ou_bonus_to_jsoo, caracteristique_ou_bonus_of_jsoo
 ]
 
@@ -502,19 +502,26 @@ let actions_enc = Json_encoding.union [
   Json_encoding.case (Json_encoding.list action_enc) Option.some Fun.id;
 ]
 
-type avec_valeur =
-  | Bonus of { id: caracteristique_ou_bonus; valeur: valeur; opt: bool option option }
-  | Voie of { voie: voie_type; rang: int }
-[@@deriving encoding, jsoo {snake}]
+type bonus = {
+  id: caracteristique_ou_bonus;
+  valeur: valeur;
+  opt: bool option option
+} [@@deriving encoding, jsoo]
 
-type avec_nom = string * avec_valeur [@@deriving encoding, jsoo]
+type voie_bonus = {
+  profils: profil list;
+  rang: int;
+} [@@deriving encoding, jsoo]
+
+type bonus_avec_nom = string * bonus [@@deriving encoding, jsoo]
 
 type capacite = {
   nom: string;
   description: string;
   action: action list; [@dft []] [@encoding actions_enc]
   sort: bool; [@dft false]
-  bonus: avec_valeur list; [@dft []]
+  bonus: bonus list; [@dft []]
+  voie: voie_bonus option;
 } [@@deriving encoding, jsoo]
 
 type voie = capacite list [@@deriving encoding, jsoo]
@@ -537,6 +544,7 @@ type points_avec_max = {
 } [@@deriving encoding, jsoo]
 
 type equipement_et_nombre = equipement_nom * int option [@@deriving encoding, jsoo]
+type voie_et_rang = voie_type * int [@@deriving encoding, jsoo]
 
 type personnage = {
   nom: string;
@@ -557,8 +565,8 @@ type personnage = {
   travers: travers option;
   description: string; [@dft ""]
   image: string option;
-  voies: (voie_type * int) list; [@dft []]
-  bonuses: avec_nom list;
+  voies: voie_et_rang list; [@dft []]
+  bonuses: bonus_avec_nom list;
 } [@@deriving encoding, jsoo]
 
 let caracteristiques_par_defaut peuple = match peuple with
@@ -649,7 +657,7 @@ let bonuses_peuple p c =
     | Nain -> "nain", [
         [ `CON, 1; `AGI, -1 ]; [ `VOL, 1; `AGI, -1 ];
       ] in
-  List.map (fun l -> List.map (fun (id, v) -> nom, Bonus {id; valeur=`int v; opt=None}) l) l
+  List.map (fun l -> List.map (fun (id, v) -> nom, {id; valeur=`int v; opt=None}) l) l
 
 let verifie_caracteristiques c =
   let acc = [] in
@@ -672,30 +680,25 @@ let verifie_caracteristiques c =
   | _ -> false
 
 let ajoute_caracteristiques ?(factor=1) c l =
-  List.fold_left (fun acc (_, b) -> match b with
-    | Voie _ -> acc
-    | Bonus {id; valeur; _} ->
-      match valeur with
-      | `car _ -> acc
-      | `int v ->
-        let v = factor * v in
-        match id with
-        | `AGI -> { acc with agilite = acc.agilite + v }
-        | `CON -> { acc with constitution = acc.constitution + v }
-        | `FOR -> { acc with force = acc.force + v }
-        | `PER -> { acc with perception = acc.perception + v }
-        | `CHA -> { acc with charisme = acc.charisme + v }
-        | `INT -> { acc with intelligence = acc.intelligence + v }
-        | `VOL -> { acc with volonte = acc.volonte + v }
-        | _ -> acc
+  List.fold_left (fun acc (_, b) ->
+    match b.valeur with
+    | `car _ -> acc
+    | `int v ->
+      let v = factor * v in
+      match b.id with
+      | `AGI -> { acc with agilite = acc.agilite + v }
+      | `CON -> { acc with constitution = acc.constitution + v }
+      | `FOR -> { acc with force = acc.force + v }
+      | `PER -> { acc with perception = acc.perception + v }
+      | `CHA -> { acc with charisme = acc.charisme + v }
+      | `INT -> { acc with intelligence = acc.intelligence + v }
+      | `VOL -> { acc with volonte = acc.volonte + v }
+      | _ -> acc
   ) c l
 
 let ajoute_bonus ?(factor=1) p l =
   List.fold_left (fun acc (_, b) ->
-    match b with
-    | Voie _ -> acc
-    | Bonus {id; valeur; _} ->
-    let v = factor * (match valeur with
+    let v = factor * (match b.valeur with
       | `int i -> i
       | `car c -> match c with
         | `AGI -> acc.caracteristiques.agilite
@@ -705,7 +708,7 @@ let ajoute_bonus ?(factor=1) p l =
         | `CHA -> acc.caracteristiques.charisme
         | `INT -> acc.caracteristiques.intelligence
         | `VOL -> acc.caracteristiques.volonte) in
-    match id with
+    match b.id with
     | `DEF -> { acc with defense = acc.defense + v }
     | `INI -> { acc with initiative = acc.initiative + v }
     | `WEA -> acc (* todo *)
@@ -742,56 +745,24 @@ let voies_profil = function
   | `Moine -> List.map snd voie_moine_assoc
   | `Pretre -> List.map snd voie_pretre_assoc
 
-let verifie_voies p voies =
-  let rg_peuple = List.fold_left (fun acc (v, rg) -> match v with
-    | #voie_peuple -> rg
-    | _ -> acc) 0 voies in
-  let rg_mage = match List.find_map (fun (v, rg) -> match v with
-    | `Mage -> Some rg
-    | _ -> None) voies with None -> 0 | Some rg -> rg in
-  let points_capacite, rg_max_sans_mage = List.fold_left (fun (acc, m) (v, rg) -> match v with
-    | `Mage -> acc + (if rg < 3 then 1 else 2), m
-    | _ -> acc + (if rg < 3 then 1 else 2), max m rg
-  ) (0, 0) voies in
-  let rg_max = max rg_mage rg_max_sans_mage in
-  let points_niveau = if rg_mage = 0 then 3 + 2 * p.niveau else 5 + 2 * p.niveau in
-  let niveau_capacite_check =
-    (p.niveau = 1 && (rg_max_sans_mage = 1 && rg_mage = 2 || rg_max_sans_mage = 2 && rg_mage = 1)) ||
-    (rg_max <= 3 && rg_max <= p.niveau) || (rg_max = 4 && p.niveau >= 5) ||
-    (rg_max = 5 && p.niveau >= 7) || (rg_max = 6 && p.niveau >= 9) ||
-    (rg_max = 7 && p.niveau >= 11) || (rg_max = 8 && p.niveau >= 13) in
-  let profil_check = List.fold_left (fun acc (v, _) ->
-    if not acc then acc else
-    match p.profil, p.peuple, v with
-    | _, Demi_elfe, (`Elfe_haut | `Elfe_sylvain | `Humain)
-    | _, Demi_orc, `Demi_orc
-    | _, Elfe_haut, `Elfe_haut
-    | _, Elfe_sylvain, `Elfe_sylvain
-    | _, Gnome, `Gnome
-    | _, Halfelin, `Halfelin
-    | _, Humain, `Humain
-    | _, Nain, `Nain
-    | `Arquebusier, _, #voie_arquebusier
-    | `Barde, _, #voie_barde
-    | `Rodeur, _, #voie_rodeur
-    | `Voleur, _, #voie_voleur
-    | `Barbare, _, #voie_barbare
-    | `Chevalier, _, #voie_chevalier
-    | `Guerrier, _, #voie_guerrier
-    | `Ensorceleur, _, (#voie_ensorceleur | #voie_mage)
-    | `Forgesort, _, (#voie_forgesort | #voie_mage)
-    | `Magicien, _, (#voie_magicien | #voie_mage)
-    | `Sorcier, _, (#voie_sorcier | #voie_mage)
-    | `Druide, _, #voie_druide
-    | `Moine, _, #voie_moine
-    | `Pretre, _, #voie_pretre -> true
-    | _ -> false) true voies in
-  let peuple_mage_check = (rg_mage = 0 && rg_peuple >= 1) || (rg_mage >= 1 && rg_peuple = 1) in
-  if not profil_check then Some "voie pas dans le profil" else
-  if not niveau_capacite_check then Some "rang de capacite trop haut" else
-  if not peuple_mage_check then Some "voie de peuple et mage ne peuvent pas être suivies ensemble" else
-  if points_capacite > points_niveau then Some "trop de capacites" else
-  None
+let voies_capacite v rg =
+  let l, _ = List.fold_left (fun (acc, irg) (c: capacite) ->
+    if irg > rg then (acc, irg+1) else
+    let acc = match c.voie with
+      | Some {profils; rang} -> acc @ (List.map (fun v -> v, rang) @@ List.flatten @@ List.map voies_profil profils)
+      | _ -> acc in
+    acc, irg+1
+  ) ([], 1) v in
+  l
+
+let voies_capacites l =
+  List.fold_left (fun acc (_, v, rg) ->
+    let l2 = voies_capacite v rg in
+    let l2 = List.filter (fun (vt2, _) ->
+      not (List.exists (fun (vt, _) -> vt = vt2) acc)
+    ) l2 in
+    acc @ l2
+  ) [] l
 
 let remplit_caracteristiques p def_equipement agi_max  =
   let caracteristiques = ajoute_caracteristiques p.caracteristiques_base p.bonuses in
@@ -852,16 +823,16 @@ let equipements_profil : profil -> (equipement_nom * int option) list list = fun
   | `Moine -> [ [`baton_ferre, None] ]
   | `Pretre -> [ [`masse, None; `marteau, None; `baton_ferre, None]; [`petit_bouclier, None]; [`chemise_de_mailles, None] ]
 
-let bonus_voies voies =
+let bonus_capacites voies =
   let rec aux acc i rg l =
     if i > rg then acc else
     match l with
     | [] -> acc
     | (c: capacite) :: tl ->
-      let acc = acc @ (List.filter_map (function
-        | Bonus { opt = (None | Some Some true); _ } as b -> Some (c.nom, b)
+      let acc = acc @ (List.filter_map (fun (b: bonus) -> match b.opt with
+        | None | Some Some true-> Some (c.nom, b)
         | _ -> None) c.bonus) in
-      let acc = if c.sort then acc @ [ c.nom, Bonus { id=`PM; valeur=`int 1; opt=None } ] else acc in
+      let acc = if c.sort then acc @ [ c.nom, { id=`PM; valeur=`int 1; opt=None } ] else acc in
       aux acc (i+1) rg tl in
    List.fold_left (fun acc (l, rg) ->
      aux acc 1 rg l
@@ -872,3 +843,68 @@ let de_recuperation = function
   | Combattants -> `d10
   | Mages -> `d6
   | Mystiques -> `d8
+
+let rangs_et_points ~capacites (p: personnage) =
+  let rg_peuple = List.fold_left (fun acc (v, rg) -> match v with
+    | #voie_peuple -> rg
+    | _ -> acc) 0 p.voies in
+  let rg_mage = match List.find_map (fun (v, rg) -> match v with
+    | `Mage -> Some rg
+    | _ -> None) p.voies with None -> 0 | Some rg -> rg in
+  let points_capacite, rg_max_sans_mage = List.fold_left (fun (acc, m) (v, rg) -> match v with
+    | `Mage -> acc + (if rg < 3 then 1 else 2), m
+    | _ -> acc + (if rg < 3 then 1 else 2), max m rg
+  ) (0, 0) p.voies in
+  let rg_max = max rg_mage rg_max_sans_mage in
+  let points_niveau = if rg_mage = 0 then 3 + 2 * p.niveau else 5 + 2 * p.niveau in
+  let points_bonus = List.fold_left (fun acc (c: capacite) ->
+    match c.voie with None -> acc | Some {rang; _} -> acc + (if rang <= 2 then 1 else 2)) 0 capacites in
+  rg_peuple, rg_mage, rg_max, rg_max_sans_mage, points_niveau, points_bonus, points_capacite
+
+let verifie_voies ~capacites p =
+  let rg_peuple, rg_mage, rg_max, rg_max_sans_mage, points_niveau, points_bonus, points_capacite =
+    rangs_et_points ~capacites p in
+  let niveau_capacite_check =
+    (p.niveau = 1 && (rg_max_sans_mage = 1 && rg_mage = 2 || rg_max_sans_mage = 2 && rg_mage = 1)) ||
+    (rg_max <= 3 && rg_max <= p.niveau) || (rg_max = 4 && p.niveau >= 5) ||
+    (rg_max = 5 && p.niveau >= 7) || (rg_max = 6 && p.niveau >= 9) ||
+    (rg_max = 7 && p.niveau >= 11) || (rg_max = 8 && p.niveau >= 13) in
+  let profil_check = List.fold_left (fun acc (v, _) ->
+    if not acc then acc else
+    match p.profil, p.peuple, v with
+    | _, Demi_elfe, (`Elfe_haut | `Elfe_sylvain | `Humain)
+    | _, Demi_orc, `Demi_orc
+    | _, Elfe_haut, `Elfe_haut
+    | _, Elfe_sylvain, `Elfe_sylvain
+    | _, Gnome, `Gnome
+    | _, Halfelin, `Halfelin
+    | _, Humain, `Humain
+    | _, Nain, `Nain
+    | `Arquebusier, _, #voie_arquebusier
+    | `Barde, _, #voie_barde
+    | `Rodeur, _, #voie_rodeur
+    | `Voleur, _, #voie_voleur
+    | `Barbare, _, #voie_barbare
+    | `Chevalier, _, #voie_chevalier
+    | `Guerrier, _, #voie_guerrier
+    | `Ensorceleur, _, (#voie_ensorceleur | #voie_mage)
+    | `Forgesort, _, (#voie_forgesort | #voie_mage)
+    | `Magicien, _, (#voie_magicien | #voie_mage)
+    | `Sorcier, _, (#voie_sorcier | #voie_mage)
+    | `Druide, _, #voie_druide
+    | `Moine, _, #voie_moine
+    | `Pretre, _, #voie_pretre -> true
+    | _ ->
+      let b = List.exists (fun (c: capacite) -> match c.voie with
+        | None -> false
+        | Some { profils; _ } ->
+          List.exists (fun p -> List.mem v (voies_profil p)) profils) capacites in
+      Format.printf "TEST0 %B@." b;
+      b
+    ) true p.voies in
+  let peuple_mage_check = (rg_mage = 0 && rg_peuple >= 1) || (rg_mage >= 1 && rg_peuple = 1) in
+  if not profil_check then Some "voie pas dans le profil" else
+  if not niveau_capacite_check then Some "rang de capacite trop haut" else
+  if not peuple_mage_check then Some "voie de peuple et mage ne peuvent pas être suivies ensemble" else
+  if points_capacite + points_bonus > points_niveau then Some "trop de capacites" else
+    None

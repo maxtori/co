@@ -5,7 +5,11 @@
   },
   {
     "nom": "Talent pour la violence",
-    "description": "Le joueur choisit une capacité de rang 1 de n’importe quelle voie de barbare ou de guerrier."
+    "description": "Le joueur choisit une capacité de rang 1 de n’importe quelle voie de barbare ou de guerrier.",
+    "voie": {
+      "profils": ["barbare", "guerrier"],
+      "rang": 1
+    }
   },
   {
     "nom": "Critique brutal",
