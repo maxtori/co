@@ -498,6 +498,9 @@
                 </ul>
               </li>
             </ul>
+            <div class="text-center mt-3">
+              <span class="border border-secondary p-2">{{ page.creation.creation.voies.points_de_maitrise[0] }} / {{ page.creation.creation.voies.points_de_maitrise[1] }}</span>
+            </div>
           </div>
 
           <!-- creation nom -->
@@ -575,9 +578,9 @@
               <div id="edition-niveau" class="accordion-collapse collapse" data-bs-parent="#edition-accordeon">
                 <div class="accordion-body">
                   <div class="d-flex justify-content-center">
-                    <button class="btn btn-light" @click="page.edition.choix.niveau=page.edition.choix.niveau-1"><i class="bi bi-dash"></i></button>
+                    <button class="btn btn-light" @click="change_niveau(-1)"><i class="bi bi-dash"></i></button>
                     <input type="number" class="form-control text-center" v-model="page.edition.choix.niveau" style="width:60px"/>
-                    <button class="btn btn-light" @click="page.edition.choix.niveau=page.edition.choix.niveau+1"><i class="bi bi-plus"></i></button>
+                    <button class="btn btn-light" @click="change_niveau(1)"><i class="bi bi-plus"></i></button>
                   </div>
                 </div>
               </div>
@@ -627,7 +630,8 @@
             <!-- edition capacites -->
             <div class="accordion-item">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#edition-capacites">
-                Capacités
+                <span class="flex-fill">Capacités</span>
+                <span class="px-3">{{ page.edition.choix.points_de_maitrise[0] }} / {{ page.edition.choix.points_de_maitrise[1] }}</span>
               </button>
               <div id="edition-capacites" class="accordion-collapse collapse" data-bs-parent="#edition-accordeon">
                 <div class="accordion-body p-0">

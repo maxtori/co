@@ -862,13 +862,13 @@ let rangs_et_points ~capacites (p: personnage) =
     | `Mage -> Some rg
     | _ -> None) p.voies with None -> 0 | Some rg -> rg in
   let points_capacite, rg_max_sans_mage = List.fold_left (fun (acc, m) (v, rg) -> match v with
-    | `Mage -> acc + (if rg < 3 then 1 else 2), m
-    | _ -> acc + (if rg < 3 then 1 else 2), max m rg
+    | `Mage -> acc + (if rg < 3 then rg else 2*rg-2), m
+    | _ -> acc + (if rg < 3 then rg else 2*rg-2), max m rg
   ) (0, 0) p.voies in
   let rg_max = max rg_mage rg_max_sans_mage in
-  let points_niveau = if rg_mage = 0 then 3 + 2 * p.niveau else 5 + 2 * p.niveau in
+  let points_niveau = if rg_mage = 0 then 1 + 2 * p.niveau else 3 + 2 * p.niveau in
   let points_bonus = List.fold_left (fun acc (c: capacite) ->
-    match c.voie with None -> acc | Some {rang; _} -> acc + (if rang <= 2 then 1 else 2)) 0 capacites in
+    match c.voie with None -> acc | Some {rang; _} -> acc + (if rang < 3 then 1 else 2)) 0 capacites in
   rg_peuple, rg_mage, rg_max, rg_max_sans_mage, points_niveau, points_bonus, points_capacite
 
 let verifie_voies ~capacites p =
@@ -909,12 +909,11 @@ let verifie_voies ~capacites p =
         | None -> false
         | Some { profils; _ } ->
           List.exists (fun p -> List.mem v (voies_profil p)) profils) capacites in
-      Format.printf "TEST0 %B@." b;
       b
     ) true p.voies in
-  let peuple_mage_check = (rg_mage = 0 && rg_peuple >= 1) || (rg_mage >= 1 && rg_peuple = 1) in
-  if not profil_check then Some "voie pas dans le profil" else
-  if not niveau_capacite_check then Some "rang de capacite trop haut" else
-  if not peuple_mage_check then Some "voie de peuple et mage ne peuvent pas être suivies ensemble" else
-  if points_capacite + points_bonus > points_niveau then Some "trop de capacites" else
-    None
+  let peuple_mage_check = rg_peuple <= 1 || rg_mage < 1  in
+  if not profil_check then Error "voie pas dans le profil" else
+  if not niveau_capacite_check then Error "rang de capacite trop haut" else
+  if not peuple_mage_check then Error "voie de peuple et mage ne peuvent pas être suivies ensemble" else
+  if points_capacite > points_niveau + points_bonus then Error "trop de capacites" else
+    Ok (points_capacite, points_niveau + points_bonus)
