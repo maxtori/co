@@ -871,7 +871,7 @@ let rangs_et_points ~capacites (p: personnage) =
     match c.voie with None -> acc | Some {rang; _} -> acc + (if rang < 3 then 1 else 2)) 0 capacites in
   rg_peuple, rg_mage, rg_max, rg_max_sans_mage, points_niveau, points_bonus, points_capacite
 
-let verifie_voies ~capacites p =
+let verifie_voies ?(validate=true) ~capacites p =
   let rg_peuple, rg_mage, rg_max, rg_max_sans_mage, points_niveau, points_bonus, points_capacite =
     rangs_et_points ~capacites p in
   let niveau_capacite_check =
@@ -916,4 +916,5 @@ let verifie_voies ~capacites p =
   if not niveau_capacite_check then Error "rang de capacite trop haut" else
   if not peuple_mage_check then Error "voie de peuple et mage ne peuvent pas être suivies ensemble" else
   if points_capacite > points_niveau + points_bonus then Error "trop de capacites" else
+  if validate && rg_mage >= 1 && rg_max < 2 then Error "un mage de niveau 1 doit choisir une capacité de rang 2" else
     Ok (points_capacite, points_niveau + points_bonus)

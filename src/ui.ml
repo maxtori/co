@@ -552,7 +552,7 @@ and choisit_capacite app vt rg =
       | Voies { choix; _ } ->
         let voies = change_capacites choix in
         let capacites = capacites voies in
-        begin match verifie_voies ~capacites { perso with voies } with
+        begin match verifie_voies ~validate:false ~capacites { perso with voies } with
           | Error e -> alert app e
           | Ok (pc, pn) ->
             (Unsafe.coerce app)##.page##.creation##.creation##.voies##.choix := of_listf voie_et_rang_to_jsoo voies;
@@ -564,7 +564,7 @@ and choisit_capacite app vt rg =
   | Edition { choix={voies; niveau; _}; perso; _} ->
     let voies = change_capacites voies in
     let capacites = capacites voies in
-    begin match verifie_voies ~capacites { perso with niveau; voies } with
+    begin match verifie_voies ~validate:false ~capacites { perso with niveau; voies } with
       | Error e -> alert app e
       | Ok (pc, pn) ->
         (Unsafe.coerce app)##.page##.edition##.choix##.voies := of_listf voie_et_rang_to_jsoo voies;
