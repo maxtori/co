@@ -12,7 +12,7 @@
     "description": "Le joueur choisit une capacité de rang 1 de n’importe quelle voie de magicien ou d’ensorceleur. Il peut utiliser cette capacité en armure sans pénalité (mais pas une capacité qui offre un bonus de DEF). À la place, il peut choisir une capacité de rang 2, mais ne doit alors pas porter d’armure pour lancer le sort.",
     "voie": {
       "profils": [ "magicien", "ensorceleur" ],
-      "rang": 1
+      "rangs": [ 1 ]
     }
   },
   {

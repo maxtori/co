@@ -1,0 +1,29 @@
+[
+  {
+    "nom": "Forme hybride",
+    "rang": 4,
+    "description": "Au prix d’une action limitée, le personnage peut se transformer en forme hybride, mi-homme, mi-loup pendant 1 min. Il doit terminer une récupération rapide avant de pouvoir à nouveau utiliser cette capacité. Sous cette forme, il ne peut pas lancer de sort ou utiliser d’arme pour attaquer à distance, en revanche il obtient une attaque de morsure (Attaque au contact) qui inflige [1d4°+FOR] DM en action gratuite une fois par round. Il reprend immédiatement sa forme normale s’il tombe à 0 PV.",
+    "action": "limitée"
+  },
+  {
+    "nom": "Transformation en loup",
+    "rang": 5,
+    "description": "Le personnage peut prendre la forme d’un loup pendant une durée maximale de 1 h par rang chaque jour. Le personnage conserve toutes ses caractéristiques sauf celles ci-dessous, ainsi que sa valeur d’attaque au contact habituelle.",
+    "action": "limitée"
+  },
+  {
+    "nom": "Éventration",
+    "rang": 6,
+    "description": "Désormais, lorsqu’il obtient 15‑20 sur son attaque de morsure, le lycanthrope ajoute 1d4° aux DM de sa morsure (sous forme de loup ou d’hybride)."
+  },
+  {
+    "nom": "Résistance surnaturelle",
+    "rang": 7,
+    "description": "Désormais le lycanthrope réduit de 5 tous les DM qui lui sont infligés par des armes qui ne sont pas en argent lorsqu’il est sous forme hybride. Cette réduction des DM ne peut pas être cumulée à une autre forme de RD."
+  },
+  {
+    "nom": "Forme puissante",
+    "rang": 8,
+    "description": "Le lycanthrope augmente sa FOR de +2 lorsqu’il est sous forme de loup ou d’hybride (il gagne +2 en attaque au contact et aux DM sur toutes ses attaques basées sur la force)."
+  }
+]

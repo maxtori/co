@@ -25,16 +25,16 @@
 
       <nav class="navbar navbar-expand bg-dark text-center pb-0" style="position:fixed;bottom:0px;right:0;left:0;z-index:1000">
         <ul class="navbar-nav flex-fill">
-          <li class="nav-item border" style="width: 10%">
-            <a class="nav-link" role="button" @click="charge_modal_des('d20', 0, 1, undefined)">
-              <i class="bi bi-dice-5-fill"></i>
-            </a>
-          </li>
           <li class="nav-item border" style="width: 45%">
             <a class="nav-link" role="button" @click="home()">Personnages</a>
           </li>
           <li class="nav-item border" style="width: 45%">
             <a class="nav-link" role="button" @click="edition()" v-if="page.personnage!==undefined">Édition</a>
+          </li>
+          <li class="nav-item border" style="width: 10%">
+            <a class="nav-link" role="button" @click="charge_modal_des('d20', 0, 1, undefined)">
+              <i class="bi bi-dice-5-fill"></i>
+            </a>
           </li>
         </ul>
       </nav>
@@ -178,7 +178,7 @@
             </div>
             <div class="col border p-0 d-flex justify-content-around">
               <span class="flex-fill">INT</span>
-              <span class="flex-fill text-bg-light" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.intelligence, 1, 'Intelligence')">{{ (page.personnage.perso.caracteristiques.intelligent > 0) ? '+' : ''}}{{ page.personnage.perso.caracteristiques.intelligence }}</span>
+              <span class="flex-fill text-bg-light" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.intelligence, 1, 'Intelligence')">{{ (page.personnage.perso.caracteristiques.intelligence > 0) ? '+' : ''}}{{ page.personnage.perso.caracteristiques.intelligence }}</span>
             </div>
             <div class="col border p-0 d-flex justify-content-around">
               <span class="flex-fill">VOL</span>
@@ -298,7 +298,7 @@
                 <span class="flex-fill">{{ pp_voie(v[0]) }}</span>
                 <span class="me-3 badge text-bg-light">
                   <span class="m-2">Rang</span>
-                  <span class="m-2">{{ v[1] }}</span>
+                  <span class="m-2">{{ rang_max(v[1]) }}</span>
                 </span>
               </button>
               <div :id="v[0]" class="accordion-collapse collapse" data-bs-parent="#voies-accordeon">
@@ -308,7 +308,7 @@
                     <div v-for="(c, i) in voie(v[0], v[1])" class="accordion-item">
                       <button class="accordion-button d-flex collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#'+v[0]+'-'+String(i)">
                         <span class="flex-fill">{{ c.nom }}</span>
-                        <span class="me-3">{{ i+1 }}</span>
+                        <span class="me-3">{{ c.rang }}</span>
                       </button>
                       <div :id="v[0]+'-'+String(i)" class="accordion-collapse collapse" :data-bs-parent="'#voie-accordeon-'+v[0]">
                         <div class="accordion-body p-0">
@@ -483,9 +483,9 @@
                   {{ pp_voie(vt[0]) }}
                 </button>
                 <ul class="list-group collapse" :id="vt[0]">
-                  <li v-for="(c, i) in voie(vt[0], vt[1])" class="list-group-item list-group-item-action p-0" :class="(capacite_choisie(vt[0], i+1)) ? 'active' : ''" @click="choisit_capacite(vt[0], i+1)" role="button">
+                  <li v-for="c in voie(vt[0], vt[1])" class="list-group-item list-group-item-action p-0" :class="(capacite_choisie(vt[0], c.rang)) ? 'active' : ''" @click="choisit_capacite(vt[0], c.rang)" role="button">
                     <div class="w-100 d-flex">
-                      <span class="border border-secondary border-2 px-3">{{ i + 1 }}</span>
+                      <span class="border border-secondary border-2 px-3">{{ c.rang }}</span>
                       <strong class="flex-fill text-bg-light">{{ c.nom }}</strong>
                     </div>
                     <div v-if="c.action.length!=0 || c.sort" class="row mx-0">
@@ -641,9 +641,9 @@
                         {{ pp_voie(vt[0]) }}
                       </button>
                       <ul class="list-group collapse" :id="'edition-'+vt[0]">
-                        <li v-for="(c, i) in voie(vt[0], vt[1])" class="list-group-item list-group-item-action p-0" :class="(capacite_choisie(vt[0], i+1)) ? 'active' : ''" role="button" @click="choisit_capacite(vt[0], i+1)">
+                        <li v-for="(c, i) in voie(vt[0], vt[1])" class="list-group-item list-group-item-action p-0" :class="(capacite_choisie(vt[0], c.rang)) ? 'active' : ''" role="button" @click="choisit_capacite(vt[0], c.rang)">
                           <div class="w-100 d-flex">
-                            <span class="border border-secondary border-2 px-3">{{ i + 1 }}</span>
+                            <span class="border border-secondary border-2 px-3">{{ c.rang }}</span>
                             <strong class="flex-fill text-bg-light">{{ c.nom }}</strong>
                           </div>
                           <div v-if="c.action.length!=0 || c.sort" class="row mx-0">

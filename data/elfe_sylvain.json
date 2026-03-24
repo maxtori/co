@@ -8,7 +8,7 @@
     "description": "Le joueur choisit une capacité de rang 1 de n’importe quelle voie de druide ou de rôdeur. Il peut utiliser cette capacité en armure jusqu’à l’armure de cuir renforcé sans pénalité.",
     "voie": {
       "profils": ["druide", "rodeur"],
-      "rang": 1
+      "rangs": [ 1 ]
     }
   },
   {

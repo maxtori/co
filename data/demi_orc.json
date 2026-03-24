@@ -8,7 +8,7 @@
     "description": "Le joueur choisit une capacité de rang 1 de n’importe quelle voie de barbare ou de guerrier.",
     "voie": {
       "profils": ["barbare", "guerrier"],
-      "rang": 1
+      "rangs": [ 1 ]
     }
   },
   {

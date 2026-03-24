@@ -1,0 +1,27 @@
+[
+  {
+    "nom": "Capacité de néophyte",
+    "rang": 4,
+    "description": "Choisissez une capacité de rang 1 de n’importe quelle voie issue d’un profil de votre famille."
+  },
+  {
+    "nom": "Capacité d’initié",
+    "rang": 5,
+    "description": "Choisissez une capacité de rang 2 de n’importe quelle voie issue d’un profil de votre famille."
+  },
+  {
+    "nom": "Capacité de professionnel",
+    "rang": 6,
+    "description": "Choisissez une capacité de rang 3 de n’importe quelle voie issue d’un profil de votre famille."
+  },
+  {
+    "nom": "Capacité d’expert",
+    "rang": 7,
+    "description": "Choisissez une capacité de rang 4 de n’importe quelle voie issue d’un profil de votre famille."
+  },
+  {
+    "nom": "Capacité de maître",
+    "rang": 8,
+    "description": "Choisissez une capacité de rang 5 de n’importe quelle voie issue d’un profil de votre famille."
+  }
+]
