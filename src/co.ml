@@ -906,8 +906,9 @@ let verifie_voies ?(validate=true) ~capacites p =
   let rg_peuple, rg_mage, rg_max, rg_max_sans_mage, points_niveau, points_bonus, points_capacite =
     rangs_et_points ~capacites p in
   let niveau_capacite_check =
-    (p.niveau = 1 && (rg_max_sans_mage = 1 && rg_mage = 2 || rg_max_sans_mage = 2 && rg_mage = 1)) ||
-    (rg_max <= 3 && rg_max <= p.niveau) || (rg_max = 4 && p.niveau >= 5) ||
+    (p.niveau = 1 && ((validate && (rg_max_sans_mage = 1 && rg_mage = 2 || rg_max_sans_mage = 2 && rg_mage = 1)) ||
+                      (not validate && (rg_max_sans_mage <= 1 && rg_mage <= 2 || rg_max_sans_mage <= 2 && rg_mage <= 1)))) ||
+    (rg_max <= 3 && p.niveau >= rg_max) || (rg_max = 4 && p.niveau >= 5) ||
     (rg_max = 5 && p.niveau >= 7) || (rg_max = 6 && p.niveau >= 9) ||
     (rg_max = 7 && p.niveau >= 11) || (rg_max = 8 && p.niveau >= 13) in
   let profil_check = List.fold_left (fun acc (v, _) ->
