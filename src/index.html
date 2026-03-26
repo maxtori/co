@@ -24,7 +24,10 @@
             <a class="nav-link" role="button" @click="home()">Personnages</a>
           </li>
           <li class="nav-item border" style="width: 45%">
-            <a class="nav-link" role="button" @click="edition()" v-if="page.personnage!==undefined">Édition</a>
+            <a v-if="page.personnage!==undefined" class="nav-link" role="button" @click="edition()">Édition</a>
+            <a v-else-if="page.creation!==undefined" class="nav-link" role="button" @click="phase_suivante()">{{ (page.creation.creation.enregistrement===undefined) ? 'Suivant' : 'Fin' }}</a>
+            <a v-else-if="page.personnages!==undefined" class="nav-link" role="button" @click="dir({nouveau:0})">Nouveau</a>
+            <a v-else-if="page.edition!==undefined" class="nav-link" role="button" @click="edite()">Sauvegarder</a>
           </li>
           <li class="nav-item border" style="width: 10%">
             <a class="nav-link" role="button" @click="charge_modal_des('d20', 0, 1, undefined)">
@@ -37,7 +40,7 @@
       <div class="container-fluid mt-3 mb-5 px-0">
 
         <!-- chargement -->
-        <div v-if="page.chargement!==undefined" class="text-center" >
+        <div v-if="page.chargement!==undefined" class="text-center my-5 py-5" >
           <div class="spinner-border"></div>
         </div>
 
@@ -48,7 +51,7 @@
               <div class="card-header">
                 {{ p.label }}
               </div>
-              <div class="card-body d-flex justify-content-center">
+              <div class="card-body d-flex justify-content-center" v-if="p.perso.nom">
                 <h1 class="me-5">{{ p.perso.nom }}</h1>
                 <div class="pt-1">
                   <span class="wavy-frame text-bg-light px-4 py-1 fw-bolder">{{ p.perso.niveau }}</span>
@@ -63,40 +66,16 @@
                 </button>
               </div>
             </div>
-            <!-- <table class="table text-center" style="--bs-table-bg:none"> -->
-            <!--   <thead> -->
-            <!--     <tr> -->
-            <!--       <th scope="col">Personnage</th> -->
-            <!--       <th scope="col">Nom</th> -->
-            <!--       <th scope="col">Niveau</th> -->
-            <!--       <th scope="col"></th> -->
-            <!--     </tr> -->
-            <!--   </thead> -->
-            <!--   <tbody> -->
-            <!--     <tr v-for="p in page.personnages"> -->
-            <!--       <td><span @click="personnage(p)" role="button">{{ p.label }}</span></td> -->
-            <!--       <td>{{ p.perso.nom }}</td> -->
-            <!--       <td>{{ p.perso.niveau }}</td> -->
-            <!--       <td> -->
-            <!--         <button class="btn w-50 py-0" @click="detruit_personnage(p.label)"> -->
-            <!--           <i class="bi bi-trash3"></i> -->
-            <!--         </button> -->
-            <!--         <button class="btn w-50 py-0" @click="telecharge_personnage(p.label, p.perso)"> -->
-            <!--           <i class="bi bi-download"></i> -->
-            <!--         </button> -->
-            <!--       </td> -->
-            <!--     </tr> -->
-            <!--   </tbody> -->
-            <!-- </table> -->
           </div>
-          <div class="text-center my-5">
-            <div class="row mx-0">
-              <div class="col px-0 py-2 text-bg-secondary border" @click="dir({importation:''})" role="button">
-                importation
-              </div>
-              <div class="col px-0 py-2 text-bg-secondary border" @click="commence_creation()" role="button">
-                création
-              </div>
+        </div>
+
+        <div v-else-if="page.nouveau!==undefined">
+          <div class="text-center my-5 py-5 w-75 mx-auto">
+            <div class="card my-5 py-4" @click="dir({importation:''})" role="button">
+              Importation
+            </div>
+            <div class="card my-5 py-4" @click="commence_creation()" role="button">
+              Création
             </div>
           </div>
         </div>
@@ -359,7 +338,7 @@
         </div>
 
         <!-- creation -->
-        <div v-else-if="page.creation!==undefined">
+        <div v-else-if="page.creation!==undefined" class="my-5">
           <!-- creation profil -->
           <div v-if="page.creation.creation.profil!==undefined">
             <div class="accordion" id="familles-accordeon" style="--bs-body-bg:none">
@@ -564,13 +543,6 @@
               <div class="col p-0"><input class="form-control py-0" v-model="page.creation.creation.enregistrement.label"/></div>
             </div>
           </div>
-
-          <div class="row mx-0 my-5 text-center" >
-            <div class="col text-bg-secondary py-2" @click="phase_suivante()" role="button">
-              <span v-if="page.creation.creation.enregistrement===undefined">Suivant</span>
-              <span v-else>Fin</span>
-            </div>
-          </div>
         </div>
 
         <!-- importation -->
@@ -589,7 +561,7 @@
         </div>
 
         <!-- edition -->
-        <div v-else-if="page.edition!==undefined">
+        <div v-else-if="page.edition!==undefined" class="my-5">
           <div class="accordion" id="edition-accordeon" style="--bs-body-bg:none">
             <!-- edition niveau -->
             <div class="accordion-item">
@@ -784,11 +756,6 @@
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div class="row mx-0 my-5 text-center" >
-            <div class="col text-bg-secondary py-2" @click="edite()" role="button">
-              Sauvegarder
             </div>
           </div>
         </div>

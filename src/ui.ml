@@ -88,6 +88,7 @@ type page =
   | Chargement
   | Personnages of avec_label list
   | Personnage of { label: string; perso: personnage }
+  | Nouveau
   | Importation of string
   | Creation of { label: string; perso: personnage; creation: phase_creation }
   | Edition of edition
