@@ -137,7 +137,15 @@ type caracteristiques = {
   volonte: int;
 } [@@deriving encoding, jsoo]
 
-type de = [ `d3 | `d4 | `d6 | `d8 | `d10 | `d12 | `d20 ] [@@deriving encoding, jsoo]
+type de = [ `d3 | `d4 | `d6 | `d8 | `d10 | `d12 | `d20 | `d4o [@key "d4°"]] [@@deriving encoding, jsoo]
+
+let de_str niveau d =
+  let d = match d with
+    | `d4o ->
+      if niveau < 6 then `d4 else if niveau < 9 then `d6
+      else if niveau < 12 then `d8 else if niveau < 15 then `d10 else `d12
+    | _ -> d in
+  match Json_encoding.construct de_enc d with `String s -> s | _ -> assert false
 
 type genre_points = [
   | `points_de_vigueur

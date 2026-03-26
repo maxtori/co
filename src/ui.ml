@@ -608,10 +608,10 @@ and charge_modal_points app g = match page_of_jsoo app##.page with
     ignore md##show
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"
 
-and lance_de_recuperation app points = match page_of_jsoo app##.page, Optdef.to_option points##.de with
+and lance_de_recuperation app points = match page_of_jsoo app##.page, to_optdef de_of_jsoo points##.de with
   | Personnage {label; perso}, Some de ->
     points##.resultat := undefined;
-    lance_de "des-recuperation" (to_string de) 1 @@ fun r ->
+    lance_de "des-recuperation" (de_str perso.niveau de) 1 @@ fun r ->
     let p = points_of_jsoo points in
     let points_de_vigueur = { perso.points_de_vigueur with courant = min (perso.points_de_vigueur.courant + r) perso.points_de_vigueur.max } in
     let des_de_recuperation = { p.points with courant = p.points.courant - 1 } in
@@ -630,10 +630,14 @@ and charge_modal_des app de bonus nombre titre =
   let md = new%js cs (string "#des-modal") in
   ignore md##show
 
-and lance_de _app des =
+and lance_de app des =
+  let niveau = match page_of_jsoo app##.page with
+    | Personnage { perso={niveau; _}; _ } -> niveau
+    | _ -> 0 in
   des##.resultat := undefined;
   let d = des_of_jsoo des in
-  lance_de "des-container" (to_string des##.de) d.nombre @@ fun r ->
+  let de = de_str niveau d.de in
+  lance_de "des-container" de d.nombre @@ fun r ->
   des##.resultat := def r
 
 and equipements _app l kind =
