@@ -290,7 +290,9 @@ let route ?(loading=true) app p =
 
 let init app =
   chargement_personnages app @@ fun app l ->
-  route app (page_to_jsoo (Personnages l))
+  match l with
+  | [] -> route app (page_to_jsoo Nouveau)
+  | _ -> route app (page_to_jsoo (Personnages l))
 
 let creation_box_de id =
   let cs = Unsafe.global##._DiceBox in
