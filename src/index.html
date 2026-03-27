@@ -47,11 +47,11 @@
         <!-- personnages -->
         <div v-else-if="page.personnages!==undefined">
           <div v-if="page.personnages.length!==0" class="my-5 w-75 mx-auto">
-            <div v-for="p in page.personnages" class="card text-center border border-dark border-5 my-3" @click="personnage(p)" role="button" style="--bs-card-bg:none">
-              <div class="card-header">
+            <div v-for="p in page.personnages" class="card text-center border border-dark border-5 my-3" style="--bs-card-bg:none">
+              <div class="card-header" @click="personnage(p)" role="button">
                 {{ p.label }}
               </div>
-              <div class="card-body d-flex justify-content-center" v-if="p.perso.nom">
+              <div v-if="p.perso.nom" class="card-body d-flex justify-content-center" @click="personnage(p)" role="button">
                 <h1 class="me-5">{{ p.perso.nom }}</h1>
                 <div class="pt-1">
                   <span class="wavy-frame text-bg-light px-4 py-1 fw-bolder">{{ p.perso.niveau }}</span>
