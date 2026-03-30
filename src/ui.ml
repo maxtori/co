@@ -105,6 +105,7 @@ and des : des option = None
 and tsp : int = Int32.to_int (to_int32 date##now) / 1000
 and image : string option = None
 and has_storage : bool = Option.is_some (Optdef.to_option Unsafe.global##.navigator##.storage)
+and test : string option = None
 
 let genre_de_titre = function
   | `points_de_vigueur -> "Points de vigeur"
@@ -798,12 +799,14 @@ and rang_max _app rgs =
   let l = to_list rgs in
   rang_max l
 
-and copie_lien_personnage _app p =
+and copie_lien_personnage app p =
   let b64 = personnage_to_b64 (personnage_of_jsoo p) in
   let origin = to_string Dom_html.window##.location##.origin in
   let pathname = to_string Dom_html.window##.location##.pathname in
   let s = Format.sprintf "%s%s?perso=%s" origin pathname b64 in
-  ignore @@ (Unsafe.coerce Dom_html.window##.navigator)##.clipboard##writeText (string s)
+  log_str s;
+  app##.test := def (string s);
+  Promise.jthen ((Unsafe.coerce Dom_html.window##.navigator)##share (string s)) Fun.id
 
 [%%mounted fun app ->
   let elt_erreur = Dom_html.getElementById "erreur-modal" in
