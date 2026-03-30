@@ -58,12 +58,23 @@
                 </div>
               </div>
               <div class="card-footer text-body-secondary">
-                <button class="btn w-50 py-0" @click="detruit_personnage(p.label)">
-                  <i class="bi bi-trash3"></i>
-                </button>
-                <button class="btn w-50 py-0" @click="telecharge_personnage(p.label, p.perso)">
-                  <i class="bi bi-download"></i>
-                </button>
+                <div class="row mx-0">
+                  <div class="col d-flex border-secondary border-end">
+                    <button class="btn py-0 flex-fill" @click="telecharge_personnage(p.label, p.perso)">
+                      <i class="bi bi-download"></i>
+                    </button>
+                  </div>
+                  <div class="col d-flex border-secondary border-end">
+                    <button class="btn py-0 flex-fill" @click="copie_lien_personnage(p.perso)">
+                      <i class="bi bi-share"></i>
+                    </button>
+                  </div>
+                  <div class="col d-flex">
+                    <button class="btn py-0 flex-fill" @click="detruit_personnage(p.label)">
+                      <i class="bi bi-trash3"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

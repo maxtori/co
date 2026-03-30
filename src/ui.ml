@@ -242,7 +242,17 @@ let alert app s =
   let md = new%js cs (string "#erreur-modal") in
   ignore md##show
 
-let route ?(loading=true) app p =
+let personnage_to_b64 p =
+  let s = EzEncoding.construct personnage_enc p in
+  to_string @@ Dom_html.window##btoa (string s)
+
+let personnage_of_b64 s =
+  try
+    let s = Dom_html.window##atob (string s) in
+    Some (EzEncoding.destruct personnage_enc (to_string s))
+  with _ -> None
+
+let route ?(loading=true) ?path app p =
   app##.tsp := Int32.to_int (to_int32 date##now) / 1000;
   let p0, p1 = unproxy app##.page, unproxy p in
   if loading then (app##.page := page_to_jsoo Chargement);
@@ -251,7 +261,8 @@ let route ?(loading=true) app p =
   Dom_html.window##.history##replaceState (state p0) (string "") null;
   let f app =
     app##.page := p1;
-    Dom_html.window##.history##pushState (state p1) (string "") null in
+    let path = opt string path in
+    Dom_html.window##.history##pushState (state p1) (string "") path in
   match page_of_jsoo p with
   | Personnages l ->
     let rec aux = function
@@ -772,11 +783,6 @@ and [@noconv] choisit_bonus_capacite app (ev: Dom_html.inputElement Dom.event t)
       let perso = aux ~label ~checked perso in
       let p = Personnage {label; perso} in
       route ~loading:false app (page_to_jsoo p)
-    (* | Edition e -> *)
-    (*   let perso = aux ~label:e.label ~checked e.perso in *)
-    (*   let choix = { e.choix with bonuses = perso.bonuses } in *)
-    (*   let p = Edition { e with choix; perso } in *)
-    (*   route ~loading:false app (page_to_jsoo p) *)
     | _ -> ()
 
 and change_niveau app a = match page_of_jsoo app##.page with
@@ -791,6 +797,13 @@ and change_niveau app a = match page_of_jsoo app##.page with
 and rang_max _app rgs =
   let l = to_list rgs in
   rang_max l
+
+and copie_lien_personnage _app p =
+  let b64 = personnage_to_b64 (personnage_of_jsoo p) in
+  let origin = to_string Dom_html.window##.location##.origin in
+  let pathname = to_string Dom_html.window##.location##.pathname in
+  let s = Format.sprintf "%s%s?perso=%s" origin pathname b64 in
+  ignore @@ (Unsafe.coerce Dom_html.window##.navigator)##.clipboard##writeText (string s)
 
 [%%mounted fun app ->
   let elt_erreur = Dom_html.getElementById "erreur-modal" in
@@ -827,13 +840,27 @@ let () =
     let now = Int32.to_int (to_int32 date##now) / 1000 in
     if now > app##.tsp + 3600 then route app app##.page;
     _false);
-  try match Opt.to_option (Unsafe.coerce Dom_html.window##.history)##.state with
-    | Some p ->
+  let perso_param =
+    let search = to_string Dom_html.window##.location##.search in
+    if search  = "" then None else
+    let l = String.split_on_char '&' (String.sub search 1 (String.length search - 1)) in
+    let l = List.map (fun s -> match String.split_on_char '=' s with
+      | [] -> s, None | [ k ] -> k, None
+      | k :: v -> k, Some (String.concat "=" v)
+    ) l in
+    match List.assoc_opt "perso" l with
+    | Some Some s -> personnage_of_b64 s
+    | _ -> None in
+  try match perso_param, Opt.to_option (Unsafe.coerce Dom_html.window##.history)##.state with
+    | Some perso, _ ->
+      let label = Format.sprintf "%s_%d" perso.nom perso.niveau in
+      route app ~path:"/" (page_to_jsoo (Personnage {label; perso}))
+    | _, Some p ->
       begin match page_of_jsoo p with
         | Chargement -> init app
         | _ -> route app p
       end
-    | None -> init app
+    | _ -> init app
   with exn ->
     log "initialisation erreur: %s" (Printexc.to_string exn);
     backup app
