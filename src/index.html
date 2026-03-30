@@ -137,9 +137,9 @@
               </h1>
             </div>
           </div>
-          <div id="perso-description" class="p-2 collapse">
-            <img v-if="image!==undefined" :src="image" class="w-50">
-            <p class="mt-0" v-if="page.personnage.perso.description">{{ page.personnage.perso.description }}</p>
+          <div id="perso-description" class="collapse">
+            <img v-if="image!==undefined" :src="image" class="w-50 my-2">
+            <p class="my-2" v-if="page.personnage.perso.description">{{ page.personnage.perso.description }}</p>
           </div>
 
           <div class="row mx-0 pt-1 wavy-top text-bg-light"></div>
