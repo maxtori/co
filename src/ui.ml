@@ -90,7 +90,7 @@ type page =
   | Personnage of { label: string; perso: personnage }
   | Nouveau
   | Importation of string
-  | Creation of { label: string; perso: personnage; creation: phase_creation }
+  | Creation of { label: string; perso: personnage; phase: phase_creation }
   | Edition of edition
   | Backup of (Unsafe.any js_array t js_array t [@ignore])
 [@@deriving jsoo {remove_undefined; snake}]
@@ -298,10 +298,10 @@ let route ?(loading=true) ?path app p =
         app##.image := def url;
         f app
     end
-  | Creation { creation = Voies {voies; _}; _ } ->
+  | Creation { phase = Voies {voies; _}; _ } ->
     chargement_voies (List.map fst voies) @@ fun _ ->
     f app
-  | Creation { creation = Equipements {possibilites; _}; perso = {equipements; _}; _ } ->
+  | Creation { phase = Equipements {possibilites; _}; perso = {equipements; _}; _ } ->
     chargement_equipements (List.map fst (equipements @ List.flatten possibilites)) @@ fun _ ->
     f app
   | Edition { voies; equipements=l; choix={equipements; _}; _ } ->
@@ -374,13 +374,13 @@ let capacites l =
 let%meth commence_creation app =
   let profils = profils () in
   let label = Format.sprintf "perso_%ld" (to_int32 date##now) in
-  let p = Creation { label; perso=personnage_vide; creation=Profil {profils; choix=None} } in
+  let p = Creation { label; perso=personnage_vide; phase=Profil {profils; choix=None} } in
   route app (page_to_jsoo p)
 
 and personnage app p =
   let p = avec_label_of_jsoo p in
   let page = match p.creation with
-    | Some creation -> Creation { label=p.label; perso=p.perso; creation }
+    | Some phase -> Creation { label=p.label; perso=p.perso; phase }
     | None -> Personnage { label=p.label; perso=p.perso } in
   route app (page_to_jsoo page)
 
@@ -447,26 +447,26 @@ and voie app vt rgs =
 
 and phase_suivante app =
   match page_of_jsoo app##.page with
-  | Creation { perso; creation; label } ->
-    begin match creation with
+  | Creation { perso; phase; label } ->
+    begin match phase with
       | Profil {choix=None; _ } ->
         alert app "profil non choisi"
       | Profil {choix=Some (famille, profil); _ } ->
         let peuples = List.map snd peuple_assoc in
-        let creation = Peuple { peuples; choix=None } in
+        let phase = Peuple { peuples; choix=None } in
         let perso = { perso with famille; profil } in
-        let p = Creation { perso; creation; label } in
-        ajout_personnage ~creation app label perso @@ fun app _ ->
+        let p = Creation { perso; phase; label } in
+        ajout_personnage ~creation:phase app label perso @@ fun app _ ->
         route app (page_to_jsoo p)
       | Peuple {choix=None; _ } ->
         alert app "peuple non choisi"
       | Peuple {choix=Some peuple; _ } ->
         let choix = caracteristiques_par_defaut (Some peuple) in
         let bonuses = bonuses_peuple peuple choix in
-        let creation = Caracteristiques { bonuses; choix; choix_bonus=None } in
+        let phase = Caracteristiques { bonuses; choix; choix_bonus=None } in
         let perso = { perso with peuple } in
-        edition_personnage ~creation app label perso;
-        let p = Creation { perso; creation; label } in
+        edition_personnage ~creation:phase app label perso;
+        let p = Creation { perso; phase; label } in
         route app (page_to_jsoo p)
       | Caracteristiques { choix_bonus=None; _ } ->
         alert app "caracteristiques bonus non choisies"
@@ -482,7 +482,7 @@ and phase_suivante app =
               def + defense, Option.fold ~none:agi ~some:(fun a -> min a agi) agilite_max
             | _ -> def, agi) (0, 8) perso.equipements in
           let perso = remplit_caracteristiques perso def_equipement agi_max in
-          let creation = match possibilites with
+          let phase = match possibilites with
             | [] ->
               let voies = List.map (fun v -> v, [1; 2; 3; 4; 5]) @@
                 voies_peuple perso.peuple @ voies_profil perso.profil in
@@ -491,8 +491,8 @@ and phase_suivante app =
             | _ ->
               let choix = List.map List.hd possibilites in
               Equipements { possibilites; choix } in
-          edition_personnage ~creation app label perso;
-          let p = Creation { perso; creation; label } in
+          edition_personnage ~creation:phase app label perso;
+          let p = Creation { perso; phase; label } in
           route app (page_to_jsoo p)
         else alert app "caracteristiques non valables"
       | Equipements { choix; _ } ->
@@ -501,9 +501,9 @@ and phase_suivante app =
           voies_peuple perso.peuple @ voies_profil perso.profil in
         let perso = { perso with equipements } in
         let _, _, _, _, pn, _, _ = rangs_et_points ~capacites:[] perso in
-        let creation = Voies { voies; choix=[]; points_de_maitrise=0, pn } in
-        edition_personnage ~creation app label perso;
-        let p = Creation { perso; creation; label } in
+        let phase = Voies { voies; choix=[]; points_de_maitrise=0, pn } in
+        edition_personnage ~creation:phase app label perso;
+        let p = Creation { perso; phase; label } in
         route app (page_to_jsoo p)
       | Voies { choix=l; _ } ->
         let l, capacites = capacites l in
@@ -520,11 +520,11 @@ and phase_suivante app =
             let perso = remplit_caracteristiques perso def_equipement agi_max in
             let ideaux = "" :: (List.map fst ideal_assoc) in
             let travers_options = "" :: (List.map fst travers_assoc) in
-            let creation = Enregistrement {
+            let phase = Enregistrement {
               ideaux; travers_options; nom=""; label=""; ideal=""; travers="";
               description=""; image=None; image_url=None } in
-            edition_personnage ~creation app label perso;
-            let p = Creation { perso; creation; label } in
+            edition_personnage ~creation:phase app label perso;
+            let p = Creation { perso; phase; label } in
             route app (page_to_jsoo p)
           | Error e -> alert app e
         end
@@ -543,8 +543,8 @@ and phase_suivante app =
 
 and capacite_choisie app vt rg =
   match page_of_jsoo app##.page with
-  | Creation { creation; _ } ->
-    begin match creation with
+  | Creation { phase; _ } ->
+    begin match phase with
       | Voies { choix; _ } ->
         List.exists (fun (c, rgs) -> c = voie_type_of_jsoo vt && List.mem rg rgs) choix
       | _ -> false
@@ -580,17 +580,17 @@ and choisit_capacite app vt rg =
     chargement_voies (List.map fst voies) @@ fun _ ->
     x##.voies := of_listf voie_et_rangs_to_jsoo voies in
   match page_of_jsoo app##.page with
-  | Creation { creation; perso; _ } ->
-    begin match creation with
+  | Creation { phase; perso; _ } ->
+    begin match phase with
       | Voies { choix; _ } ->
         let voies = change_capacites choix in
         let voies, capacites = capacites voies in
         begin match verifie_voies ~validate:false ~capacites { perso with voies } with
           | Error e -> alert app e
           | Ok (pc, pn) ->
-            (Unsafe.coerce app)##.page##.creation##.creation##.voies##.choix := of_listf voie_et_rangs_to_jsoo voies;
-            (Unsafe.coerce app)##.page##.creation##.creation##.voies##.points_de_maitrise_ := array [|pc; pn|];
-            rafraichit_voies (Unsafe.coerce app)##.page##.creation##.creation##.voies perso.peuple perso.profil perso.famille voies
+            (Unsafe.coerce app)##.page##.creation##.phase##.voies##.choix := of_listf voie_et_rangs_to_jsoo voies;
+            (Unsafe.coerce app)##.page##.creation##.phase##.voies##.points_de_maitrise_ := array [|pc; pn|];
+            rafraichit_voies (Unsafe.coerce app)##.page##.creation##.phase##.voies perso.peuple perso.profil perso.famille voies
         end
       | _ -> ()
     end
@@ -757,10 +757,10 @@ and [@noconv] charge_image app (ev: Dom_html.inputElement Dom.event t) =
     let nom_fichier = String.lowercase_ascii (nom ^ ext) in
     sauvergarde_fichier_persistent nom_fichier a f in
   match Opt.to_option ev##.target, page_of_jsoo app##.page with
-  | Some target, Creation { label; creation=Enregistrement {nom; _}; _ } ->
+  | Some target, Creation { label; phase=Enregistrement {nom; _}; _ } ->
     aux ~nom ~label target @@ fun nom_fichier url ->
-    (Unsafe.coerce app)##.page##.creation##.creation##.enregistrement##.image_url_ := def url;
-    (Unsafe.coerce app)##.page##.creation##.creation##.enregistrement##.image := def (string nom_fichier)
+    (Unsafe.coerce app)##.page##.creation##.phase##.enregistrement##.image_url_ := def url;
+    (Unsafe.coerce app)##.page##.creation##.phase##.enregistrement##.image := def (string nom_fichier)
   | Some target, Edition { label; perso={ nom; _ }; _ } ->
     aux ~nom ~label target @@ fun nom_fichier url ->
     (Unsafe.coerce app)##.page##.edition##.choix##.image_url_ := def url;

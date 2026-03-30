@@ -29,7 +29,7 @@
           </li>
           <li class="nav-item border" style="width: 45%">
             <a v-if="page.personnage!==undefined" class="nav-link" role="button" @click="edition()">Édition</a>
-            <a v-else-if="page.creation!==undefined" class="nav-link" role="button" @click="phase_suivante()">{{ (page.creation.creation.enregistrement===undefined) ? 'Suivant' : 'Fin' }}</a>
+            <a v-else-if="page.creation!==undefined" class="nav-link" role="button" @click="phase_suivante()">{{ (page.creation.phase.enregistrement===undefined) ? 'Suivant' : 'Fin' }}</a>
             <a v-else-if="page.personnages!==undefined" class="nav-link" role="button" @click="dir({nouveau:0})">Nouveau</a>
             <a v-else-if="page.edition!==undefined" class="nav-link" role="button" @click="edite()">Sauvegarder</a>
           </li>
@@ -355,17 +355,17 @@
         <!-- creation -->
         <div v-else-if="page.creation!==undefined" class="my-5">
           <!-- creation profil -->
-          <div v-if="page.creation.creation.profil!==undefined">
+          <div v-if="page.creation.phase.profil!==undefined">
             <div class="accordion" id="familles-accordeon" style="--bs-body-bg:none">
-              <div v-for="f in page.creation.creation.profil.profils" class="accordion-item">
+              <div v-for="f in page.creation.phase.profil.profils" class="accordion-item">
                 <button class="accordion-button d-flex collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#'+f[0]">
                   {{ f[0] }}
                 </button>
                 <div :id="f[0]" class="accordion-collapse collapse" data-bs-parent="#familles-accordeon">
                   <div class="accordion-body p-0">
                     <ul class="list-group">
-                      <li v-for="p in f[1]" class="list-group-item" :class="(page.creation.creation.profil.choix && page.creation.creation.profil.choix[1]==p) ? 'active' : ''">
-                        <div @click="function() { page.creation.creation.profil.choix = [ f[0], p ] }" role="button">{{ p }}</div>
+                      <li v-for="p in f[1]" class="list-group-item" :class="(page.creation.phase.profil.choix && page.creation.phase.profil.choix[1]==p) ? 'active' : ''">
+                        <div @click="function() { page.creation.phase.profil.choix = [ f[0], p ] }" role="button">{{ p }}</div>
                       </li>
                     </ul>
                   </div>
@@ -375,16 +375,16 @@
           </div>
 
           <!-- creation peuple -->
-          <div v-else-if="page.creation.creation.peuple!==undefined">
+          <div v-else-if="page.creation.phase.peuple!==undefined">
             <ul class="list-group">
-              <li v-for="p in page.creation.creation.peuple.peuples" class="list-group-item" :class="(page.creation.creation.peuple.choix && page.creation.creation.peuple.choix==p) ? 'active' : ''">
-                <div @click="function() { page.creation.creation.peuple.choix = p }" role="button">{{ pp_peuple(p) }}</div>
+              <li v-for="p in page.creation.phase.peuple.peuples" class="list-group-item" :class="(page.creation.phase.peuple.choix && page.creation.phase.peuple.choix==p) ? 'active' : ''">
+                <div @click="function() { page.creation.phase.peuple.choix = p }" role="button">{{ pp_peuple(p) }}</div>
               </li>
             </ul>
           </div>
 
           <!-- creation caracteristiques -->
-          <div v-else-if="page.creation.creation.caracteristiques!==undefined" class="text-center">
+          <div v-else-if="page.creation.phase.caracteristiques!==undefined" class="text-center">
 
             <div class="row mx-0 mt-3">
               <div class="col p-0 text-bg-light">Caractéristiques</div>
@@ -393,33 +393,33 @@
             <div class="row mx-0">
               <div class="col border p-0 d-flex justify-content-around">
                 <span class="flex-fill">AGI</span>
-                <input class="form-control py-0" type="number" v-model="page.creation.creation.caracteristiques.choix.agilite" style="width:60px"/>
+                <input class="form-control py-0" type="number" v-model="page.creation.phase.caracteristiques.choix.agilite" style="width:60px"/>
               </div>
               <div class="col border p-0 d-flex justify-content-around">
                 <span class="flex-fill">CON</span>
-                <input class="form-control py-0" type="number" v-model="page.creation.creation.caracteristiques.choix.constitution" style="width:60px"/>
+                <input class="form-control py-0" type="number" v-model="page.creation.phase.caracteristiques.choix.constitution" style="width:60px"/>
               </div>
               <div class="col border p-0 d-flex justify-content-around">
                 <span class="flex-fill">FOR</span>
-                <input class="form-control py-0" type="number" v-model="page.creation.creation.caracteristiques.choix.force" style="width:60px"/>
+                <input class="form-control py-0" type="number" v-model="page.creation.phase.caracteristiques.choix.force" style="width:60px"/>
               </div>
             </div>
             <div class="row mx-0">
               <div class="col border p-0 d-flex justify-content-around">
                 <span class="flex-fill">PER</span>
-                <input class="form-control py-0" type="number" v-model="page.creation.creation.caracteristiques.choix.perception" style="width:60px"/>
+                <input class="form-control py-0" type="number" v-model="page.creation.phase.caracteristiques.choix.perception" style="width:60px"/>
               </div>
               <div class="col border p-0 d-flex justify-content-around">
                 <span class="flex-fill">CHA</span>
-                <input class="form-control py-0" type="number" v-model="page.creation.creation.caracteristiques.choix.charisme" style="width:60px"/>
+                <input class="form-control py-0" type="number" v-model="page.creation.phase.caracteristiques.choix.charisme" style="width:60px"/>
               </div>
               <div class="col border p-0 d-flex justify-content-around">
                 <span class="flex-fill">INT</span>
-                <input class="form-control py-0" type="number" v-model="page.creation.creation.caracteristiques.choix.intelligence" style="width:60px"/>
+                <input class="form-control py-0" type="number" v-model="page.creation.phase.caracteristiques.choix.intelligence" style="width:60px"/>
               </div>
               <div class="col border p-0 d-flex justify-content-around">
                 <span class="flex-fill">VOL</span>
-                <input class="form-control py-0" type="number" v-model="page.creation.creation.caracteristiques.choix.volonte" style="width:60px"/>
+                <input class="form-control py-0" type="number" v-model="page.creation.phase.caracteristiques.choix.volonte" style="width:60px"/>
               </div>
             </div>
 
@@ -428,8 +428,8 @@
             </div>
 
             <ul class="list-group">
-              <li v-for="(p, i) in page.creation.creation.caracteristiques.bonuses" class="list-group-item p-0" :class="(page.creation.creation.caracteristiques.choix_bonus && page.creation.creation.caracteristiques.choix_bonus[1]==i) ? 'active' : ''">
-                <div @click="function() { page.creation.creation.caracteristiques.choix_bonus = [ p, i ] }" class="row mx-0" role="button">
+              <li v-for="(p, i) in page.creation.phase.caracteristiques.bonuses" class="list-group-item p-0" :class="(page.creation.phase.caracteristiques.choix_bonus && page.creation.phase.caracteristiques.choix_bonus[1]==i) ? 'active' : ''">
+                <div @click="function() { page.creation.phase.caracteristiques.choix_bonus = [ p, i ] }" class="row mx-0" role="button">
                   <div v-for="b in p" class="col border p-0 d-flex justify-content">
                     <span class="flex-fill">{{ b[1].id }}</span>
                     <span class="flex-fill text-bg-light">{{ b[1].valeur }}</span>
@@ -441,7 +441,7 @@
           </div>
 
           <!-- creation equipements -->
-          <div v-else-if="page.creation.creation.equipements!==undefined">
+          <div v-else-if="page.creation.phase.equipements!==undefined">
 
             <div class="row mx-0 mt-3">
               <div class="col text-bg-light">Equipements</div>
@@ -480,10 +480,10 @@
             <div class="row mx-0 mt-3">
               <div class="col text-bg-light">Equipements au choix</div>
             </div>
-            <div v-for="(l, i) in page.creation.creation.equipements.possibilites" class="row mx-0 mt-3">
+            <div v-for="(l, i) in page.creation.phase.equipements.possibilites" class="row mx-0 mt-3">
               <ul class="list-group">
-                <li v-for="e in l" class="list-group-item p-0 text-center" :class="(page.creation.creation.equipements.choix[i][0]==e[0]) ? 'active' : ''">
-                  <button class="btn w-100" @click="page.creation.creation.equipements.choix[i]=e">
+                <li v-for="e in l" class="list-group-item p-0 text-center" :class="(page.creation.phase.equipements.choix[i][0]==e[0]) ? 'active' : ''">
+                  <button class="btn w-100" @click="page.creation.phase.equipements.choix[i]=e">
                     {{ pp_equipement(e[0]) }}
                   </button>
                 </li>
@@ -492,9 +492,9 @@
           </div>
 
           <!-- creation voies -->
-          <div v-else-if="page.creation.creation.voies!==undefined">
+          <div v-else-if="page.creation.phase.voies!==undefined">
             <ul class="list-group">
-              <li v-for="vt in page.creation.creation.voies.voies" class="list-group-item p-0 text-center">
+              <li v-for="vt in page.creation.phase.voies.voies" class="list-group-item p-0 text-center">
                 <button class="btn w-100" data-bs-toggle="collapse" :data-bs-target="'#'+vt[0]" aria-expanded="false">
                   {{ pp_voie(vt[0]) }}
                 </button>
@@ -515,48 +515,48 @@
               </li>
             </ul>
             <div class="text-center mt-3">
-              <span class="border border-secondary p-2">{{ page.creation.creation.voies.points_de_maitrise[0] }} / {{ page.creation.creation.voies.points_de_maitrise[1] }}</span>
+              <span class="border border-secondary p-2">{{ page.creation.phase.voies.points_de_maitrise[0] }} / {{ page.creation.phase.voies.points_de_maitrise[1] }}</span>
             </div>
           </div>
 
           <!-- creation nom -->
-          <div class="text-center" v-else-if="page.creation.creation.enregistrement!==undefined">
+          <div class="text-center" v-else-if="page.creation.phase.enregistrement!==undefined">
             <div class="row mx-0">
               <div class="col p-0 text-bg-light">Nom du personnage</div>
-              <div class="col p-0"><input class="form-control py-0" v-model="page.creation.creation.enregistrement.nom"/></div>
+              <div class="col p-0"><input class="form-control py-0" v-model="page.creation.phase.enregistrement.nom"/></div>
             </div>
             <div class="row mx-0">
               <div class="col p-0 text-bg-light">Idéal</div>
               <div class="col p-0">
-                <select class="form-control py-0" v-model="page.creation.creation.enregistrement.ideal">
-                  <option v-for="i in page.creation.creation.enregistrement.ideaux" :value="i">{{ i }}</option>
+                <select class="form-control py-0" v-model="page.creation.phase.enregistrement.ideal">
+                  <option v-for="i in page.creation.phase.enregistrement.ideaux" :value="i">{{ i }}</option>
                 </select>
               </div>
             </div>
             <div class="row mx-0">
               <div class="col p-0 text-bg-light">Travers</div>
               <div class="col p-0">
-                <select class="form-control py-0" v-model="page.creation.creation.enregistrement.travers">
-                  <option v-for="i in page.creation.creation.enregistrement.travers_options" :value="i">{{ i }}</option>
+                <select class="form-control py-0" v-model="page.creation.phase.enregistrement.travers">
+                  <option v-for="i in page.creation.phase.enregistrement.travers_options" :value="i">{{ i }}</option>
                 </select>
               </div>
             </div>
             <div class="row mx-0 mt-2">
               <div class="col text-bg-light">Description</div>
             </div>
-            <textarea class="form-control" v-model="page.creation.creation.enregistrement.description"></textarea>
+            <textarea class="form-control" v-model="page.creation.phase.enregistrement.description"></textarea>
             <div v-if="has_storage" class="row mx-0 mt-2">
               <div class="col p-0 text-bg-light">Image</div>
               <div class="col p-0">
                 <input class="form-control py-0" type="file" @change="charge_image" accept="image/*, application/pdf"/>
               </div>
-              <div v-if="page.creation.creation.enregistrement.image_url!==undefined" class="p-2">
-                <img :src="page.creation.creation.enregistrement.image_url" alt="image" class="w-50">
+              <div v-if="page.creation.phase.enregistrement.image_url!==undefined" class="p-2">
+                <img :src="page.creation.phase.enregistrement.image_url" alt="image" class="w-50">
               </div>
             </div>
             <div class="row mx-0 mt-2">
               <div class="col p-0 text-bg-light">Nom de la sauvegarde</div>
-              <div class="col p-0"><input class="form-control py-0" v-model="page.creation.creation.enregistrement.label"/></div>
+              <div class="col p-0"><input class="form-control py-0" v-model="page.creation.phase.enregistrement.label"/></div>
             </div>
           </div>
         </div>
