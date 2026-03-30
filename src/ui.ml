@@ -265,7 +265,9 @@ let route ?(loading=true) ?path app p =
   if loading then (app##.page := page_to_jsoo Chargement);
   Firebug.console##log_3 p0 (string "-->") p1;
   let state p = some @@ Unsafe.coerce p  in
-  Dom_html.window##.history##replaceState (state p0) (string "") null;
+  let () = match page_of_jsoo p0 with
+    | Chargement -> ()
+    | _ -> Dom_html.window##.history##replaceState (state p0) (string "") null in
   let f app =
     app##.page := p1;
     let path = opt string path in
@@ -309,7 +311,7 @@ let route ?(loading=true) ?path app p =
 let init app =
   chargement_personnages app @@ fun app l ->
   match l with
-  | [] -> route app (page_to_jsoo Nouveau)
+  | [] -> route ~loading:false app (page_to_jsoo Nouveau)
   | _ -> route app (page_to_jsoo (Personnages l))
 
 let creation_box_de id =
