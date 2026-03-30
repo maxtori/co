@@ -1,3 +1,11 @@
+(rule
+ (deps package.json co.scss)
+ (targets co.css)
+ (action
+  (progn
+   (run npm i)
+   (run npx sass --no-source-map --style compressed co.scss co.css))))
+
 (install
  (package co)
  (section share)

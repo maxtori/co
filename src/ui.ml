@@ -814,6 +814,9 @@ and copie_lien_personnage _app (p: personnage) =
   let b64 = personnage_to_b64 { p with image = None } in
   let origin = to_string Dom_html.window##.location##.origin in
   let pathname = to_string Dom_html.window##.location##.pathname in
+  let pathname = match List.rev @@ String.split_on_char '/' pathname with
+    | "index.html" :: tl -> String.concat "/" tl
+    | _ -> pathname in
   let s = Format.sprintf "%s%s?perso=%s" origin pathname b64 in
   try
     Promise.jthen ((Unsafe.coerce Dom_html.window##.navigator)##share (object%js val url = string s val title = string "CO" end)) Fun.id

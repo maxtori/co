@@ -16,4 +16,5 @@
   ez_api ezjs_min ezjs_idb ezjs_fetch vue-ppx
   (ppx_deriving_encoding :build)
   (ppx_deriving_jsoo :build)
-  (ppx_deriving_arg :build)))
+  (ppx_deriving_arg :build)
+  (conf-npm :build)))
