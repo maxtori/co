@@ -3,8 +3,8 @@
  (targets co.css)
  (action
   (progn
-   (run npm i)
-   (run npx sass --no-source-map --style compressed co.scss co.css))))
+   (run npm --silent i)
+   (run npx sass --no-source-map --style compressed -q co.scss %{targets}))))
 
 (install
  (package co)
