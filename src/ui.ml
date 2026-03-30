@@ -227,6 +227,9 @@ let chargement_voies l f =
     | vt :: tl -> charge_voie vt (function None -> aux acc tl | Some v -> aux ((vt, v) :: acc) tl) in
   aux [] l
 
+let chargement_voies_async l =
+  List.iter (fun vt -> charge_voie vt (fun _ -> ())) l
+
 let chargement_equipements l f =
   let rec aux = function
     | [] -> f ()
@@ -277,8 +280,8 @@ let route ?(loading=true) ?path app p =
     let rec aux = function
       | [] -> f app
       | ({perso; _}: avec_label) :: tl ->
-        chargement_voies (List.map fst perso.voies) @@ fun _ ->
-        chargement_equipements (List.map fst perso.equipements) @@ fun _ ->
+        chargement_voies_async (List.map fst perso.voies);
+        chargement_equipements_async (List.map fst perso.equipements);
         aux tl in
     aux l
   | Personnage {perso; _} ->
