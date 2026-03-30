@@ -46,9 +46,6 @@
 
         <!-- personnages -->
         <div v-else-if="page.personnages!==undefined">
-          <div v-if="test">
-            {{ test }}
-          </div>
           <div v-if="page.personnages.length!==0" class="my-5 w-75 mx-auto">
             <div v-for="p in page.personnages" class="card text-center border border-dark border-5 my-3" style="--bs-card-bg:none">
               <div class="card-header" @click="personnage(p)" role="button">
@@ -459,7 +456,8 @@
                   </template>
                   <template v-else-if="e[1].arme!==undefined">
                     <span class="col border p-0">{{ e[1].arme.dommage[0]}}{{e[1].arme.dommage[1] }}</span>
-                    <span class="col border p-0">{{ a.distance.portee }} m, {{e[1].arme.type }}</span>
+                    <span v-if="e[1].arme.distance!==undefined" class="col border p-0">{{ e[1].arme.distance.portee }} m, {{ e[1].arme.type }}</span>
+                    <span v-else class="col border p-0">{{ e[1].arme.type }}</span>
                   </template>
                   <template v-else-if="e[1].armure!==undefined">
                     <span class="col border p-0">

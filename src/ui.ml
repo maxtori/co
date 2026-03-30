@@ -105,7 +105,6 @@ and des : des option = None
 and tsp : int = Int32.to_int (to_int32 date##now) / 1000
 and image : string option = None
 and has_storage : bool = Option.is_some (Optdef.to_option Unsafe.global##.navigator##.storage)
-and test : string option = None
 
 let genre_de_titre = function
   | `points_de_vigueur -> "Points de vigeur"
@@ -245,11 +244,18 @@ let alert app s =
 
 let personnage_to_b64 p =
   let s = EzEncoding.construct personnage_enc p in
-  to_string @@ Dom_html.window##btoa (string s)
+  let cs = Unsafe.global##._TextEncoder in
+  let encoder = new%js cs in
+  let uint8a = encoder##encode (string s) in
+  let b = uint8a##toBase64 in
+  to_string b
 
 let personnage_of_b64 s =
   try
-    let s = Dom_html.window##atob (string s) in
+    let a = Unsafe.global##._Uint8Array##fromBase64 (string s) in
+    let cs = Unsafe.global##._TextDecoder in
+    let decoder = new%js cs in
+    let s = decoder##decode a in
     Some (EzEncoding.destruct personnage_enc (to_string s))
   with _ -> None
 
@@ -799,14 +805,15 @@ and rang_max _app rgs =
   let l = to_list rgs in
   rang_max l
 
-and copie_lien_personnage app p =
-  let b64 = personnage_to_b64 (personnage_of_jsoo p) in
+and copie_lien_personnage _app (p: personnage) =
+  let b64 = personnage_to_b64 { p with image = None } in
   let origin = to_string Dom_html.window##.location##.origin in
   let pathname = to_string Dom_html.window##.location##.pathname in
   let s = Format.sprintf "%s%s?perso=%s" origin pathname b64 in
-  log_str s;
-  app##.test := def (string s);
-  Promise.jthen ((Unsafe.coerce Dom_html.window##.navigator)##share (string s)) Fun.id
+  try
+    Promise.jthen ((Unsafe.coerce Dom_html.window##.navigator)##share (object%js val url = string s val title = string "CO" end)) Fun.id
+  with _ ->
+    Promise.jthen ((Unsafe.coerce Dom_html.window##.navigator)##.clipboard##writeText (string s)) Fun.id
 
 [%%mounted fun app ->
   let elt_erreur = Dom_html.getElementById "erreur-modal" in
