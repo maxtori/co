@@ -1,10 +1,10 @@
 (rule
- (deps package.json co.scss)
- (targets co.css)
+ (deps package.json bs.scss)
+ (targets bs.css)
  (action
   (progn
    (run npm --silent i)
-   (run npx sass --no-source-map --style compressed -q co.scss %{targets}))))
+   (run npx sass --no-source-map --style compressed -q bs.scss %{targets}))))
 
 (install
  (package co)
