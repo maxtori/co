@@ -814,7 +814,7 @@ let remplit_caracteristiques p def_equipement agi_max  =
   let caracteristiques = ajoute_caracteristiques p.caracteristiques_base p.bonuses in
   let p = { p with caracteristiques } in
   let aux p max = let courant = if p.courant = 0 || p.courant = p.max then max else p.courant in { courant; max } in
-  let points_de_vigueur = aux p.points_de_vigueur @@ p.caracteristiques.constitution + (1+p.niveau) * (match p.famille with
+  let points_de_vigueur = aux p.points_de_vigueur @@ p.niveau * p.caracteristiques.constitution + (1+p.niveau) * (match p.famille with
     | Aventuriers -> 4
     | Combattants -> 5
     | Mages -> 3
