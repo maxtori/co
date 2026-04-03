@@ -7,7 +7,7 @@
 
 (executable
  (name ui)
- (modules ui)
+ (modules wavy ui)
  (preprocess (pps ppx_deriving_jsoo vue-ppx))
  (libraries ezjs_idb ezjs_fetch co)
  (modes js))

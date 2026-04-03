@@ -823,6 +823,16 @@ and copie_lien_personnage _app (p: personnage) =
   with _ ->
     Promise.jthen ((Unsafe.coerce Dom_html.window##.navigator)##.clipboard##writeText (string s)) Fun.id
 
+and wavy_cadre _app =
+  string @@ Format.sprintf "clip-path:%s" @@
+  Wavy.cadre [ `haut, (7, 15); `droite, (5, 10); `bas, (7, 15); `gauche, (5, 10) ]
+
+and wavy_haut _app =
+  string @@ Format.sprintf "clip-path:%s" @@ Wavy.cadre [ `haut, (4, 50) ]
+
+and wavy_bas _app =
+  string @@ Format.sprintf "clip-path:%s" @@ Wavy.cadre [ `bas, (4, 50) ]
+
 [%%mounted fun app ->
   let elt_erreur = Dom_html.getElementById "erreur-modal" in
   let elt_des = Dom_html.getElementById "des-modal" in
