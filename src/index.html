@@ -315,7 +315,7 @@
           <div class="row mx-0">
             <div class="col-4 p-0 d-flex justify-content-around" v-for="c in page.personnage.perso.competences">
               <span class="border" style="width:65%">{{ pp_competence(c[0]) }}</span>
-              <span class="text-bg-light" style="width:35%" role="button" @click="charge_modal_des('d20', bonus_competence(c), 1, pp_competence(c[0]))">+{{ bonus_competence(c) }}</span>
+              <span class="text-bg-light" style="width:35%" role="button" @click="charge_modal_des_competence('d20', bonus_competence(c), 1, pp_competence(c[0]))">+{{ bonus_competence(c).map((x) => x[1]).join('/+') }}</span>
             </div>
             <div v-if="page.personnage.perso.competences.length % 3 == 1" class="col-8 p-0 text-bg-light"></div>
             <div v-else-if="page.personnage.perso.competences.length % 3 == 2" class="col-4 p-0 text-bg-light"></div>
@@ -897,8 +897,8 @@
                       <span class="mx-4">|</span>
                     </span>
                     {{ des.nombre }}{{ des.de }}
-                    <span v-if="des.bonus && des.bonus > 0"> + {{ des.bonus }}</span>
-                    <span v-else-if="des.bonus"> - {{ Math.abs(des.bonus) }} </span>
+                    <span v-if="des.choix.length==0 && des.bonus && des.bonus > 0"> + {{ des.bonus }}</span>
+                    <span v-else-if="des.choix.length==0 && des.bonus"> - {{ Math.abs(des.bonus) }} </span>
                   </div>
                   <div v-else class="d-flex">
                     <input class="form-control py-0 w-50" v-model="des.nombre"/>
@@ -915,19 +915,24 @@
                 </h2>
               </div>
               <div class="modal-body">
-                <div class="text-center d-flex mx-auto w-75">
-                  <span class="text-bg-light px-2 flex-fill">Bonus</span>
-                  <input class="form-control py-0" v-model="des.extra" type="number" style="max-width:100px"/>
+                <div v-if="des.choix.length!=0" class="text-center">
+                  <button v-for="c in des.choix" class="btn btn-outline-light mx-2" @click="function() { des.bonus=c[1]; des.choix=[] }">{{ c[0] }}</button>
                 </div>
-                <div id="des-container" class="m-2" style="height:180px">
-                </div>
-                <div style="height:50px">
-                  <h2 v-if="des.resultat" class="text-center">
-                    {{ des.resultat }} {{ (des.bonus==0) ? '' : (des.bonus > 0) ? '+ '+String(des.bonus) : '- '+String(Math.abs(des.bonus)) }} {{ (des.extra==0) ? '' : (des.extra > 0) ? '+ '+String(des.extra) : '- '+String(Math.abs(des.extra)) }} {{ (des.bonus + des.extra == 0) ? '' : '= '+String(des.resultat + des.bonus + des.extra) }}
-                  </h2>
+                <div v-else>
+                  <div class="text-center d-flex mx-auto w-75">
+                    <span class="text-bg-light px-2 flex-fill">Bonus</span>
+                    <input class="form-control py-0" v-model="des.extra" type="number" style="max-width:100px"/>
+                  </div>
+                  <div id="des-container" class="m-2" style="height:180px">
+                  </div>
+                  <div style="height:50px">
+                    <h2 v-if="des.resultat" class="text-center">
+                      {{ des.resultat }} {{ (des.bonus==0) ? '' : (des.bonus > 0) ? '+ '+String(des.bonus) : '- '+String(Math.abs(des.bonus)) }} {{ (des.extra==0) ? '' : (des.extra > 0) ? '+ '+String(des.extra) : '- '+String(Math.abs(des.extra)) }} {{ (des.bonus + des.extra == 0) ? '' : '= '+String(des.resultat + des.bonus + des.extra) }}
+                    </h2>
+                  </div>
                 </div>
               </div>
-              <div class="modal-footer">
+              <div v-if="des.choix.length==0" class="modal-footer">
                 <button class="btn btn-secondary mx-auto" @click="lance_de(des)">Lancer</button>
               </div>
             </div>

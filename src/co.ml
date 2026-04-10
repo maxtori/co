@@ -112,6 +112,8 @@ type caracteristique_ou_bonus = [ caracteristique | bonus_type ] [@@deriving enc
   let caracteristique_ou_bonus_jsoo_conv = caracteristique_ou_bonus_to_jsoo, caracteristique_ou_bonus_of_jsoo
 ]
 
+type caracteristique_et_point = (caracteristique * int) [@@deriving encoding, jsoo]
+
 type valeur = [
   | `int of int
   | `car of caracteristique

@@ -55,9 +55,10 @@ type des = {
   titre: string option;
   de: de;
   nombre: int;
-  bonus: int;
+  bonus: int; [@mutable]
   extra: int;
   resultat: int option; [@mutable]
+  choix: caracteristique_et_point list;
 } [@@deriving jsoo]
 
 type choix_edition = {
@@ -694,7 +695,17 @@ and lance_de_recuperation app points = match page_of_jsoo app##.page, to_optdef 
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"
 
 and charge_modal_des app de bonus nombre titre =
-  let des = { de=de_of_jsoo de; bonus; extra=0; nombre; titre=to_optdef to_string titre; resultat=None } in
+  let des = { de=de_of_jsoo de; bonus; extra=0; nombre; titre=to_optdef to_string titre; resultat=None; choix=[] } in
+  app##.des := def (des_to_jsoo des);
+  let cs : _ constr = Unsafe.global##.bootstrap##._Modal in
+  let md = new%js cs (string "#des-modal") in
+  ignore md##show
+
+and charge_modal_des_competence app de (choix: caracteristique_et_point list) nombre (titre: string option) =
+  let bonus, choix = match choix with
+    | [ _, i ] -> i, []
+    | _ -> 0, choix in
+  let des = { de=de_of_jsoo de; bonus; extra=0; nombre; titre; resultat=None; choix } in
   app##.des := def (des_to_jsoo des);
   let cs : _ constr = Unsafe.global##.bootstrap##._Modal in
   let md = new%js cs (string "#des-modal") in
@@ -992,9 +1003,9 @@ and bonus_competence app c =
   match page_of_jsoo app##.page with
   | Personnage { perso; _ } ->
     let c, n = competence_et_point_of_jsoo c in
-    let car = List.hd (competence_caracteristiques c) in
-    let v = valeur_caracteristique perso.caracteristiques car in
-    def (n + v)
+    let l = competence_caracteristiques c in
+    let v = List.map (fun c -> c, valeur_caracteristique perso.caracteristiques c) l in
+    def (of_listf (fun (c, v) -> caracteristique_et_point_to_jsoo (c, n + v)) v)
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"; undefined
 
 [%%mounted fun app ->
