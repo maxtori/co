@@ -3,7 +3,8 @@
     "nom": "Proche de la nature",
     "description": "Le barbare ajoute son rang + 2 à ses tests de survie (dont les tests de récupération) et de discrétion en milieu naturel. De plus, il gagne 1 PV supplémentaire.",
     "bonus": [
-      { "id": "PV", "valeur": 1 }
+      { "id": "PV", "valeur": 1 },
+      { "id": "PCM", "valeur": 4, "opt": null }
     ]
   },
   {
@@ -12,7 +13,10 @@
   },
   {
     "nom": "Vigilance",
-    "description": "Le barbare possède des sens très affûtés, il est difficile de le surprendre, il ajoute son rang + 2 à tous les tests effectués pour détecter les pièges mécaniques, magiques (ses poils se hérissent) ou les embuscades. Il devient immunisé aux Attaques sournoises d’un voleur ou à toute capacité similaire d’une créature de niveau inférieur au sien."
+    "description": "Le barbare possède des sens très affûtés, il est difficile de le surprendre, il ajoute son rang + 2 à tous les tests effectués pour détecter les pièges mécaniques, magiques (ses poils se hérissent) ou les embuscades. Il devient immunisé aux Attaques sournoises d’un voleur ou à toute capacité similaire d’une créature de niveau inférieur au sien.",
+    "bonus": [
+      { "id": "PCM", "valeur": 4, "opt": null }
+    ]
   },
   {
     "nom": "Résistance à la magie",

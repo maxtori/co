@@ -3,7 +3,8 @@
     "nom": "Vigueur",
     "description": "Le barbare est un athlète capable de prouesses physiques extraordinaires, il ajoute son rang + 2 aux tests de course, de saut ou d’escalade. De plus, il gagne 1 PV supplémentaire par rang atteint dans la voie.",
     "bonus": [
-      { "id": "PV", "valeur": 1 }
+      { "id": "PV", "valeur": 1 },
+      { "id": "PCM", "valeur": 4, "opt": null }
     ]
   },
   {

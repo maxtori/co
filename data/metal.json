@@ -3,7 +3,10 @@
     "nom": "Morsure de la forge",
     "description": "Au prix d’une action de mouvement, le forgesort peut enflammer son bâton ou son marteau pendant INT minutes et ajoute +2 DM de feu sur les attaques au contact réalisées avec cette arme. Ce bonus augmente de +1 chaque fois que le personnage atteint le rang 4 dans une voie de forgesort. L’arme s’éteint immédiatement s’il la lâche. En plus de ce sort, le forgesort ajoute son rang + 2 aux tests d’orfèvrerie ou de forge.",
     "action": "mouvement",
-    "sort": true
+    "sort": true,
+    "bonus": [
+      { "id": "PCM", "valeur": 4, "opt": null }
+    ]
   },
   {
     "nom": "Métal brûlant",

@@ -2,7 +2,10 @@
   {
     "nom": "Cri de guerre",
     "description": "Une fois par combat, le barbare pousse un hurlement qui effraie ses adversaires dans un rayon de 10 m. Les adversaires dont la FOR est inférieure à celle du barbare subissent un dé malus à leurs tests d’attaque au contact durant leur prochain tour. De plus, le barbare est sans peur, il ajoute son rang + 2 à tous les tests de VOL destinés à résister à la peur.",
-    "action": "gratuite"
+    "action": "gratuite",
+    "bonus": [
+      { "id": "PCM", "valeur": 4, "opt": null }
+    ]
   },
   {
     "nom": "Défier la mort",

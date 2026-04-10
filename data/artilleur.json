@@ -1,7 +1,10 @@
 [
   {
     "nom": "Mécanismes",
-    "description": "L’arquebusier ajoute son rang + 2 à tous les tests visant à réparer ou à comprendre des mécanismes (cela inclut le fait de désamorcer des pièges mécaniques et de manipuler des armes de siège). Il obtient un dé bonus à tous les tests d’attaque avec des armes de siège (baliste, couleuvrine, canon, trébuchet, catapulte, etc.)."
+    "description": "L’arquebusier ajoute son rang + 2 à tous les tests visant à réparer ou à comprendre des mécanismes (cela inclut le fait de désamorcer des pièges mécaniques et de manipuler des armes de siège). Il obtient un dé bonus à tous les tests d’attaque avec des armes de siège (baliste, couleuvrine, canon, trébuchet, catapulte, etc.).",
+    "bonus": [
+      { "id": "PCM", "valeur": 4, "opt": null }
+    ]
   },
   {
     "nom": "Arme à répétition",

@@ -2,7 +2,10 @@
   {
     "nom": "Teigneux",
     "description": "Une fois par round, si une créature à votre contact tente de s’éloigner de vous, vous obtenez une attaque au contact en action gratuite contre elle. De plus vous ajoutez votre rang + 2 aux tests destinés à résister à l’alcool et à la privation de nourriture ou de sommeil.",
-    "action": "gratuite"
+    "action": "gratuite",
+    "bonus": [
+      { "id": "PCM", "valeur": 4, "opt": null }
+    ]
   },
   {
     "nom": "Prouesse",

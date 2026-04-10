@@ -1,7 +1,10 @@
 [
   {
     "nom": "Éduqué",
-    "description": "Le chevalier sait lire et écrire, et apprend à parler une langue supplémentaire. De plus, il ajoute son rang + 2 à tous les tests d’histoire, d’héraldique et de géographie ainsi qu’aux tests pour savoir se comporter dans la haute société."
+    "description": "Le chevalier sait lire et écrire, et apprend à parler une langue supplémentaire. De plus, il ajoute son rang + 2 à tous les tests d’histoire, d’héraldique et de géographie ainsi qu’aux tests pour savoir se comporter dans la haute société.",
+    "bonus": [
+      { "id": "PCM", "valeur": 4, "opt": null }
+    ]
   },
   {
     "nom": "Écuyer",
@@ -9,7 +12,10 @@
   },
   {
     "nom": "Autorité naturelle",
-    "description": "Le chevalier ajoute son rang + 2 aux tests réalisés pour donner des ordres ou intimider. De plus, le noble chevalier reçoit la formation nécessaire au port de l’armure de plaque complète (DEF +7). Désormais, il peut utiliser toutes les capacités des voies de chevalier* en portant cette armure."
+    "description": "Le chevalier ajoute son rang + 2 aux tests réalisés pour donner des ordres ou intimider. De plus, le noble chevalier reçoit la formation nécessaire au port de l’armure de plaque complète (DEF +7). Désormais, il peut utiliser toutes les capacités des voies de chevalier* en portant cette armure.",
+    "bonus": [
+      { "id": "PCM", "valeur": 4, "opt": null }
+    ]
   },
   {
     "nom": "Massacrer la piétaille",

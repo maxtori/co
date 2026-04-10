@@ -14,7 +14,7 @@
   {
     "nom": "Touche-à-tout",
     "description": "Le personnage obtient une capacité de rang 1 ou 2 de n’importe quel profil au choix du joueur. Si la capacité est de rang 2 ou accorde un bonus de DEF, il doit respecter les limitations d’armure.",
-    "voie": { "rang": 2 }
+    "voie": { "rangs": [1, 2] }
   },
   {
     "nom": "Loup parmi les loups",

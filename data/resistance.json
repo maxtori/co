@@ -3,7 +3,8 @@
     "nom": "Robustesse",
     "description": "Le guerrier augmente sa valeur maximale de PV de rang + 2. De plus, vous ajoutez votre rang + 2 à tous les tests destinés à résister aux efforts physiques, à la chaleur ou au froid (conditions naturelles).",
     "bonus": [
-      { "id": "PV", "valeur": 3 }
+      { "id": "PV", "valeur": 3 },
+      { "id": "PCM", "valeur": 4, "opt": null }
     ]
   },
   {

@@ -2,7 +2,10 @@
   {
     "nom": "Protéger un allié",
     "description": "S’il n’est pas surpris, le guerrier peut accorder un bonus de DEF de +2 à un allié à son contact contre une attaque par round. Il doit annoncer son intention avant de connaître le résultat de l’attaque. De plus, vous ajoutez votre rang + 2 à tous les tests destinés à éviter d’être surpris.",
-    "action": "gratuite"
+    "action": "gratuite",
+    "bonus": [
+      { "id": "PCM", "valeur": 4, "opt": null }
+    ]
   },
   {
     "nom": "Parer un coup",

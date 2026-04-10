@@ -1,7 +1,10 @@
 [
   {
     "nom": "Pilier de bar",
-    "description": "L’arquebusier obtient un bonus égal à son rang + 2 aux tests d’interaction sociale dans les tavernes ou les auberges (renseignement, négociation, séduction, etc.) ainsi que pour résister aux effets de l’alcool. De plus, il inflige 1d4° DM à mains nues (non létal) et il divise par 2 tous les DM non létaux qu’on lui inflige."
+    "description": "L’arquebusier obtient un bonus égal à son rang + 2 aux tests d’interaction sociale dans les tavernes ou les auberges (renseignement, négociation, séduction, etc.) ainsi que pour résister aux effets de l’alcool. De plus, il inflige 1d4° DM à mains nues (non létal) et il divise par 2 tous les DM non létaux qu’on lui inflige.",
+    "bonus": [
+      { "id": "PCM", "valeur": 4, "opt": null }
+    ]
   },
   {
     "nom": "Mort ou vif",

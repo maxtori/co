@@ -2,7 +2,10 @@
   {
     "nom": "Tir de grenaille",
     "description": "L’arquebusier sait réaliser un mélange de poudre et de grenaille. Quand il charge une arme à poudre, il peut choisir d’utiliser ce mélange à la place d’une munition normale (il doit l’annoncer au moment où il charge). Lorsqu’il tire cette munition (L), il fait un seul test d’attaque contre toutes les cibles lui faisant face dans un cône de 10 m de long et sur 5 m de large. Toutes les cibles dont il atteint la DEF subissent la moitié des DM habituels. De plus, le personnage ajoute son rang + 2 à tous les tests d’artificier (par exemple pour fabriquer et tirer des feux d’artifice).",
-    "action": "limitée"
+    "action": "limitée",
+    "bonus": [
+      { "id": "PCM", "valeur": 4, "opt": null }
+    ]
   },
   {
     "nom": "Démolition",

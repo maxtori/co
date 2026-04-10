@@ -1,7 +1,10 @@
 [
   {
     "nom": "Baratin",
-    "description": "Le voleur ajoute son rang + 2 aux tests destinés à baratiner, séduire, négocier, mentir ou pour trouver un objet au marché noir. De plus, il devient capable d’utiliser les parchemins ou les baguettes magiques en réussissant un test d’attaque magique (L) contre une difficulté de (10 + (2 x rang du sort inscrit)). En cas d’échec, le sort n’est pas lancé et le voleur peut faire une nouvelle tentative."
+    "description": "Le voleur ajoute son rang + 2 aux tests destinés à baratiner, séduire, négocier, mentir ou pour trouver un objet au marché noir. De plus, il devient capable d’utiliser les parchemins ou les baguettes magiques en réussissant un test d’attaque magique (L) contre une difficulté de (10 + (2 x rang du sort inscrit)). En cas d’échec, le sort n’est pas lancé et le voleur peut faire une nouvelle tentative.",
+    "bonus": [
+      { "id": "PCM", "valeur": 4, "opt": null }
+    ]
   },
   {
     "nom": "Provocation",

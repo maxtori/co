@@ -15,6 +15,10 @@ type phase_creation =
   | Voies of {
       voies: voie_et_rangs list; choix: voie_et_rangs list;
       points_de_maitrise: int * int }
+  | Competences of {
+      maitrisees: (competence * int) list; possibilites: competence list; ajout_competence: competence option;
+      possibilites_maitrise: competence list;
+      choix: competence option; competences: (competence * int) list; points: int * int }
   | Enregistrement of {
       ideaux: string list; travers_options: string list;
       nom: string; label: string; ideal: string; travers: string;
@@ -70,7 +74,8 @@ type choix_edition = {
   nom: string;
   ideal: string;
   travers: string;
-  points_de_maitrise: int * int;
+  competences: competence_et_point list;
+  ajout_competence: competence option;
 } [@@deriving jsoo]
 
 type edition = {
@@ -82,6 +87,9 @@ type edition = {
   ids: caracteristique_ou_bonus list;
   ideaux: string list;
   travers_options: string list;
+  competences: competence list;
+  points_de_maitrise: int * int;
+  points_de_competences: int * int;
 } [@@deriving jsoo]
 
 type page =
@@ -245,6 +253,8 @@ let alert app s =
   let md = new%js cs (string "#erreur-modal") in
   ignore md##show
 
+let wrap app r f = match r with Ok x -> f x | Error e -> alert app e
+
 let personnage_to_b64 p =
   let s = EzEncoding.construct personnage_enc p in
   let cs = Unsafe.global##._TextEncoder in
@@ -401,19 +411,29 @@ and edition app = match page_of_jsoo app##.page with
       (voies_capacites ~famille:perso.famille l) in
     let voies_perso, capacites = capacites perso.voies in
     let _, _, _, _, pnv, pb, pc = rangs_et_points ~capacites perso in
-    let choix = {
-      niveau=perso.niveau; caracteristiques=perso.caracteristiques_base;
-      bonuses = perso.bonuses; bonus = ("", {id=`AGI; valeur=`int 0; opt=None});
-      voies=voies_perso; equipements=perso.equipements; equipement=(`autre "", 1);
-      description=perso.description; image_url=to_optdef to_string app##.image; image=perso.image;
-      nom=perso.nom; ideal; travers; points_de_maitrise=pc, pnv+pb;
-    } in
-    let edition = {
-      label; perso; voies; choix; ids;
-      equipements=List.map (fun (_, e) -> e, None) equipement_nom_assoc;
-      ideaux = "" :: (List.map fst ideal_assoc);
-      travers_options = "" :: (List.map fst travers_assoc) } in
-    route app (page_to_jsoo (Edition edition))
+    begin match points_de_competences perso with
+      | Error e -> alert app e
+      | Ok (points_niveau, points_capacites, points_utilises, _) ->
+        let choix = {
+          niveau=perso.niveau; caracteristiques=perso.caracteristiques_base;
+          bonuses = perso.bonuses; bonus = ("", {id=`AGI; valeur=`int 0; opt=None});
+          voies=voies_perso; equipements=perso.equipements; equipement=(`autre "", 1);
+          description=perso.description; image_url=to_optdef to_string app##.image; image=perso.image;
+          nom=perso.nom; ideal; travers; competences=perso.competences; ajout_competence=None;
+        } in
+        let competences = List.filter (fun c ->
+          Option.is_none (List.assoc_opt c perso.competences)
+        ) (List.map snd competence_assoc) in
+        let edition = {
+          label; perso; voies; choix; ids;
+          equipements=List.map (fun (_, e) -> e, None) equipement_nom_assoc;
+          ideaux = "" :: (List.map fst ideal_assoc);
+          travers_options = "" :: (List.map fst travers_assoc);
+          competences; points_de_maitrise=pc, pnv+pb;
+          points_de_competences=points_utilises,points_niveau+points_capacites;
+        } in
+        route app (page_to_jsoo (Edition edition))
+    end
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"
 
 and [@noconv] importation app (ev: Dom_html.inputElement Dom.event t) =
@@ -430,7 +450,7 @@ and voie app vt rgs =
   | Some v ->
     let rgs = to_list rgs in
     let perso_bonuses = match page_of_jsoo app##.page with
-      | Personnage { perso; _ } -> perso.bonuses
+      | Edition { choix = { bonuses; _ }; _ } -> bonuses
       | _ -> [] in
     let v = List.fold_left (fun acc (c: capacite) ->
       if not (List.mem c.rang rgs) then acc else
@@ -507,27 +527,51 @@ and phase_suivante app =
         route app (page_to_jsoo p)
       | Voies { choix=l; _ } ->
         let l, capacites = capacites l in
-        begin match verifie_voies ~capacites { perso with voies=l } with
-          | Ok _ ->
-            let perso = { perso with voies=l } in
-            let bonus_voies = bonus_capacites @@ List.filter_map (fun (v, rg) -> Option.map (fun v -> v, rg) @@ List.assoc_opt v !voies) l in
-            let def_equipement, agi_max = List.fold_left (fun (def, agi) (e, _) ->
-              match List.assoc_opt e !equipements with
-              | Some Armure { defense; agilite_max; _ } ->
-                def + defense, Option.fold ~none:agi ~some:(fun a -> min a agi) agilite_max
-              | _ -> def, agi) (0, 8) perso.equipements in
-            let perso = { perso with bonuses = perso.bonuses @ bonus_voies } in
-            let perso = remplit_caracteristiques perso def_equipement agi_max in
-            let ideaux = "" :: (List.map fst ideal_assoc) in
-            let travers_options = "" :: (List.map fst travers_assoc) in
-            let phase = Enregistrement {
-              ideaux; travers_options; nom=""; label=""; ideal=""; travers="";
-              description=""; image=None; image_url=None } in
-            edition_personnage ~creation:phase app label perso;
-            let p = Creation { perso; phase; label } in
-            route app (page_to_jsoo p)
-          | Error e -> alert app e
-        end
+        wrap app (verifie_voies ~capacites { perso with voies=l }) @@ fun _ ->
+        let perso = { perso with voies=l } in
+        let bonus_voies = bonus_capacites @@ List.filter_map (fun (v, rg) -> Option.map (fun v -> v, rg) @@ List.assoc_opt v !voies) l in
+        let def_equipement, agi_max = List.fold_left (fun (def, agi) (e, _) ->
+          match List.assoc_opt e !equipements with
+          | Some Armure { defense; agilite_max; _ } ->
+            def + defense, Option.fold ~none:agi ~some:(fun a -> min a agi) agilite_max
+          | _ -> def, agi) (0, 8) perso.equipements in
+        let perso = { perso with bonuses = perso.bonuses @ bonus_voies } in
+        let perso = remplit_caracteristiques perso def_equipement agi_max in
+        wrap app (competences_maitrisees ~validation:false perso) @@ fun maitrisees ->
+        let competences = List.filter (fun (_, n) -> n <> 0) maitrisees in
+        let possibilites_maitrise = List.map snd competence_assoc in
+        let possibilites = List.filter (fun c ->
+          Option.is_none (List.assoc_opt c competences)
+        ) possibilites_maitrise in
+        wrap app (points_de_competences perso) @@ fun (points_niveau, points_capacites, _, _) ->
+        let phase = Competences {
+          maitrisees; choix=None; competences; ajout_competence=None;
+          possibilites; points=0, (points_niveau+points_capacites);
+          possibilites_maitrise;
+        } in
+        edition_personnage ~creation:phase app label perso;
+        let p = Creation { perso; phase; label } in
+        route app (page_to_jsoo p)
+      | Competences { choix; competences; _ }  ->
+        wrap app (competences_maitrisees ?choix perso) @@ fun competences_maitrisees ->
+        let perso = { perso with competences_maitrisees; competences } in
+        wrap app (points_de_competences perso) @@
+        fun (points_niveau, points_capacites, points_utilises, points_maitrise_utilises) ->
+        if points_capacites > points_maitrise_utilises then
+          alert app (Format.sprintf "au moins %d points de compétence doivent être utilisés par des compétences du profil" points_capacites)
+        else if points_niveau + points_capacites > points_utilises then
+          alert app "points de compétences non utilisées"
+        else if points_niveau + points_capacites < points_utilises then
+          alert app "trop de points de compétences"
+        else
+        let ideaux = "" :: (List.map fst ideal_assoc) in
+        let travers_options = "" :: (List.map fst travers_assoc) in
+        let phase = Enregistrement {
+          ideaux; travers_options; nom=""; label=""; ideal=""; travers="";
+          description=""; image=None; image_url=None } in
+        edition_personnage ~creation:phase app label perso;
+        let p = Creation { perso; phase; label } in
+        route app (page_to_jsoo p)
       | Enregistrement {nom; label=lbl; ideal; travers; description; image; _} ->
         if nom = "" then alert app "nom vide" else
         let ideal = List.assoc_opt ideal ideal_assoc in
@@ -601,7 +645,7 @@ and choisit_capacite app vt rg =
       | Error e -> alert app e
       | Ok (pc, pn) ->
         (Unsafe.coerce app)##.page##.edition##.choix##.voies := of_listf voie_et_rangs_to_jsoo voies;
-        (Unsafe.coerce app)##.page##.edition##.choix##.points_de_maitrise_ := array [|pc; pn|];
+        (Unsafe.coerce app)##.page##.edition##.points_de_maitrise_ := array [|pc; pn|];
         rafraichit_voies (Unsafe.coerce app)##.page##.edition perso.peuple perso.profil perso.famille voies
     end
   | _ -> ()
@@ -684,32 +728,45 @@ and edite app = match page_of_jsoo app##.page with
     if not (verifie_caracteristiques e.choix.caracteristiques) then alert app "caracteristiques non valables" else
     let ideal = if e.choix.ideal="" then None else Some (ideal_of_str e.choix.ideal) in
     let travers = if e.choix.travers="" then None else Some (travers_of_str e.choix.travers) in
-    let p = {
+    let perso = {
       e.perso with
       niveau = e.choix.niveau; equipements=e.choix.equipements;
       caracteristiques_base=e.choix.caracteristiques;
       bonuses=e.choix.bonuses; image=e.choix.image; description=e.choix.description;
       nom = e.choix.nom; ideal; travers } in
     let l, capacites = capacites e.choix.voies in
-    begin match verifie_voies ~capacites { p with voies=l } with
+    begin match verifie_voies ~capacites { perso with voies=l } with
       | Ok _ ->
-        let p = { p with voies=e.choix.voies } in
+        let perso = { perso with voies=e.choix.voies } in
         let bonus_voies = bonus_capacites @@ List.filter_map (fun (v, rg) -> Option.map (fun v -> v, rg) @@ List.assoc_opt v !voies) l in
         let bonuses = List.fold_left (fun acc (n, b) ->
           match List.find_opt (fun (n2, _) -> n = n2) acc with
           | None -> acc @ [ n, b ]
           | Some _ -> acc
-        ) p.bonuses bonus_voies in
-        let p = { p with bonuses } in
+        ) perso.bonuses bonus_voies in
+        let perso = { perso with bonuses } in
         let def_equipement, agi_max = List.fold_left (fun (def, agi) (e, _) ->
           match List.assoc_opt e !equipements with
           | Some Armure { defense; agilite_max; _ } ->
             def + defense, Option.fold ~none:agi ~some:(fun a -> min a agi) agilite_max
-          | _ -> def, agi) (0, 8) p.equipements in
-        let p = remplit_caracteristiques p def_equipement agi_max in
-        edition_personnage app e.label p;
-        let p = Personnage {label=e.label; perso=p} in
-        route app (page_to_jsoo p)
+          | _ -> def, agi) (0, 8) perso.equipements in
+        let perso = remplit_caracteristiques perso def_equipement agi_max in
+        let perso = { perso with competences=e.choix.competences } in
+        begin match points_de_competences perso with
+          | Error e -> alert app e
+          | Ok (points_niveau, points_capacites, points_utilises, points_maitrise_utilises) ->
+            if points_niveau + points_capacites > points_utilises then
+              alert app "points de compétences non utilisées"
+            else if points_capacites > points_maitrise_utilises then
+              alert app (Format.sprintf "au moins %d points de compétence doivent être utilisés par des compétences du profil" points_capacites)
+            else if points_niveau + points_capacites < points_utilises then
+              alert app "trop de points de compétences"
+            else (
+              edition_personnage app e.label perso;
+              let p = Personnage {label=e.label; perso} in
+              route app (page_to_jsoo p)
+            )
+        end
       | Error e -> alert app e
     end
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"
@@ -768,42 +825,49 @@ and [@noconv] charge_image app (ev: Dom_html.inputElement Dom.event t) =
   | _ -> ()
 
 and [@noconv] choisit_bonus_capacite app (ev: Dom_html.inputElement Dom.event t) nom b =
-  let aux ~label ~checked (perso: personnage) =
+  match Opt.to_option ev##.target, page_of_jsoo app##.page with
+  | Some target, Edition {perso; choix={competences; niveau; bonuses=bonuses0; _}; _} ->
+    let checked = to_bool target##.checked in
     let nom = to_string nom in
     let b = bonus_of_jsoo b in
     let bonuses =
       if checked then
         let b = { b with opt=Some (Some true) } in
-        perso.bonuses @ [ nom, b ]
+        bonuses0 @ [ nom, b ]
       else
-        List.filter (fun (n, b2) -> not (n = nom && b.id = b2.id)) perso.bonuses in
-    let perso = { perso with bonuses } in
-    let def_equipement, agi_max = List.fold_left (fun (def, agi) (e, _) ->
-      match List.assoc_opt e !equipements with
-      | Some Armure { defense; agilite_max; _ } ->
-        def + defense, Option.fold ~none:agi ~some:(fun a -> min a agi) agilite_max
-      | _ -> def, agi) (0, 8) perso.equipements in
-    let perso = remplit_caracteristiques perso def_equipement agi_max in
-    edition_personnage app label perso;
-    perso in
-  match Opt.to_option ev##.target with
-  | None -> ()
-  | Some target ->
+        List.filter (fun (n, b2) -> not (n = nom && b.id = b2.id)) bonuses0 in
+    wrap app (points_de_competences {perso with competences; niveau; bonuses}) @@
+    fun (points_niveau, points_capacites, points_utilises, points_maitrise_utilises) ->
+    if points_capacites > points_maitrise_utilises then (
+      alert app (Format.sprintf "au moins %d points de compétence doivent être utilisés par des compétences du profil" points_capacites);
+      target##.checked := bool (not checked))
+    else if points_niveau + points_capacites < points_utilises then (
+      alert app "trop de points de compétences";
+      target##.checked := bool (not checked))
+    else (
+      (Unsafe.coerce app##.page)##.edition##.choix##.bonuses := of_listf bonus_avec_nom_to_jsoo bonuses;
+      (Unsafe.coerce app##.page)##.edition##.points_de_competences_ :=
+        array [| points_utilises; points_niveau + points_capacites |]
+    )
+  | Some target, _ ->
     let checked = to_bool target##.checked in
-    match page_of_jsoo app##.page with
-    | Personnage {perso; label} ->
-      let perso = aux ~label ~checked perso in
-      let p = Personnage {label; perso} in
-      route ~loading:false app (page_to_jsoo p)
-    | _ -> ()
+    alert app "cette fonction n'est pas accessible sur cette page";
+    target##.checked := bool (not checked)
+  | _ -> ()
 
 and change_niveau app a = match page_of_jsoo app##.page with
-  | Edition { choix={voies; niveau; _}; perso; _} ->
+  | Edition { choix={voies; niveau; competences; _}; perso; _} ->
     let voies, capacites = capacites voies in
-    let _, _, _, _, pnv, pb, pc = rangs_et_points ~capacites { perso with voies; niveau=niveau+a } in
-    if pc > pnv+pb then alert app "trop de capacités pour baisser le niveau" else (
+    let perso = { perso with voies; competences; niveau=niveau+a } in
+    let _, _, _, _, pnv, pb, pc = rangs_et_points ~capacites perso in
+    wrap app (points_de_competences perso) @@ fun (points_niveau, points_capacites, points_utilises, _) ->
+    if pc > pnv+pb then alert app "trop de capacités pour baisser le niveau"
+    else if points_niveau + points_capacites < points_utilises then alert app "trop de points de compétences" else (
       (Unsafe.coerce app)##.page##.edition##.choix##.niveau := niveau + a;
-      (Unsafe.coerce app)##.page##.edition##.choix##.points_de_maitrise_ := array [|pc; pnv+pb|])
+      (Unsafe.coerce app)##.page##.edition##.points_de_maitrise_ := array [|pc; pnv+pb|];
+      (Unsafe.coerce app##.page)##.edition##.points_de_competences_ :=
+        array [| points_utilises; points_niveau + points_capacites |]
+    )
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"
 
 and rang_max _app rgs =
@@ -832,6 +896,106 @@ and wavy_haut _app =
 
 and wavy_bas _app =
   string @@ Format.sprintf "clip-path:%s" @@ Wavy.cadre [ `bas, (4, 50) ]
+
+and pp_competence _app (c: competence) =
+  let s = match c with
+    | `athletisme -> "athlétisme"
+    | `discretion -> "discrétion"
+    | `equitation -> "Équitation"
+    | `medecine -> "médecine"
+    | _ -> competence_to_str c in
+  string (String.capitalize_ascii s)
+
+and ajoute_competence app =
+  let aux (o, competences, c) =
+    let competences = competences @ [ c, 0 ] in
+    o##.competences := of_listf competence_et_point_to_jsoo competences;
+    o##.ajout_competence_ := undefined in
+  let r = match page_of_jsoo app##.page with
+    | Creation { phase=Competences {ajout_competence=None; _}; _ }
+    | Edition { choix={ajout_competence=None; _}; _ } ->
+      Error "pas de compétence choisie"
+    | Creation { phase=Competences { competences; ajout_competence=Some a; choix; possibilites;_ }; perso; _ } ->
+      begin match competences_maitrisees ?choix perso with
+        | Ok _ ->
+          (Unsafe.coerce app##.page)##.creation##.phase##.competences##.possibilites :=
+            of_listf competence_to_jsoo (List.filter (fun c -> a <> c) possibilites);
+          Ok ((Unsafe.coerce app##.page)##.creation##.phase##.competences, competences, a)
+        | Error e ->
+          (Unsafe.coerce app##.page)##.creation##.phase##.competences##.ajout_competence_ := undefined;
+          Error e
+      end
+    | Edition { choix={competences; ajout_competence=Some a; _}; competences=l; _ } ->
+      (Unsafe.coerce app##.page)##.edition##.competences :=
+        of_listf competence_to_jsoo (List.filter (fun c -> a <> c) l);
+      Ok ((Unsafe.coerce app##.page)##.edition##.choix, competences, a)
+    | _ -> Error "cette fonction n'est pas accessible sur cette page" in
+
+  wrap app r aux
+
+and change_competence app (c: competence) i =
+  match page_of_jsoo app##.page with
+  | Creation { phase=Competences { competences; choix; _ }; perso; _ } ->
+    wrap app (competences_maitrisees ?choix perso) @@ fun competences_maitrisees ->
+    let competences =
+      if i = 0 then List.filter (fun (_, n) -> n <> 0) competences_maitrisees
+      else List.map (fun (c2, n) -> if c = c2 then c, n+i else c2, n) competences in
+    let perso = { perso with competences_maitrisees; competences } in
+    wrap app (points_de_competences perso) @@ fun (points_niveau, points_capacites, points_utilises, _) ->
+    if points_niveau + points_capacites < points_utilises then
+      alert app "trop de points de compétences"
+    else (
+      (Unsafe.coerce app##.page)##.creation##.phase##.competences##.competences :=
+        of_listf competence_et_point_to_jsoo competences;
+      (Unsafe.coerce app##.page)##.creation##.phase##.competences##.competences_maitrisees_ :=
+        of_listf competence_et_point_to_jsoo competences_maitrisees;
+      (Unsafe.coerce app##.page)##.creation##.phase##.competences##.points :=
+        array [| points_utilises; points_niveau + points_capacites |]
+    )
+  | Edition { choix = { competences; niveau; voies; _ }; perso; _ } ->
+    let voies, _ = capacites voies in
+    let competences = List.map (fun (c2, n) -> if c = c2 then c, n+i else c2, n) competences in
+    let perso = { perso with voies; competences; niveau } in
+    wrap app (points_de_competences perso) @@ fun (points_niveau, points_capacites, points_utilises, _) ->
+    if points_niveau + points_capacites < points_utilises then
+      alert app "trop de points de compétences"
+    else (
+      (Unsafe.coerce app##.page)##.edition##.choix##.competences :=
+        of_listf competence_et_point_to_jsoo competences;
+      (Unsafe.coerce app##.page)##.edition##.points_de_competences_ :=
+        array [| points_utilises; points_niveau + points_capacites |]
+    )
+  | _ -> alert app "cette fonction n'est pas accessible sur cette page"
+
+and supprime_competence app (c: competence) =
+  match page_of_jsoo app##.page with
+  | Creation { phase=Competences { competences; choix; _ }; perso; _ } ->
+    let competences = List.remove_assoc c competences in
+    wrap app (competences_maitrisees ?choix perso) @@ fun competences_maitrisees ->
+    let perso = { perso with competences_maitrisees; competences } in
+    wrap app (points_de_competences perso) @@ fun (points_niveau, points_capacites, points_utilises, _) ->
+    (Unsafe.coerce app##.page)##.creation##.phase##.competences##.competences :=
+      of_listf competence_et_point_to_jsoo competences;
+    (Unsafe.coerce app##.page)##.creation##.phase##.competences##.points :=
+      array [| points_utilises; points_niveau + points_capacites |]
+  | Edition { choix = { competences; _ }; perso; _ } ->
+    let competences = List.remove_assoc c competences in
+    let perso = { perso with competences } in
+    wrap app (points_de_competences perso) @@ fun (points_niveau, points_capacites, points_utilises, _) ->
+    (Unsafe.coerce app##.page)##.edition##.choix##.competences :=
+      of_listf competence_et_point_to_jsoo competences;
+    (Unsafe.coerce app##.page)##.edition##.points_de_competences_ :=
+      array [| points_utilises; points_niveau + points_capacites |]
+  | _ -> alert app "cette fonction n'est pas accessible sur cette page"
+
+and bonus_competence app c =
+  match page_of_jsoo app##.page with
+  | Personnage { perso; _ } ->
+    let c, n = competence_et_point_of_jsoo c in
+    let car = List.hd (competence_caracteristiques c) in
+    let v = valeur_caracteristique perso.caracteristiques car in
+    def (n + v)
+  | _ -> alert app "cette fonction n'est pas accessible sur cette page"; undefined
 
 [%%mounted fun app ->
   let elt_erreur = Dom_html.getElementById "erreur-modal" in

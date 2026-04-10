@@ -96,6 +96,7 @@ type bonus_type = [
   | `PC
   | `PR
   | `PM
+  | `PCM
 ] [@@deriving encoding {assoc}, jsoo]
 
 type caracteristique_ou_bonus = [ caracteristique | bonus_type ] [@@deriving encoding]
@@ -577,9 +578,39 @@ type points_avec_max = {
 type equipement_et_nombre = equipement_nom * int option [@@deriving encoding, jsoo]
 type voie_et_rangs = voie_type * int list [@@deriving encoding, jsoo]
 
+type competence = [
+  | `acrobaties
+  | `artisanat
+  | `athletisme
+  | `commerce
+  | `connaissance
+  | `discretion
+  | `divertissement
+  | `equitation
+  | `escalade
+  | `effraction
+  | `empathie
+  | `intimidation
+  | `medecine
+  | `natation
+  | `occultisme
+  | `persuasion
+  | `religion
+  | `renseignement
+  | `sciences
+  | `tromperie
+  | `survie
+  | `vigilance
+] [@@deriving encoding {assoc}, jsoo]
+
+let competence_to_str c =
+  match Json_encoding.construct competence_enc c with `String s -> s | _ -> assert false
+
+type competence_et_point = competence * int [@@deriving encoding, jsoo]
+
 type personnage = {
   nom: string;
-  niveau: int;
+  niveau: int; [@dft 1]
   famille: famille;
   profil: profil;
   peuple: peuple;
@@ -589,16 +620,20 @@ type personnage = {
   des_de_recuperation: points_avec_max;
   points_de_chance: points_avec_max;
   points_de_mana: points_avec_max;
-  initiative: int;
-  defense: int;
+  initiative: int; [@dft 0]
+  defense: int; [@dft 0]
   equipements: equipement_et_nombre list; [@dft []]
   ideal: ideal option;
   travers: travers option;
   description: string; [@dft ""]
   image: string option;
   voies: voie_et_rangs list; [@dft []]
-  bonuses: bonus_avec_nom list;
+  bonuses: bonus_avec_nom list; [@dft []]
+  competences_maitrisees: competence_et_point list; [@dft []]
+  competences: competence_et_point list; [@dft []]
 } [@@deriving encoding, jsoo]
+
+let (let$) = Result.bind
 
 let caracteristiques_par_defaut peuple = match peuple with
   | None ->
@@ -639,7 +674,7 @@ let personnage_vide = {
   points_de_vigueur=points_vide;
   des_de_recuperation=points_vide; points_de_chance=points_vide; points_de_mana=points_vide;
   initiative=0; defense=0; equipements=[]; ideal=None; travers=None; description="";
-  image=None; voies=[]; bonuses=[];
+  image=None; voies=[]; bonuses=[]; competences_maitrisees=[]; competences=[];
 }
 
 let profils_famille = function
@@ -711,6 +746,16 @@ let verifie_caracteristiques c =
   | Some 1, None, Some 1, Some 1, Some 2, Some 2 -> true
   | _ -> false
 
+
+let valeur_caracteristique p = function
+  | `AGI -> p.agilite
+  | `CON -> p.constitution
+  | `FOR -> p.force
+  | `PER -> p.perception
+  | `CHA -> p.charisme
+  | `INT -> p.intelligence
+  | `VOL -> p.volonte
+
 let ajoute_caracteristiques ?(factor=1) c l =
   List.fold_left (fun acc (_, b) ->
     match b.valeur with
@@ -732,14 +777,7 @@ let ajoute_bonus ?(factor=1) p l =
   List.fold_left (fun acc (_, b) ->
     let v = factor * (match b.valeur with
       | `int i -> i
-      | `car c -> match c with
-        | `AGI -> acc.caracteristiques.agilite
-        | `CON -> acc.caracteristiques.constitution
-        | `FOR -> acc.caracteristiques.force
-        | `PER -> acc.caracteristiques.perception
-        | `CHA -> acc.caracteristiques.charisme
-        | `INT -> acc.caracteristiques.intelligence
-        | `VOL -> acc.caracteristiques.volonte) in
+      | `car c -> valeur_caracteristique acc.caracteristiques c) in
     match b.id with
     | `DEF -> { acc with defense = acc.defense + v }
     | `INI -> { acc with initiative = acc.initiative + v }
@@ -750,8 +788,6 @@ let ajoute_bonus ?(factor=1) p l =
     | `PM -> { acc with points_de_mana = { max = acc.points_de_mana.max + v; courant = acc.points_de_mana.courant + v } }
     | _ -> acc
   ) p l
-
-
 
 let voies_peuple = function
   | Demi_elfe -> [ `Elfe_haut; `Elfe_sylvain; `Humain ]
@@ -961,5 +997,66 @@ let verifie_voies ?(validate=true) ~capacites p =
   if not niveau_capacite_check then Error "rang de capacite trop haut" else
   if not peuple_mage_check then Error "voie de peuple et mage ne peuvent pas être suivies ensemble" else
   if points_capacite > points_niveau + points_bonus then Error "trop de capacites" else
-  if validate && rg_mage >= 1 && rg_max < 2 then Error "un mage de niveau 1 doit choisir une capacité de rang 2" else
-    Ok (points_capacite, points_niveau + points_bonus)
+  if validate && rg_mage >= 1 && rg_max < 2 then Error "un mage de niveau 1 doit choisir une capacité de rang 2"
+  else Ok (points_capacite, points_niveau + points_bonus)
+
+let competences_maitrisees_profil : profil -> competence list = function
+  | `Barbare -> [ `artisanat; `athletisme; `equitation; `escalade; `intimidation; `natation; `survie; `vigilance ]
+  | `Chevalier -> [ `athletisme; `connaissance; `equitation; `intimidation; `natation; `persuasion; `religion ]
+  | `Guerrier -> [ `artisanat; `athletisme; `equitation; `intimidation; `natation ]
+  | `Arquebusier -> [ `artisanat; `athletisme; `equitation; `intimidation; `natation; `sciences; `vigilance ]
+  | `Barde -> [ `acrobaties; `artisanat; `athletisme; `commerce; `connaissance; `divertissement; `empathie; `equitation; `intimidation; `natation; `persuasion; `religion; `renseignement; `tromperie ]
+  | `Voleur -> [ `acrobaties; `artisanat; `athletisme; `commerce; `discretion; `escalade; `effraction; `intimidation; `natation; `persuasion; `renseignement; `tromperie; `vigilance ]
+  | `Rodeur -> [ `acrobaties; `artisanat; `athletisme; `discretion; `equitation; `escalade; `medecine; `natation; `survie; `vigilance ]
+  | #profil_mage -> [ `artisanat; `connaissance; `occultisme; `sciences ]
+  | `Druide -> [ `artisanat; `athletisme; `connaissance; `discretion; `equitation; `empathie; `medecine; `natation; `religion; `survie; `vigilance ]
+  | `Moine -> [ `acrobaties; `artisanat; `athletisme; `connaissance; `discretion; `empathie; `escalade; `medecine; `natation; `religion; `survie; `vigilance ]
+  | `Pretre -> [ `artisanat; `athletisme; `connaissance; `empathie; `equitation; `intimidation; `medecine; `persuasion; `religion; `survie ]
+
+let competences_maitrisees ?choix ?(validation=true) (p: personnage) =
+  let peuple = match p.peuple with
+    | Demi_elfe -> if List.exists (fun (vt, _) -> vt = `Elfe_haut) p.voies then Elfe_haut else Elfe_sylvain
+    | p -> p in
+  let$ l = match peuple, choix with
+    | Demi_elfe, _ -> assert false
+    | Demi_orc, _ -> Ok [ `athletisme; `intimidation ]
+    | Elfe_haut, _ -> Ok [ `connaissance; `divertissement ]
+    | Elfe_sylvain, _ -> Ok [ `discretion; `survie ]
+    | Gnome, _ -> Ok [ `sciences; `occultisme ]
+    | Halfelin, _ -> Ok [ `discretion; `effraction ]
+    | Humain, None when validation -> Error "les compétences pour un humain requiert un choix"
+    | Humain, None -> Ok [ `artisanat ]
+    | Humain, Some c -> Ok [ `artisanat; c ]
+    | Nain, _ -> Ok [ `artisanat; `vigilance ] in
+  Ok (List.fold_left (fun acc c ->
+    match List.assoc_opt c acc with
+    | None -> acc @ [ c, 0 ]
+    | Some n -> (List.remove_assoc c acc) @ [ c, n+2 ]
+  ) (List.map (fun c -> c, 0) (competences_maitrisees_profil p.profil)) l)
+
+let points_de_competences (p: personnage) =
+  let points_niveau = 3 * p.niveau in
+  let points_capacites = List.fold_left (fun acc (_, b) -> match b.id, b.valeur, b.opt with
+    | `PCM, `int n, (None | Some Some true) -> acc+n
+    | _ -> acc) 0 p.bonuses in
+  let rec aux acc accm = function
+    | [] -> Ok (acc, accm)
+    | (c, n) :: tl ->
+      if n < 0 then Error "points de compétence négatifs" else
+      match List.assoc_opt c p.competences_maitrisees with
+      | None -> aux (acc + 2*n) accm tl
+      | Some m ->
+        if n - m < 0 then
+          Error (Format.sprintf "minimum de points de compétences pour %s: %d" (competence_to_str c) m)
+        else aux (acc + n - m) (accm + n - m) tl in
+  let$ points_utilises, points_maitrise_utilises = aux 0 0 p.competences in
+  Ok (points_niveau, points_capacites, points_utilises, points_maitrise_utilises)
+
+let competence_caracteristiques : competence -> caracteristique list = function
+  | `acrobaties | `discretion | `escalade | `effraction -> [ `AGI ]
+  | `commerce | `divertissement | `intimidation | `persuasion | `renseignement |`tromperie -> [ `CHA ]
+  | `artisanat | `connaissance | `occultisme | `religion | `sciences -> [ `INT ]
+  | `empathie | `medecine | `survie | `vigilance -> [ `PER ]
+  | `natation -> [ `CON ]
+  | `athletisme -> [ `AGI; `FOR; `CON ]
+  | `equitation -> [ `AGI; `CHA ]

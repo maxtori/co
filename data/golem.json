@@ -1,7 +1,10 @@
 [
   {
     "nom": "Grosse tête",
-    "description": "Le forgesort remplace la force brutale par un peu de réflexion. Il peut effectuer un test d’INT au lieu d’un test de FOR (par exemple, il utilise un levier pour déplacer une lourde charge). De plus, au niveau où il acquiert cette capacité, il peut ajouter son INT à ses PV au lieu de la CON. Il ajoute son rang + 2 à tous les tests de bricolage ou de science."
+    "description": "Le forgesort remplace la force brutale par un peu de réflexion. Il peut effectuer un test d’INT au lieu d’un test de FOR (par exemple, il utilise un levier pour déplacer une lourde charge). De plus, au niveau où il acquiert cette capacité, il peut ajouter son INT à ses PV au lieu de la CON. Il ajoute son rang + 2 à tous les tests de bricolage ou de science.",
+    "bonus": [
+      { "id": "PCM", "valeur": 4, "opt": null }
+    ]
   },
   {
     "nom": "Golem",

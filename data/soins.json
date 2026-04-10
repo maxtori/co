@@ -3,13 +3,19 @@
     "nom": "Récupération mineure",
     "description": "Le prêtre peut apposer les mains sur un allié au contact (ou sur lui-même) pour le soigner. Le patient récupère [1d4°+CHA du prêtre] PV. Ce sort peut être lancé une fois par jour par rang atteint dans la voie, plus une fois supplémentaire chaque fois que le personnage atteint le rang 3 dans une autre voie de prêtre. En plus de ce sort, le prêtre ajoute son rang + 2 à tous les tests de médecine et de premiers soins.",
     "action": "attaque",
-    "sort": true
+    "sort": true,
+    "bonus": [
+      { "id": "PCM", "valeur": 4, "opt": null }
+    ]
   },
   {
     "nom": "Vigueur divine",
     "description": "La cible au contact est guérie d’un poison ou d’une maladie. Si l’infection est surnaturelle, un test d’attaque magique (éventuellement opposé) peut être demandé par le MJ. De plus, le prêtre obtient un bonus égal au rang + 2 aux tests effectués pour résister aux maladies et aux poisons.",
     "action": "limitée",
-    "sort": true
+    "sort": true,
+    "bonus": [
+      { "id": "PCM", "valeur": 4, "opt": null }
+    ]
   },
   {
     "nom": "Récupération majeure",

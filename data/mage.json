@@ -1,7 +1,10 @@
 [
   {
     "nom": "Capacité de peuple + occultisme",
-    "description": "Le mage conserve sa capacité de peuple de rang 1. De plus, il ajoute son rang + 2 aux tests de connaissance et d’érudition en rapport avec la magie."
+    "description": "Le mage conserve sa capacité de peuple de rang 1. De plus, il ajoute son rang + 2 aux tests de connaissance et d’érudition en rapport avec la magie.",
+    "bonus": [
+      { "id": "PCM", "valeur": 4, "opt": null }
+    ]
   },
   {
     "nom": "Maîtrise de la magie",

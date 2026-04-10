@@ -1,7 +1,10 @@
 [
   {
     "nom": "Maître de la survie",
-    "description": "En milieu naturel, le druide ajoute son rang + 2 à tous les tests de survie (s’orienter, trouver un abri et de la nourriture, éviter les dangers, etc.) dont les tests de récupération effectués chaque nuit. Lorsqu’il dort en milieu naturel, s’il utilise 1 DR, il guérit 1d4° PV supplémentaire."
+    "description": "En milieu naturel, le druide ajoute son rang + 2 à tous les tests de survie (s’orienter, trouver un abri et de la nourriture, éviter les dangers, etc.) dont les tests de récupération effectués chaque nuit. Lorsqu’il dort en milieu naturel, s’il utilise 1 DR, il guérit 1d4° PV supplémentaire.",
+    "bonus": [
+      { "id": "PCM", "valeur": 4, "opt": null }
+    ]
   },
   {
     "nom": "Terrains difficiles",

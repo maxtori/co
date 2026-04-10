@@ -1,14 +1,18 @@
 [
   {
     "nom": "Acrobate",
-    "description": "Le barde ajoute son rang + 2 à tous les tests qu’il effectue pour réaliser des acrobaties, tenir en équilibre, faire des sauts ou de l’escalade."
+    "description": "Le barde ajoute son rang + 2 à tous les tests qu’il effectue pour réaliser des acrobaties, tenir en équilibre, faire des sauts ou de l’escalade.",
+    "bonus": [
+      { "id": "PCM", "valeur": 4, "opt": null }
+    ]
   },
   {
     "nom": "Grâce féline",
     "description": "Le barde gagne son CHA en Initiative et +1 en DEF (+2 au rang 4). De plus, le barde ajoute son rang + 2 aux tests de danse, de mime ou de jonglerie.",
     "bonus": [
       { "id": "INI", "valeur": "CHA" },
-      { "id": "DEF", "valeur": 1 }
+      { "id": "DEF", "valeur": 1 },
+      { "id": "PCM", "valeur": 4, "opt": null }
     ]
   },
   {
