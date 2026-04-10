@@ -516,8 +516,8 @@
                   {{ pp_voie(vt[0]) }}
                 </button>
                 <ul class="list-group collapse" :id="vt[0]">
-                  <li v-for="c in voie(vt[0], vt[1])" class="list-group-item list-group-item-action p-0" :class="(capacite_choisie(vt[0], c.rang)) ? 'active' : ''" @click="choisit_capacite(vt[0], c.rang)" role="button">
-                    <div class="w-100 d-flex">
+                  <li v-for="(c, i) in voie(vt[0], vt[1])" class="list-group-item list-group-item-action p-0" :class="(capacite_choisie(vt[0], c.rang)) ? 'active' : ''">
+                    <div class="w-100 d-flex" @click="choisit_capacite(vt[0], c.rang)" role="button">
                       <span class="border border-secondary border-2 px-3">{{ c.rang }}</span>
                       <strong class="flex-fill text-bg-light">{{ c.nom }}</strong>
                     </div>
@@ -527,6 +527,14 @@
                     </div>
                     <p class="mb-0 p-2">{{ c.description }}</p>
                     <div v-if="c.html" v-html="c.html"></div>
+                    <div class="d-flex flex-wrap justify-content-center">
+                      <div v-for="(b, j) in c.bonus.filter((b) => b.opt!==undefined)" class="p-2">
+                        <div class="form-check form-switch">
+                          <input class="form-check-input" type="checkbox" role="switch" :checked="b.opt" @change="function (ev) { choisit_bonus_capacite(ev, c.nom, b) }" :id="'personnage-voies-bonus-'+String(i)+'-'+String(j)"/>
+                          <label class="form-check-label" :for="'personnage-voies-bonus-'+String(i)+'-'+String(j)">{{ b.id }}+{{ b.valeur }}</label>
+                        </div>
+                      </div>
+                    </div>
                   </li>
                 </ul>
               </li>
@@ -542,7 +550,7 @@
               <div class="col text-bg-light text-center">Compétences maitrisées</div>
             </div>
             <div class="p-2 d-flex flex-wrap mb-3">
-              <span class="px-2 border border-secondary" v-for="c in page.creation.phase.competences.maitrisees">{{ pp_competence(c[0]) }}</span>
+              <span class="px-2 border border-secondary" v-for="c in page.creation.phase.competences.maitrisees">{{ pp_competence(c[0]) }} ({{ competence_caracteristiques(c[0]).join('/') }})</span>
             </div>
             <div v-if="page.creation.perso.peuple=='Humain'">
               <div class="row mx-0">
@@ -563,20 +571,23 @@
             </div>
             <div class="mb-3">
               <div v-for="c in page.creation.phase.competences.competences" class="row mx-0 text-center">
-                <div class="col">{{ pp_competence(c[0]) }}</div>
-                <div class="col d-flex">
+                <div class="col-5 d-flex justify-content-around">
+                  <span>{{ pp_competence(c[0]) }}</span>
+                  <span>({{ competence_caracteristiques(c[0]).join('/') }})</span>
+                </div>
+                <div class="col-5 d-flex">
                   <button class="btn btn-secondary btn-sm py-0" @click="change_competence(c[0], -1)"><i class="bi bi-dash"></i></button>
                   <input type="number" class="form-control py-0" v-model="c[1]" style="width:60px"/>
                   <button class="btn btn-secondary btn-sm py-0" @click="change_competence(c[0], 1)"><i class="bi bi-plus"></i></button>
                 </div>
-                <div class="col">
+                <div class="col-2">
                   <button class="btn btn-secondary py-0" @click="supprime_competence(c[0])"><i class="bi bi-trash3"></i></button>
                 </div>
               </div>
             </div>
             <div class="w-75 d-flex mx-auto">
               <select class="form-select py-0" v-model="page.creation.phase.competences.ajout_competence">
-                <option v-for="c in page.creation.phase.competences.possibilites" :value="c">{{ pp_competence(c) }}</option>
+                <option v-for="c in page.creation.phase.competences.possibilites" :value="c">{{ pp_competence(c) }} ({{ competence_caracteristiques(c).join('/') }})</option>
               </select>
               <button class="btn btn-light py-0" @click="ajoute_competence()"><i class="bi bi-plus"></i></button>
             </div>
@@ -780,20 +791,23 @@
                   </div>
                   <div class="mb-3">
                     <div v-for="c in page.edition.choix.competences" class="row mx-0 text-center">
-                      <div class="col">{{ pp_competence(c[0]) }}</div>
-                      <div class="col d-flex">
+                      <div class="col-5 d-flex justify-content-around">
+                        <span>{{ pp_competence(c[0]) }}</span>
+                        <span>({{ competence_caracteristiques(c[0]).join('/') }})</span>
+                      </div>
+                      <div class="col-5 d-flex">
                         <button class="btn btn-secondary btn-sm py-0" @click="change_competence(c[0], -1)"><i class="bi bi-dash"></i></button>
                         <input type="number" class="form-control py-0" v-model="c[1]" style="width:60px"/>
                         <button class="btn btn-secondary btn-sm py-0" @click="change_competence(c[0], 1)"><i class="bi bi-plus"></i></button>
                       </div>
-                      <div class="col">
+                      <div class="col-2">
                         <button class="btn btn-secondary py-0" @click="supprime_competence(c[0])"><i class="bi bi-trash3"></i></button>
                       </div>
                     </div>
                   </div>
                   <div class="w-75 d-flex mx-auto mb-3">
                     <select class="form-select py-0" v-model="page.edition.choix.ajout_competence">
-                      <option v-for="c in page.edition.competences" :value="c">{{ pp_competence(c) }}</option>
+                      <option v-for="c in page.edition.competences" :value="c">{{ pp_competence(c) }} ({{ competence_caracteristiques(c).join('/') }})</option>
                     </select>
                     <button class="btn btn-light py-0" @click="ajoute_competence()"><i class="bi bi-plus"></i></button>
                   </div>
