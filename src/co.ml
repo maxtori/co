@@ -115,6 +115,7 @@ type caracteristique_ou_bonus = [ caracteristique | bonus_type ] [@@deriving enc
 type valeur = [
   | `int of int
   | `car of caracteristique
+  | `rang of int [@wrap "rang"]
 ] [@@deriving encoding]
 
 [@@@jsoo
@@ -122,9 +123,13 @@ type valeur = [
   let valeur_to_jsoo : valeur -> valeur_jsoo Ezjs_min.t = function
     | `int i -> Ezjs_min.Unsafe.inject i
     | `car c -> Ezjs_min.Unsafe.inject (caracteristique_to_jsoo c)
+    | `rang i -> Ezjs_min.Unsafe.inject (Ezjs_min.string (Format.sprintf "rang + %d" i))
   let valeur_of_jsoo : valeur_jsoo Ezjs_min.t -> valeur = fun v ->
     try (`int (Float.to_int @@ Ezjs_min.float_of_number @@ Ezjs_min.Unsafe.coerce v))
-    with _ -> `car (caracteristique_of_jsoo (Ezjs_min.Unsafe.coerce v))
+    with _ -> try `car (caracteristique_of_jsoo (Ezjs_min.Unsafe.coerce v))
+      with _ ->
+        let s = Ezjs_min.to_string (Ezjs_min.Unsafe.coerce v) in
+        `rang (int_of_string (String.sub s 7 (String.length s - 7)))
   let valeur_jsoo_conv = valeur_to_jsoo, valeur_of_jsoo
 ]
 
@@ -759,7 +764,7 @@ let valeur_caracteristique p = function
 let ajoute_caracteristiques ?(factor=1) c l =
   List.fold_left (fun acc (_, b) ->
     match b.valeur with
-    | `car _ -> acc
+    | `car _ | `rang _ -> acc
     | `int v ->
       let v = factor * v in
       match b.id with
@@ -777,6 +782,7 @@ let ajoute_bonus ?(factor=1) p l =
   List.fold_left (fun acc (_, b) ->
     let v = factor * (match b.valeur with
       | `int i -> i
+      | `rang i -> i + 1 (* todo *)
       | `car c -> valeur_caracteristique acc.caracteristiques c) in
     match b.id with
     | `DEF -> { acc with defense = acc.defense + v }
