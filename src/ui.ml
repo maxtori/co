@@ -166,6 +166,10 @@ let edition_personnage ?creation app label perso =
   let st = Personnages.store ~mode:READWRITE app##.db in
   Personnages.put ~key:label st {perso; creation}
 
+let edition_raw_personnage app label perso =
+  let st = Personnages.store ~mode:READWRITE app##.db in
+  Personnages.Raw.put ~key:label st (object%js val perso = perso val creation = undefined end)
+
 let suppression_personnage app label =
   let st = Personnages.store ~mode:READWRITE app##.db in
   Personnages.delete st (Personnages.K label)
@@ -663,6 +667,11 @@ and telecharge_raw_personnage _app label p =
   let s = to_string @@ _JSON##stringify p in
   telecharge (to_string label) s
 
+and sauvegarde_raw_personnage app label i =
+  let elt = Dom_html.getElementById (Format.sprintf "backup-textarea-%d" i) in
+  edition_raw_personnage app label (_JSON##parse (Unsafe.coerce elt)##.value);
+  init app
+
 and charge_modal_points app g = match page_of_jsoo app##.page with
   | Personnage { perso=p; _ } ->
     let genre = genre_points_of_jsoo g in
@@ -1007,6 +1016,11 @@ and bonus_competence app c =
     let v = List.map (fun c -> c, valeur_caracteristique perso.caracteristiques c) l in
     def (of_listf (fun (c, v) -> caracteristique_et_point_to_jsoo (c, n + v)) v)
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"; undefined
+
+and choisit_bonus_des app b =
+  (Unsafe.coerce app)##.des##.bonus := b;
+  (Unsafe.coerce app)##.des##.choix := array [||]
+
 
 [%%mounted fun app ->
   let elt_erreur = Dom_html.getElementById "erreur-modal" in

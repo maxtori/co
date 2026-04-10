@@ -101,31 +101,37 @@
         </div>
 
         <div v-else-if="page.backup!==undefined">
-          <table class="table text-center" style="--bs-table-bg:none">
-            <thead>
-              <tr>
-                <th scope="col">Personnage</th>
-                <th scope="col">Nom</th>
-                <th scope="col">Niveau</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="p in page.backup">
-                <td>{{ p[0] }}</td>
-                <td>{{ p[1].nom }}</td>
-                <td>{{ p[1].niveau }}</td>
-                <td>
-                  <button class="btn w-50 py-0" @click="detruit_personnage(p[0])">
-                    <i class="bi bi-trash3"></i>
-                  </button>
-                  <button class="btn w-50 py-0" @click="telecharge_raw_personnage(p[0], p[1])">
-                    <i class="bi bi-download"></i>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="text-center m-5">Backup</div>
+          <ul class="list-group">
+            <template v-for="(p, i) in page.backup">
+              <li class="list-group-item">
+                <div class="row text-center">
+                  <div class="col-2">{{p[0]}}</div>
+                  <div class="col-2">{{p[1].nom}}</div>
+                  <div class="col-2">{{p[1].niveau}}</div>
+                  <div class="col-2">
+                    <button class="btn w-50 py-0" type="button" data-bs-toggle="collapse" :data-bs-target="'#backup-edite-'+String(i)">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                  </div>
+                  <div class="col-2">
+                    <button class="btn w-50 py-0" @click="telecharge_raw_personnage(p[0], p[1])">
+                      <i class="bi bi-download"></i>
+                    </button>
+                  </div>
+                  <div class="col-2">
+                    <button class="btn py-0" @click="detruit_personnage(p[0])">
+                      <i class="bi bi-trash3"></i>
+                    </button>
+                  </div>
+                </div>
+              </li>
+              <div class="collapse text-center" :id="'backup-edite-'+String(i)">
+                <textarea :id="'backup-textarea-'+String(i)" class="form-control w-100" rows="10">{{ p[1] }}</textarea>
+                <button class="btn btn-secondary m-2" @click="sauvegarde_raw_personnage(p[0], i)">Edite</button>
+              </div>
+            </template>
+          </ul>
         </div>
 
         <!-- personnage -->
@@ -916,7 +922,7 @@
               </div>
               <div class="modal-body">
                 <div v-if="des.choix.length!=0" class="text-center">
-                  <button v-for="c in des.choix" class="btn btn-outline-light mx-2" @click="function() { des.bonus=c[1]; des.choix=[] }">{{ c[0] }}</button>
+                  <button v-for="c in des.choix" class="btn btn-outline-light mx-2" @click="choisit_bonus_des(c[1])">{{ c[0] }}</button>
                 </div>
                 <div v-else>
                   <div class="text-center d-flex mx-auto w-75">
