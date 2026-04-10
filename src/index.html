@@ -571,9 +571,9 @@
             </div>
             <div class="mb-3">
               <div v-for="c in page.creation.phase.competences.competences" class="row mx-0 text-center">
-                <div class="col-5 d-flex justify-content-around">
-                  <span>{{ pp_competence(c[0]) }}</span>
-                  <span>({{ competence_caracteristiques(c[0]).join('/') }})</span>
+                <div class="col-5 d-flex justify-content-between">
+                  <span class="ps-2">{{ pp_competence(c[0]) }}</span>
+                  <span class="pe-2">({{ competence_caracteristiques(c[0]).join('/') }})</span>
                 </div>
                 <div class="col-5 d-flex">
                   <button class="btn btn-secondary btn-sm py-0" @click="change_competence(c[0], -1)"><i class="bi bi-dash"></i></button>
@@ -791,9 +791,9 @@
                   </div>
                   <div class="mb-3">
                     <div v-for="c in page.edition.choix.competences" class="row mx-0 text-center">
-                      <div class="col-5 d-flex justify-content-around">
-                        <span>{{ pp_competence(c[0]) }}</span>
-                        <span>({{ competence_caracteristiques(c[0]).join('/') }})</span>
+                      <div class="col-5 d-flex justify-content-between">
+                        <span class="ps-2">{{ pp_competence(c[0]) }}</span>
+                        <span class="pe-2">({{ competence_caracteristiques(c[0]).join('/') }})</span>
                       </div>
                       <div class="col-5 d-flex">
                         <button class="btn btn-secondary btn-sm py-0" @click="change_competence(c[0], -1)"><i class="bi bi-dash"></i></button>
