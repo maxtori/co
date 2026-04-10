@@ -550,7 +550,7 @@
               <div class="col text-bg-light text-center">Compétences maitrisées</div>
             </div>
             <div class="p-2 d-flex flex-wrap mb-3">
-              <span class="px-2 border border-secondary" v-for="c in page.creation.phase.competences.maitrisees">{{ pp_competence(c[0]) }} ({{ competence_caracteristiques(c[0]).join('/') }})</span>
+              <span class="px-2 border border-secondary" v-for="c in page.creation.phase.competences.maitrisees">{{ pp_competence(c[0]) }}</span>
             </div>
             <div v-if="page.creation.perso.peuple=='Humain'">
               <div class="row mx-0">
