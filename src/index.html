@@ -510,6 +510,17 @@
 
           <!-- creation voies -->
           <div v-else-if="page.creation.phase.voies!==undefined">
+            <div class="row mx-0 my-3">
+              <div class="col text-bg-light">Niveau</div>
+            </div>
+            <div class="d-flex justify-content-center">
+              <button class="btn btn-light" @click="change_niveau(page.creation.phase.voies.niveau-1)"><i class="bi bi-dash"></i></button>
+              <input type="number" class="form-control text-center" v-model="page.creation.phase.voies.niveau" style="width:60px" @change="change_niveau(page.edition.choix.niveau)"/>
+              <button class="btn btn-light" @click="change_niveau(page.creation.phase.voies.niveau+1)"><i class="bi bi-plus"></i></button>
+            </div>
+            <div class="row mx-0 mt-3">
+              <div class="col text-bg-light">Capacités</div>
+            </div>
             <ul class="list-group">
               <li v-for="vt in page.creation.phase.voies.voies" class="list-group-item p-0 text-center">
                 <button class="btn w-100" data-bs-toggle="collapse" :data-bs-target="'#'+vt[0]" aria-expanded="false">

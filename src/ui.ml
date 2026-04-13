@@ -13,7 +13,7 @@ type phase_creation =
       possibilites: equipement_et_nombre list list;
       choix: equipement_et_nombre list }
   | Voies of {
-      voies: voie_et_rangs list; choix: voie_et_rangs list;
+      niveau: int; voies: voie_et_rangs list; choix: voie_et_rangs list;
       points_de_maitrise: int * int; bonuses_optionnels: bonus_avec_nom list }
   | Competences of {
       maitrisees: (competence * int) list; possibilites: competence list; ajout_competence: competence option;
@@ -515,7 +515,7 @@ and phase_suivante app =
               let voies = List.map (fun v -> v, [1; 2; 3; 4; 5]) @@
                 voies_peuple perso.peuple @ voies_profil perso.profil in
               let _, _, _, _, _, _, pc = rangs_et_points ~capacites:[] perso in
-              Voies { voies; choix=[]; points_de_maitrise=0, pc; bonuses_optionnels=[] }
+              Voies { niveau=1; voies; choix=[]; points_de_maitrise=0, pc; bonuses_optionnels=[] }
             | _ ->
               let choix = List.map List.hd possibilites in
               Equipements { possibilites; choix } in
@@ -529,14 +529,14 @@ and phase_suivante app =
           voies_peuple perso.peuple @ voies_profil perso.profil in
         let perso = { perso with equipements } in
         let _, _, _, _, pn, _, _ = rangs_et_points ~capacites:[] perso in
-        let phase = Voies { voies; choix=[]; points_de_maitrise=0, pn; bonuses_optionnels=[] } in
+        let phase = Voies { niveau=1; voies; choix=[]; points_de_maitrise=0, pn; bonuses_optionnels=[] } in
         edition_personnage ~creation:phase app label perso;
         let p = Creation { perso; phase; label } in
         route app (page_to_jsoo p)
-      | Voies { choix=l; bonuses_optionnels; _ } ->
+      | Voies { niveau; choix=l; bonuses_optionnels; _ } ->
         let l, capacites = capacites l in
-        wrap app (verifie_voies ~capacites { perso with voies=l }) @@ fun _ ->
-        let perso = { perso with voies=l } in
+        let perso = { perso with niveau; voies=l } in
+        wrap app (verifie_voies ~capacites perso) @@ fun _ ->
         let bonus_voies = bonus_capacites @@ List.filter_map (fun (vt, rg) -> Option.map (fun v -> vt, v, rg) @@ List.assoc_opt vt !voies) l in
         let def_equipement, agi_max = List.fold_left (fun (def, agi) (e, _) ->
           match List.assoc_opt e !equipements with
@@ -567,8 +567,6 @@ and phase_suivante app =
         fun (points_niveau, points_capacites, points_utilises, points_maitrise_utilises) ->
         if points_capacites > points_maitrise_utilises then
           alert app (Format.sprintf "au moins %d points de compétence doivent être utilisés par des compétences du profil" points_capacites)
-        else if points_niveau + points_capacites > points_utilises then
-          alert app "points de compétences non utilisées"
         else if points_niveau + points_capacites < points_utilises then
           alert app "trop de points de compétences"
         else
@@ -799,9 +797,7 @@ and edite app = match page_of_jsoo app##.page with
         begin match points_de_competences perso with
           | Error e -> alert app e
           | Ok (points_niveau, points_capacites, points_utilises, points_maitrise_utilises) ->
-            if points_niveau + points_capacites > points_utilises then
-              alert app "points de compétences non utilisées"
-            else if points_capacites > points_maitrise_utilises then
+            if points_capacites > points_maitrise_utilises then
               alert app (Format.sprintf "au moins %d points de compétence doivent être utilisés par des compétences du profil" points_capacites)
             else if points_niveau + points_capacites < points_utilises then
               alert app "trop de points de compétences"
@@ -917,7 +913,15 @@ and [@noconv] choisit_bonus_capacite app (ev: Dom_html.inputElement Dom.event t)
     target##.checked := bool (not checked)
   | _ -> ()
 
-and change_niveau app niveau = match page_of_jsoo app##.page with
+and change_niveau app niveau =
+  match page_of_jsoo app##.page with
+  | Creation { phase=Voies {choix; _}; perso; _ } ->
+    let voies, capacites = capacites choix in
+    let perso = { perso with voies; niveau } in
+    let _, _, _, _, pnv, pb, pc = rangs_et_points ~capacites perso in
+    if pc > pnv+pb then alert app "trop de capacités pour baisser le niveau" else (
+      (Unsafe.coerce app)##.page##.creation##.phase##.voies##.niveau := niveau;
+      (Unsafe.coerce app)##.page##.creation##.phase##.voies##.points_de_maitrise_ := array [|pc; pnv+pb|])
   | Edition { choix={voies; competences; _}; perso; _} ->
     let voies, capacites = capacites voies in
     let perso = { perso with voies; competences; niveau } in
