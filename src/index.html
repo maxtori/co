@@ -56,14 +56,14 @@
         <!-- personnages -->
         <div v-else-if="page.personnages!==undefined">
           <div v-if="page.personnages.length!==0" class="my-5 w-75 mx-auto">
-            <div v-for="p in page.personnages" class="card text-center border border-dark border-5 my-3" style="--bs-card-bg:none">
+            <div v-for="(p, i) in page.personnages" class="card text-center border border-dark border-5 my-3" style="--bs-card-bg:none">
               <div class="card-header" @click="personnage(p)" role="button">
                 {{ p.label }}
               </div>
               <div v-if="p.perso.nom" class="card-body d-flex justify-content-center" @click="personnage(p)" role="button">
                 <h1 class="me-5">{{ p.perso.nom }}</h1>
                 <div class="pt-1">
-                  <span class="text-bg-light px-4 py-1 fw-bolder" :style="wavy_cadre()">{{ p.perso.niveau }}</span>
+                  <span class="text-bg-light px-4 py-1 fw-bolder" :style="wavy_cadre(i+1)">{{ p.perso.niveau }}</span>
                 </div>
               </div>
               <div class="card-footer text-body-secondary">
@@ -142,7 +142,7 @@
             </div>
             <div class="col px-0">
               <h1>
-                <span class="px-4 py-1 text-bg-light" :style="wavy_cadre()">
+                <span class="px-4 py-1 text-bg-light" :style="wavy_cadre(0)">
                   {{ page.personnage.perso.niveau }}
                 </span>
               </h1>
@@ -153,7 +153,7 @@
             <p class="my-2" v-if="page.personnage.perso.description">{{ page.personnage.perso.description }}</p>
           </div>
 
-          <div class="row mx-0 pt-1 text-bg-light" :style="wavy_haut()"></div>
+          <div class="row mx-0 pt-1 text-bg-light" :style="wavy_haut(0)"></div>
           <div class="row mx-0">
             <div class="col p-0 border">
               {{ page.personnage.perso.famille }}
@@ -170,11 +170,11 @@
               {{ page.personnage.perso.travers }}
             </div>
           </div>
-          <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas()"></div>
+          <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas(0)"></div>
 
           <!-- personnage caracteristiques -->
           <div class="row mx-0 mt-3">
-            <div class="col p-0 text-bg-light" :style="wavy_haut()">Caractéristiques</div>
+            <div class="col p-0 text-bg-light" :style="wavy_haut(1)">Caractéristiques</div>
           </div>
           <div class="row mx-0">
             <div class="col p-0 d-flex justify-content-around">
@@ -219,10 +219,10 @@
               <span class="flex-fill text-bg-light">{{ page.personnage.perso.defense }}</span>
             </div>
           </div>
-          <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas()"></div>
+          <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas(1)"></div>
 
           <div class="row mx-0 mt-3">
-            <div class="col p-0 text-bg-light" :style="wavy_haut()">Points et Dés</div>
+            <div class="col p-0 text-bg-light" :style="wavy_haut(2)">Points et Dés</div>
           </div>
 
           <div class="row mx-0">
@@ -261,10 +261,10 @@
               </span>
             </div>
           </div>
-          <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas()"></div>
+          <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas(2)"></div>
 
           <div class="row mx-0 mt-3">
-            <div class="col p-0 text-bg-light" :style="wavy_haut()">Attaques</div>
+            <div class="col p-0 text-bg-light" :style="wavy_haut(3)">Attaques</div>
           </div>
           <div class="row mx-0">
             <div class="col p-0 d-flex justify-content-around">
@@ -280,11 +280,11 @@
               <span class="flex-fill text-bg-light" role="button" @click="charge_modal_des('d20', page.personnage.perso.niveau + page.personnage.perso.caracteristiques.volonte, 1, 'Attaque magique')">{{ (page.personnage.perso.niveau + page.personnage.perso.caracteristiques.volonte > 0) ? '+' : '' }}{{ page.personnage.perso.niveau + page.personnage.perso.caracteristiques.volonte }}</span>
             </div>
           </div>
-          <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas()"></div>
+          <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas(3)"></div>
 
           <!-- personnage equipements -->
           <div class="row mx-0 mt-3">
-            <div class="col p-0 text-bg-light collapsed" role="button" data-bs-toggle="collapse" data-bs-target="#autres-equipements" :style="wavy_haut()">Équipements</div>
+            <div class="col p-0 text-bg-light collapsed" role="button" data-bs-toggle="collapse" data-bs-target="#autres-equipements" :style="wavy_haut(4)">Équipements</div>
           </div>
           <template v-for="(e, i) in equipements(page.personnage.perso.equipements, 'arme')">
             <div v-for="(a, j) in e[1].arme.arme" class="row mx-0">
@@ -312,11 +312,11 @@
               <span class="col border p-0">{{ pp_equipement(e[0]) }}</span>
             </div>
           </div>
-          <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas()"></div>
+          <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas(4)"></div>
 
           <!-- personnage competences -->
           <div class="row mx-0 mt-3">
-            <div class="col p-0 text-bg-light" :style="wavy_haut()">Compétences</div>
+            <div class="col p-0 text-bg-light" :style="wavy_haut(5)">Compétences</div>
           </div>
           <div class="row mx-0">
             <div class="col-4 p-0 d-flex justify-content-around" v-for="c in page.personnage.perso.competences">
@@ -326,11 +326,11 @@
             <div v-if="page.personnage.perso.competences.length % 3 == 1" class="col-8 p-0 text-bg-light"></div>
             <div v-else-if="page.personnage.perso.competences.length % 3 == 2" class="col-4 p-0 text-bg-light"></div>
           </div>
-          <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas()"></div>
+          <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas(5)"></div>
 
           <!-- personnage voies -->
           <div class="row mx-0 mt-3">
-            <div class="col p-0 text-bg-light" :style="wavy_haut()">Capacités</div>
+            <div class="col p-0 text-bg-light" :style="wavy_haut(6)">Capacités</div>
           </div>
           <div class="accordion" id="voies-accordeon" style="--bs-body-bg:none">
             <div v-for="v in page.personnage.perso.voies" class="accordion-item">
@@ -352,7 +352,7 @@
                       </button>
                       <div :id="v[0]+'-'+String(i)" class="accordion-collapse collapse" :data-bs-parent="'#voie-accordeon-'+v[0]">
                         <div class="accordion-body p-0">
-                          <div v-if="c.action.length!=0 || c.sort" class="text-bg-light row mx-0" :style="wavy_bas()">
+                          <div v-if="c.action.length!=0 || c.sort" class="text-bg-light row mx-0" :style="wavy_bas(6)">
                             <div v-if="c.sort" class="col">sort</div>
                             <div v-if="c.action.length!=0" class="col">{{ c.action.join(' / ') }}</div>
                           </div>

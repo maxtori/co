@@ -106,6 +106,9 @@ type page =
 
 let voies : (voie_type * voie) list ref = ref []
 let equipements : (equipement_nom * equipement) list ref = ref []
+let wavy_haut : (int, string) Hashtbl.t = Hashtbl.create 10
+let wavy_bas : (int, string) Hashtbl.t = Hashtbl.create 10
+let wavy_cadre : (int, string) Hashtbl.t = Hashtbl.create 10
 
 let%data page : page = Chargement
 and modal_erreur : string option = None
@@ -945,15 +948,31 @@ and copie_lien_personnage _app (p: personnage) =
   with _ ->
     Promise.jthen ((Unsafe.coerce Dom_html.window##.navigator)##.clipboard##writeText (string s)) Fun.id
 
-and wavy_cadre _app =
-  string @@ Format.sprintf "clip-path:%s" @@
-  Wavy.cadre [ `haut, (7, 15); `droite, (5, 10); `bas, (7, 15); `gauche, (5, 10) ]
+and wavy_cadre _app i =
+  let s = match Hashtbl.find_opt wavy_cadre i with
+    | None ->
+      let s = Wavy.cadre [ `haut, (7, 15); `droite, (5, 10); `bas, (7, 15); `gauche, (5, 10) ] in
+      Hashtbl.add wavy_cadre i s; s
+    | Some s -> s in
+  string @@ Format.sprintf "clip-path:%s" s
 
-and wavy_haut _app =
-  string @@ Format.sprintf "clip-path:%s" @@ Wavy.cadre [ `haut, (4, 50) ]
+and wavy_haut _app i =
+  let s = match Hashtbl.find_opt wavy_haut i with
+    | None ->
+      let s = Wavy.cadre [ `haut, (4, 50) ] in
+      Hashtbl.add wavy_haut i s;
+      s
+    | Some s -> s in
+  string @@ Format.sprintf "clip-path:%s" s
 
-and wavy_bas _app =
-  string @@ Format.sprintf "clip-path:%s" @@ Wavy.cadre [ `bas, (4, 50) ]
+and wavy_bas _app i =
+  let s = match Hashtbl.find_opt wavy_bas i with
+    | None ->
+      let s = Wavy.cadre [ `bas, (4, 50) ] in
+      Hashtbl.add wavy_bas i s;
+      s
+    | Some s -> s in
+  string @@ Format.sprintf "clip-path:%s" s
 
 and pp_competence _app (c: competence) =
   let s = match c with
