@@ -91,7 +91,7 @@ type caracteristique = [
 type bonus_type = [
   | `DEF
   | `INI
-  | `WEA
+  | `FAI
   | `PV
   | `PC
   | `PR
@@ -120,7 +120,6 @@ type caracteristique_et_point = (caracteristique * int) [@@deriving encoding, js
 type valeur = [
   | `int of int
   | `car of caracteristique
-  | `rang of int [@wrap "rang"]
 ] [@@deriving encoding]
 
 [@@@jsoo
@@ -128,13 +127,9 @@ type valeur = [
   let valeur_to_jsoo : valeur -> valeur_jsoo Ezjs_min.t = function
     | `int i -> Ezjs_min.Unsafe.inject i
     | `car c -> Ezjs_min.Unsafe.inject (caracteristique_to_jsoo c)
-    | `rang i -> Ezjs_min.Unsafe.inject (Ezjs_min.string (Format.sprintf "rang + %d" i))
   let valeur_of_jsoo : valeur_jsoo Ezjs_min.t -> valeur = fun v ->
     try (`int (Float.to_int @@ Ezjs_min.float_of_number @@ Ezjs_min.Unsafe.coerce v))
-    with _ -> try `car (caracteristique_of_jsoo (Ezjs_min.Unsafe.coerce v))
-      with _ ->
-        let s = Ezjs_min.to_string (Ezjs_min.Unsafe.coerce v) in
-        `rang (int_of_string (String.sub s 7 (String.length s - 7)))
+    with _ -> `car (caracteristique_of_jsoo (Ezjs_min.Unsafe.coerce v))
   let valeur_jsoo_conv = valeur_to_jsoo, valeur_of_jsoo
 ]
 
@@ -698,6 +693,16 @@ let profils_famille = function
 let profils () =
   List.map (fun (_, f) -> f, profils_famille f) famille_assoc
 
+let caracteristique_avec_valeur c acc i =
+  let acc = if c.agilite = i then `AGI :: acc else acc in
+  let acc = if c.constitution = i then `CON :: acc else acc in
+  let acc = if c.force = i then `FOR :: acc else acc in
+  let acc = if c.perception = i then `PER :: acc else acc in
+  let acc = if c.charisme = i then `CHA :: acc else acc in
+  let acc = if c.intelligence = i then `INT :: acc else acc in
+  let acc = if c.volonte = i then `VOL :: acc else acc in
+  acc
+
 let bonuses_peuple p c =
   let nom, l = match p with
     | Demi_elfe -> "demi_elfe", [
@@ -721,22 +726,21 @@ let bonuses_peuple p c =
       [ `AGI, 1; `FOR, -1 ]; [ `VOL, 1; `FOR, -1 ];
     ]
     | Humain ->
-      let aux acc i =
-        let acc = if c.agilite = i then `AGI :: acc else acc in
-        let acc = if c.constitution = i then `CON :: acc else acc in
-        let acc = if c.force = i then `FOR :: acc else acc in
-        let acc = if c.perception = i then `PER :: acc else acc in
-        let acc = if c.charisme = i then `CHA :: acc else acc in
-        let acc = if c.intelligence = i then `INT :: acc else acc in
-        let acc = if c.volonte = i then `VOL :: acc else acc in
-        acc in
-      let l = aux [] (-1) in
-      let l = if List.length l >= 2 then l else aux l 0 in
+      let l = caracteristique_avec_valeur c [] (-1) in
+      let l = if List.length l >= 2 then l else caracteristique_avec_valeur c l 0 in
       "humain", List.map (fun c -> [c, 1]) l
     | Nain -> "nain", [
         [ `CON, 1; `AGI, -1 ]; [ `VOL, 1; `AGI, -1 ];
       ] in
   List.map (fun l -> List.map (fun (id, v) -> nom, {id; valeur=`int v; opt=None}) l) l
+
+let plus_faibles_caracteristiques c =
+  let rec aux acc i = match acc with
+    | [] ->
+      let acc = caracteristique_avec_valeur c [] i in
+      aux acc (i+1)
+    | acc -> acc in
+  aux [] (-3)
 
 let verifie_caracteristiques c =
   let acc = [] in
@@ -771,7 +775,7 @@ let valeur_caracteristique p = function
 let ajoute_caracteristiques ?(factor=1) c l =
   List.fold_left (fun acc (_, b) ->
     match b.valeur with
-    | `car _ | `rang _ -> acc
+    | `car _  -> acc
     | `int v ->
       let v = factor * v in
       match b.id with
@@ -789,12 +793,10 @@ let ajoute_bonus ?(factor=1) p l =
   List.fold_left (fun acc (_, b) ->
     let v = factor * (match b.valeur with
       | `int i -> i
-      | `rang i -> i + 1 (* todo *)
       | `car c -> valeur_caracteristique acc.caracteristiques c) in
     match b.id with
     | `DEF -> { acc with defense = acc.defense + v }
     | `INI -> { acc with initiative = acc.initiative + v }
-    | `WEA -> acc (* todo *)
     | `PV -> { acc with points_de_vigueur = { max = acc.points_de_vigueur.max + v; courant = acc.points_de_vigueur.courant + v } }
     | `PC -> { acc with points_de_chance = { max = acc.points_de_chance.max + v; courant = acc.points_de_chance.courant + v } }
     | `PR -> { acc with des_de_recuperation = { max = acc.des_de_recuperation.max + v; courant = acc.des_de_recuperation.courant + v } }

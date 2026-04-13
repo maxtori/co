@@ -203,7 +203,7 @@ let charge_fichier url f =
   | Error e -> js_log e; log "%s non présent" url; f None
   | Ok r -> f (Some r.Ezjs_fetch.body)
 
-let charge_voie v f =
+let charge_voie ~(perso: personnage) v f =
   match List.assoc_opt v !voies with
   | Some v -> f (Some v)
   | None ->
@@ -214,6 +214,17 @@ let charge_voie v f =
     | None -> f None
     | Some s ->
       let voie = EzEncoding.destruct voie_enc s in
+      let voie = List.map (fun (c: capacite) ->
+        let bonus = List.flatten @@ List.map (fun b ->
+          match b.id with
+          | `FAI ->
+            let l = plus_faibles_caracteristiques perso.caracteristiques in
+            begin match l with
+              | [ id ] -> [ { b with id } ]
+              | _ -> List.map (fun id -> { b with id; opt=Some None }) l
+            end
+          | _ -> [ b ]) c.bonus in
+        { c with bonus }) voie in
       voies := (v, voie) :: !voies;
       f (Some voie)
 
@@ -237,14 +248,14 @@ let charge_equipement e f =
         equipements := (e, equipement) :: !equipements;
         f (Some equipement)
 
-let chargement_voies l f =
+let chargement_voies ~perso l f =
   let rec aux acc = function
     | [] -> f (List.rev acc)
-    | vt :: tl -> charge_voie vt (function None -> aux acc tl | Some v -> aux ((vt, v) :: acc) tl) in
+    | vt :: tl -> charge_voie ~perso vt (function None -> aux acc tl | Some v -> aux ((vt, v) :: acc) tl) in
   aux [] l
 
-let chargement_voies_async l =
-  List.iter (fun vt -> charge_voie vt (fun _ -> ())) l
+let chargement_voies_async ~perso l =
+  List.iter (fun vt -> charge_voie ~perso vt (fun _ -> ())) l
 
 let chargement_equipements l f =
   let rec aux = function
@@ -298,12 +309,12 @@ let route ?(loading=true) ?path app p =
     let rec aux = function
       | [] -> f app
       | ({perso; _}: avec_label) :: tl ->
-        chargement_voies_async (List.map fst perso.voies);
+        chargement_voies_async ~perso (List.map fst perso.voies);
         chargement_equipements_async (List.map fst perso.equipements);
         aux tl in
     aux l
   | Personnage {perso; _} ->
-    chargement_voies (List.map fst perso.voies) @@ fun _ ->
+    chargement_voies ~perso (List.map fst perso.voies) @@ fun _ ->
     chargement_equipements (List.map fst perso.equipements) @@ fun _ ->
     begin match perso.image with
       | None -> f app
@@ -316,14 +327,14 @@ let route ?(loading=true) ?path app p =
         app##.image := def url;
         f app
     end
-  | Creation { phase = Voies {voies; _}; _ } ->
-    chargement_voies (List.map fst voies) @@ fun _ ->
+  | Creation { phase = Voies {voies; _}; perso; _ } ->
+    chargement_voies ~perso (List.map fst voies) @@ fun _ ->
     f app
   | Creation { phase = Equipements {possibilites; _}; perso = {equipements; _}; _ } ->
     chargement_equipements (List.map fst (equipements @ List.flatten possibilites)) @@ fun _ ->
     f app
-  | Edition { voies; equipements=l; choix={equipements; _}; _ } ->
-    chargement_voies (List.map fst voies) @@ fun _ ->
+  | Edition { voies; equipements=l; choix={equipements; _}; perso; _ } ->
+    chargement_voies ~perso (List.map fst voies) @@ fun _ ->
     chargement_equipements (List.map fst equipements) @@ fun _ ->
     chargement_equipements_async (List.map fst l);
     f app
@@ -410,7 +421,7 @@ and edition app = match page_of_jsoo app##.page with
     let ids = List.map snd caracteristique_assoc @ List.map snd bonus_type_assoc in
     let ideal = match perso.ideal with None -> "" | Some ideal -> ideal_to_str ideal in
     let travers = match perso.travers with None -> "" | Some t -> travers_to_str t in
-    chargement_voies (List.map fst perso.voies) @@ fun l ->
+    chargement_voies ~perso (List.map fst perso.voies) @@ fun l ->
     let l = List.map (fun (vt, v) -> vt, v, List.assoc vt perso.voies) l in
     let rg_mage = rang_max @@ Option.value ~default:[] @@ List.assoc_opt `Mage perso.voies in
     let voies =
@@ -628,15 +639,15 @@ and choisit_capacite app vt rg =
             (List.find_opt (fun c -> c.rang = rg) v)) supprime) in
         aux modifie acc bonuses bonuses_supprimes tl in
     aux false [] bonuses [] lv in
-  let rafraichit_voies x peuple profil famille l1 =
+  let rafraichit_voies ~perso x peuple profil famille l1 =
     let rg_mage = rang_max @@ Option.value ~default:[] @@ List.assoc_opt `Mage l1 in
-    chargement_voies (List.map fst l1) @@ fun l ->
+    chargement_voies ~perso (List.map fst l1) @@ fun l ->
     let l1 = List.map (fun (vt, v) -> vt, v, List.assoc vt l1) l in
     let voies =
       List.map (fun x -> x, if rg_mage >= 1 then [1] else [1; 2; 3; 4; 5]) (voies_peuple peuple) @
       List.map (fun x -> x, [1; 2; 3; 4; 5]) (voies_profil profil) @
       (voies_capacites ~famille l1) in
-    chargement_voies (List.map fst voies) @@ fun _ ->
+    chargement_voies ~perso (List.map fst voies) @@ fun _ ->
     x##.voies := of_listf voie_et_rangs_to_jsoo voies in
   match page_of_jsoo app##.page with
   | Creation { phase; perso; _ } ->
@@ -655,7 +666,7 @@ and choisit_capacite app vt rg =
               | None -> ()
               | Some elt -> (Unsafe.coerce elt)##.checked := _false
             ) bonus_supprimes;
-            rafraichit_voies (Unsafe.coerce app)##.page##.creation##.phase##.voies perso.peuple perso.profil perso.famille voies
+            rafraichit_voies ~perso (Unsafe.coerce app)##.page##.creation##.phase##.voies perso.peuple perso.profil perso.famille voies
         end
       | _ -> ()
     end
@@ -673,7 +684,7 @@ and choisit_capacite app vt rg =
           | None -> ()
           | Some elt -> (Unsafe.coerce elt)##.checked := _false
         ) bonus_supprimes;
-        rafraichit_voies (Unsafe.coerce app)##.page##.edition perso.peuple perso.profil perso.famille voies
+        rafraichit_voies ~perso (Unsafe.coerce app)##.page##.edition perso.peuple perso.profil perso.famille voies
     end
   | _ -> ()
 
