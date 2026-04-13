@@ -895,11 +895,8 @@ and [@noconv] choisit_bonus_capacite app (ev: Dom_html.inputElement Dom.event t)
         target##.checked := bool (not checked)
       | Ok bonuses ->
         wrap app (points_de_competences {perso with competences; niveau; bonuses}) @@
-        fun (points_niveau, points_capacites, points_utilises, points_maitrise_utilises) ->
-        if points_capacites > points_maitrise_utilises then (
-          alert app (Format.sprintf "au moins %d points de compétence doivent être utilisés par des compétences du profil" points_capacites);
-          target##.checked := bool (not checked))
-        else if points_niveau + points_capacites < points_utilises then (
+        fun (points_niveau, points_capacites, points_utilises, _points_maitrise_utilises) ->
+        if points_niveau + points_capacites < points_utilises then (
           alert app "trop de points de compétences";
           target##.checked := bool (not checked))
         else (
