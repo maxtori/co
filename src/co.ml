@@ -762,7 +762,6 @@ let verifie_caracteristiques c =
   | Some 1, None, Some 1, Some 1, Some 2, Some 2 -> true
   | _ -> false
 
-
 let valeur_caracteristique p = function
   | `AGI -> p.agilite
   | `CON -> p.constitution
@@ -847,7 +846,14 @@ let voies_capacite ~famille ~rangs capacites =
         | #profil as p -> acc @ [ p ]
       ) [] profils in
       let voies = match profils with [] -> toutes_voies () | _ -> List.flatten @@ List.map voies_profil profils in
-      acc @ (List.map (fun v -> v, rangs) @@ voies)
+      List.fold_left (fun acc v -> match List.assoc_opt v acc with
+        | None -> acc @ [v, rangs]
+        | Some rgs ->
+          let rgs = List.fold_left (fun rgs rg ->
+            if List.mem rg rgs then rgs else List.sort Int.compare (rg :: rgs)
+          ) rgs rangs in
+          (List.remove_assoc v acc) @ [ v, rgs ]
+      ) acc voies
     | _ -> acc
   ) [] capacites in
   l
