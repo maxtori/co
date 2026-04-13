@@ -929,16 +929,17 @@ and pp_competence _app (c: competence) =
     | _ -> competence_to_str c in
   string (String.capitalize_ascii s)
 
-and ajoute_competence app =
+and ajoute_competence app (arg: competence option) =
   let aux (o, competences, c) =
     let competences = competences @ [ c, 0 ] in
     o##.competences := of_listf competence_et_point_to_jsoo competences;
     o##.ajout_competence_ := undefined in
   let r = match page_of_jsoo app##.page with
     | Creation { phase=Competences {ajout_competence=None; _}; _ }
-    | Edition { choix={ajout_competence=None; _}; _ } ->
+    | Edition { choix={ajout_competence=None; _}; _ } when Option.is_none arg ->
       Error "pas de compétence choisie"
-    | Creation { phase=Competences { competences; ajout_competence=Some a; choix; possibilites;_ }; perso; _ } ->
+    | Creation { phase=Competences { competences; ajout_competence; choix; possibilites;_ }; perso; _ } ->
+      let a = match ajout_competence, arg with None, None -> assert false | _, Some a | Some a, _ -> a in
       begin match competences_maitrisees ?choix perso with
         | Ok _ ->
           (Unsafe.coerce app##.page)##.creation##.phase##.competences##.possibilites :=
@@ -948,7 +949,8 @@ and ajoute_competence app =
           (Unsafe.coerce app##.page)##.creation##.phase##.competences##.ajout_competence_ := undefined;
           Error e
       end
-    | Edition { choix={competences; ajout_competence=Some a; _}; competences=l; _ } ->
+    | Edition { choix={competences; ajout_competence; _}; competences=l; _ } ->
+      let a = match ajout_competence, arg with None, None -> assert false | _, Some a | Some a, _ -> a in
       (Unsafe.coerce app##.page)##.edition##.competences :=
         of_listf competence_to_jsoo (List.filter (fun c -> a <> c) l);
       Ok ((Unsafe.coerce app##.page)##.edition##.choix, competences, a)
@@ -992,7 +994,7 @@ and change_competence app (c: competence) i =
 
 and supprime_competence app (c: competence) =
   match page_of_jsoo app##.page with
-  | Creation { phase=Competences { competences; choix; _ }; perso; _ } ->
+  | Creation { phase=Competences { competences; choix; possibilites; _ }; perso; _ } ->
     let competences = List.remove_assoc c competences in
     wrap app (competences_maitrisees ?choix perso) @@ fun competences_maitrisees ->
     let perso = { perso with competences_maitrisees; competences } in
@@ -1000,15 +1002,20 @@ and supprime_competence app (c: competence) =
     (Unsafe.coerce app##.page)##.creation##.phase##.competences##.competences :=
       of_listf competence_et_point_to_jsoo competences;
     (Unsafe.coerce app##.page)##.creation##.phase##.competences##.points :=
-      array [| points_utilises; points_niveau + points_capacites |]
-  | Edition { choix = { competences; _ }; perso; _ } ->
+      array [| points_utilises; points_niveau + points_capacites |];
+    (Unsafe.coerce app##.page)##.creation##.phase##.competences##.possibilites :=
+      of_listf competence_to_jsoo (possibilites @ [ c ])
+
+  | Edition { choix = { competences; _ }; perso; competences=possibilites; _ } ->
     let competences = List.remove_assoc c competences in
     let perso = { perso with competences } in
     wrap app (points_de_competences perso) @@ fun (points_niveau, points_capacites, points_utilises, _) ->
     (Unsafe.coerce app##.page)##.edition##.choix##.competences :=
       of_listf competence_et_point_to_jsoo competences;
     (Unsafe.coerce app##.page)##.edition##.points_de_competences_ :=
-      array [| points_utilises; points_niveau + points_capacites |]
+      array [| points_utilises; points_niveau + points_capacites |];
+    (Unsafe.coerce app##.page)##.edition##.competences :=
+      of_listf competence_to_jsoo (possibilites @ [ c ])
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"
 
 and competence_caracteristiques _app (c: competence) =
