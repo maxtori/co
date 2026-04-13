@@ -534,7 +534,7 @@ and phase_suivante app =
         let l, capacites = capacites l in
         wrap app (verifie_voies ~capacites { perso with voies=l }) @@ fun _ ->
         let perso = { perso with voies=l } in
-        let bonus_voies = bonus_capacites @@ List.filter_map (fun (v, rg) -> Option.map (fun v -> v, rg) @@ List.assoc_opt v !voies) l in
+        let bonus_voies = bonus_capacites @@ List.filter_map (fun (vt, rg) -> Option.map (fun v -> vt, v, rg) @@ List.assoc_opt vt !voies) l in
         let def_equipement, agi_max = List.fold_left (fun (def, agi) (e, _) ->
           match List.assoc_opt e !equipements with
           | Some Armure { defense; agilite_max; _ } ->
@@ -603,21 +603,30 @@ and capacite_choisie app vt rg =
   | _ -> false
 
 and choisit_capacite app vt rg =
-  let change_capacites voies =
+  let change_capacites lv bonuses =
     let vt = voie_type_of_jsoo vt in
-    let rec aux modified acc = function
-      | [] when not modified -> List.rev ((vt, List.init rg (fun i -> i+1)) :: acc)
-      | [] -> List.rev acc
+    let v = List.assoc vt !voies in
+    let rec aux modifie acc bonuses bonuses_supprimes = function
+      | [] when not modifie -> List.rev ((vt, List.init rg (fun i -> i+1)) :: acc), bonuses, bonuses_supprimes
+      | [] -> List.rev acc, bonuses, bonuses_supprimes
       | (vt0, rgs0) :: tl ->
         let rg0 = rang_max rgs0 in
-        let acc, modified =
-          if vt <> vt0 then (vt0, rgs0) :: acc, modified
-          else if rg0 < rg then (vt, rgs0 @ List.init (rg - rg0) (fun i -> i+rg0+1)) :: acc, true
-          else if rg0 = rg && List.length rgs0 = 1 then acc, true
-          else if rg0 = rg then (vt, List.filter (fun i -> i <> rg0) rgs0) :: acc, true
-          else (vt, List.filter (fun i -> i <= rg) rgs0) :: acc, true in
-        aux modified acc tl in
-    aux false [] voies in
+        let acc, modifie, supprime =
+          if vt <> vt0 then (vt0, rgs0) :: acc, modifie, []
+          else if rg0 < rg then (vt, rgs0 @ List.init (rg - rg0) (fun i -> i+rg0+1)) :: acc, true, []
+          else if rg0 = rg && List.length rgs0 = 1 then acc, true, rgs0
+          else if rg0 = rg then (vt, List.filter (fun i -> i <> rg0) rgs0) :: acc, true, [ rg0 ]
+          else (vt, List.filter (fun i -> i <= rg) rgs0) :: acc, true,
+               List.filter (fun i -> i > rg) rgs0 in
+        let noms_supprime = List.filter_map (fun rg ->
+          Option.map (fun (c: capacite) -> c.nom) (List.find_opt (fun c -> c.rang = rg) v)
+        ) supprime in
+        let bonuses = List.filter (fun (n, _) -> not (List.mem n noms_supprime)) bonuses in
+        let bonuses_supprimes = bonuses_supprimes @ List.flatten (List.filter_map (fun rg ->
+          Option.map (fun (c: capacite) -> List.map (fun b -> c.rang, b.id) c.bonus)
+            (List.find_opt (fun c -> c.rang = rg) v)) supprime) in
+        aux modifie acc bonuses bonuses_supprimes tl in
+    aux false [] bonuses [] lv in
   let rafraichit_voies x peuple profil famille l1 =
     let rg_mage = rang_max @@ Option.value ~default:[] @@ List.assoc_opt `Mage l1 in
     chargement_voies (List.map fst l1) @@ fun l ->
@@ -631,26 +640,38 @@ and choisit_capacite app vt rg =
   match page_of_jsoo app##.page with
   | Creation { phase; perso; _ } ->
     begin match phase with
-      | Voies { choix; _ } ->
-        let voies = change_capacites choix in
+      | Voies { choix; bonuses_optionnels; _ } ->
+        let voies, bonuses, bonus_supprimes = change_capacites choix bonuses_optionnels in
         let voies, capacites = capacites voies in
         begin match verifie_voies ~validate:false ~capacites { perso with voies } with
           | Error e -> alert app e
           | Ok (pc, pn) ->
             (Unsafe.coerce app)##.page##.creation##.phase##.voies##.choix := of_listf voie_et_rangs_to_jsoo voies;
             (Unsafe.coerce app)##.page##.creation##.phase##.voies##.points_de_maitrise_ := array [|pc; pn|];
+            (Unsafe.coerce app)##.page##.creation##.phase##.voies##.bonuses_optionnels_ := of_listf bonus_avec_nom_to_jsoo bonuses;
+            List.iter (fun (rg, id) ->
+              match Dom_html.getElementById_opt (Format.sprintf "creation-voies-bonus-%d-%s" rg (caracteristique_ou_bonus_to_str id)) with
+              | None -> ()
+              | Some elt -> (Unsafe.coerce elt)##.checked := _false
+            ) bonus_supprimes;
             rafraichit_voies (Unsafe.coerce app)##.page##.creation##.phase##.voies perso.peuple perso.profil perso.famille voies
         end
       | _ -> ()
     end
-  | Edition { choix={voies; niveau; _}; perso; _} ->
-    let voies = change_capacites voies in
+  | Edition { choix={voies; niveau; bonuses; _}; perso; _} ->
+    let voies, bonuses, bonus_supprimes = change_capacites voies bonuses in
     let voies, capacites = capacites voies in
     begin match verifie_voies ~validate:false ~capacites { perso with niveau; voies } with
       | Error e -> alert app e
       | Ok (pc, pn) ->
         (Unsafe.coerce app)##.page##.edition##.choix##.voies := of_listf voie_et_rangs_to_jsoo voies;
         (Unsafe.coerce app)##.page##.edition##.points_de_maitrise_ := array [|pc; pn|];
+        (Unsafe.coerce app)##.page##.edition##.choix##.bonuses := of_listf bonus_avec_nom_to_jsoo bonuses;
+        List.iter (fun (rg, id) ->
+          match Dom_html.getElementById_opt (Format.sprintf "edition-voies-bonus-%d-%s" rg (caracteristique_ou_bonus_to_str id)) with
+          | None -> ()
+          | Some elt -> (Unsafe.coerce elt)##.checked := _false
+        ) bonus_supprimes;
         rafraichit_voies (Unsafe.coerce app)##.page##.edition perso.peuple perso.profil perso.famille voies
     end
   | _ -> ()
@@ -758,7 +779,7 @@ and edite app = match page_of_jsoo app##.page with
     begin match verifie_voies ~capacites { perso with voies=l } with
       | Ok _ ->
         let perso = { perso with voies=e.choix.voies } in
-        let bonus_voies = bonus_capacites @@ List.filter_map (fun (v, rg) -> Option.map (fun v -> v, rg) @@ List.assoc_opt v !voies) l in
+        let bonus_voies = bonus_capacites @@ List.filter_map (fun (vt, rg) -> Option.map (fun v -> vt, v, rg) @@ List.assoc_opt vt !voies) l in
         let bonuses = List.fold_left (fun acc (n, b) ->
           match List.find_opt (fun (n2, _) -> n = n2) acc with
           | None -> acc @ [ n, b ]
@@ -816,12 +837,12 @@ and pp_equipement _app e =
   string @@ String.capitalize_ascii @@ String.map (function '_' -> ' ' | c -> c) s
 
 and pp_peuple _app p =
-  let s = match Json_encoding.construct peuple_enc (peuple_of_jsoo p) with `String s -> s | _ -> assert false in
+  let s = match Json_encoding.construct peuple_enc (peuple_of_jsoo p) with `String s -> s | _ -> failwith "nom peuple non valide" in
   let b = String.starts_with ~prefix:"demi_" s in
   string @@ String.capitalize_ascii @@ String.map (function '_' -> if b then '-' else ' ' | c -> c) s
 
 and pp_voie _app v =
-  let s = match Json_encoding.construct voie_type_enc (voie_type_of_jsoo v) with `String s -> s | _ -> assert false in
+  let s = voie_type_to_str (voie_type_of_jsoo v) in
   let b = String.starts_with ~prefix:"demi_" s in
   string @@ String.capitalize_ascii @@ String.map (function '_' -> if b then '-' else ' ' | c -> c) s
 
@@ -844,34 +865,49 @@ and [@noconv] charge_image app (ev: Dom_html.inputElement Dom.event t) =
     (Unsafe.coerce app)##.page##.edition##.choix##.image := def (string nom_fichier)
   | _ -> ()
 
-and [@noconv] choisit_bonus_capacite app (ev: Dom_html.inputElement Dom.event t) nom b =
-  let aux target bonuses =
-    let checked = to_bool target##.checked in
+and [@noconv] choisit_bonus_capacite app (ev: Dom_html.inputElement Dom.event t) vt rg nom b =
+  let aux checked bonuses voies =
+    let vt = voie_type_of_jsoo vt in
     let nom = to_string nom in
     let b = bonus_of_jsoo b in
     if checked then
-      let b = { b with opt=Some (Some true) } in
-      checked, bonuses @ [ nom, b ]
-    else checked, List.filter (fun (n, b2) -> not (n = nom && b.id = b2.id)) bonuses in
+      match List.assoc_opt vt voies with
+      | Some rgs when List.mem rg rgs ->
+        let b = { b with opt=Some (Some true) } in
+        Ok (bonuses @ [ nom, b ])
+      | _ -> Error "capacité non apprise"
+    else Ok (List.filter (fun (n, b2) -> not (n = nom && b.id = b2.id)) bonuses) in
   match Opt.to_option ev##.target, page_of_jsoo app##.page with
-  | Some target, Creation {phase=Voies {bonuses_optionnels; _}; _} ->
-    let _checked, bonuses = aux target bonuses_optionnels in
-    (Unsafe.coerce app##.page)##.creation##.phase##.voies##.bonuses_optionnels_ := of_listf bonus_avec_nom_to_jsoo bonuses
-  | Some target, Edition {perso; choix={competences; niveau; bonuses; _}; _} ->
-    let checked, bonuses = aux target bonuses in
-    wrap app (points_de_competences {perso with competences; niveau; bonuses}) @@
-    fun (points_niveau, points_capacites, points_utilises, points_maitrise_utilises) ->
-    if points_capacites > points_maitrise_utilises then (
-      alert app (Format.sprintf "au moins %d points de compétence doivent être utilisés par des compétences du profil" points_capacites);
-      target##.checked := bool (not checked))
-    else if points_niveau + points_capacites < points_utilises then (
-      alert app "trop de points de compétences";
-      target##.checked := bool (not checked))
-    else (
-      (Unsafe.coerce app##.page)##.edition##.choix##.bonuses := of_listf bonus_avec_nom_to_jsoo bonuses;
-      (Unsafe.coerce app##.page)##.edition##.points_de_competences_ :=
-        array [| points_utilises; points_niveau + points_capacites |]
-    )
+  | Some target, Creation {phase=Voies {bonuses_optionnels; choix; _}; _} ->
+    let checked = to_bool target##.checked in
+    begin match aux checked bonuses_optionnels choix with
+      | Error e ->
+        alert app e;
+        target##.checked := bool (not checked)
+      | Ok bonuses ->
+        (Unsafe.coerce app##.page)##.creation##.phase##.voies##.bonuses_optionnels_ :=
+          of_listf bonus_avec_nom_to_jsoo bonuses
+    end
+  | Some target, Edition {perso; choix={competences; niveau; bonuses; voies; _}; _} ->
+    let checked = to_bool target##.checked in
+    begin match aux checked bonuses voies with
+      | Error e ->
+        alert app e;
+        target##.checked := bool (not checked)
+      | Ok bonuses ->
+        wrap app (points_de_competences {perso with competences; niveau; bonuses}) @@
+        fun (points_niveau, points_capacites, points_utilises, points_maitrise_utilises) ->
+        if points_capacites > points_maitrise_utilises then (
+          alert app (Format.sprintf "au moins %d points de compétence doivent être utilisés par des compétences du profil" points_capacites);
+          target##.checked := bool (not checked))
+        else if points_niveau + points_capacites < points_utilises then (
+          alert app "trop de points de compétences";
+          target##.checked := bool (not checked))
+        else (
+          (Unsafe.coerce app##.page)##.edition##.choix##.bonuses := of_listf bonus_avec_nom_to_jsoo bonuses;
+          (Unsafe.coerce app##.page)##.edition##.points_de_competences_ :=
+            array [| points_utilises; points_niveau + points_capacites |])
+    end
   | Some target, _ ->
     let checked = to_bool target##.checked in
     alert app "cette fonction n'est pas accessible sur cette page";
@@ -938,7 +974,7 @@ and ajoute_competence app (arg: competence option) =
     | Edition { choix={ajout_competence=None; _}; _ } when Option.is_none arg ->
       Error "pas de compétence choisie"
     | Creation { phase=Competences { competences; ajout_competence; choix; possibilites;_ }; perso; _ } ->
-      let a = match ajout_competence, arg with None, None -> assert false | _, Some a | Some a, _ -> a in
+      let a = match ajout_competence, arg with None, None -> failwith "argument non compatible" | _, Some a | Some a, _ -> a in
       begin match competences_maitrisees ?choix perso with
         | Ok _ ->
           (Unsafe.coerce app##.page)##.creation##.phase##.competences##.possibilites :=
@@ -949,7 +985,7 @@ and ajoute_competence app (arg: competence option) =
           Error e
       end
     | Edition { choix={competences; ajout_competence; _}; competences=l; _ } ->
-      let a = match ajout_competence, arg with None, None -> assert false | _, Some a | Some a, _ -> a in
+      let a = match ajout_competence, arg with None, None -> failwith "argument non compatible" | _, Some a | Some a, _ -> a in
       (Unsafe.coerce app##.page)##.edition##.competences :=
         of_listf competence_to_jsoo (List.filter (fun c -> a <> c) l);
       Ok ((Unsafe.coerce app##.page)##.edition##.choix, competences, a)

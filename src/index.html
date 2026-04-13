@@ -516,7 +516,7 @@
                   {{ pp_voie(vt[0]) }}
                 </button>
                 <ul class="list-group collapse" :id="vt[0]">
-                  <li v-for="(c, i) in voie(vt[0], vt[1])" class="list-group-item list-group-item-action p-0" :class="(capacite_choisie(vt[0], c.rang)) ? 'active' : ''">
+                  <li v-for="c in voie(vt[0], vt[1])" class="list-group-item list-group-item-action p-0" :class="(capacite_choisie(vt[0], c.rang)) ? 'active' : ''">
                     <div @click="choisit_capacite(vt[0], c.rang)" role="button">
                       <div class="w-100 d-flex">
                         <span class="border border-secondary border-2 px-3">{{ c.rang }}</span>
@@ -532,8 +532,8 @@
                     <div class="d-flex flex-wrap justify-content-center">
                       <div v-for="(b, j) in c.bonus.filter((b) => b.opt!==undefined)" class="p-2">
                         <div class="form-check form-switch">
-                          <input class="form-check-input" type="checkbox" role="switch" :checked="b.opt" @change="function (ev) { choisit_bonus_capacite(ev, c.nom, b) }" :id="'personnage-voies-bonus-'+String(i)+'-'+String(j)"/>
-                          <label class="form-check-label" :for="'personnage-voies-bonus-'+String(i)+'-'+String(j)">{{ b.id }}+{{ b.valeur }}</label>
+                          <input class="form-check-input" type="checkbox" role="switch" :checked="b.opt" @change="function (ev) { choisit_bonus_capacite(ev, vt[0], c.rang, c.nom, b) }" :id="'creation-voies-bonus-'+c.rang+'-'+b.id"/>
+                          <label class="form-check-label" :for="'creation-voies-bonus-'+c.rang+'-'+b.id">{{ b.id }}+{{ b.valeur }}</label>
                         </div>
                       </div>
                     </div>
@@ -726,7 +726,7 @@
                         {{ pp_voie(vt[0]) }}
                       </button>
                       <ul class="list-group collapse" :id="'edition-'+vt[0]">
-                        <li v-for="(c, i) in voie(vt[0], vt[1])" class="list-group-item list-group-item-action p-0" :class="(capacite_choisie(vt[0], c.rang)) ? 'active' : ''">
+                        <li v-for="c in voie(vt[0], vt[1])" class="list-group-item list-group-item-action p-0" :class="(capacite_choisie(vt[0], c.rang)) ? 'active' : ''">
                           <div role="button" @click="choisit_capacite(vt[0], c.rang)">
                             <div class="w-100 d-flex" >
                               <span class="border border-secondary border-2 px-3">{{ c.rang }}</span>
@@ -742,8 +742,8 @@
                           <div class="d-flex flex-wrap justify-content-center">
                             <div v-for="(b, j) in c.bonus.filter((b) => b.opt!==undefined)" class="p-2">
                               <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" :checked="b.opt" @change="function (ev) { choisit_bonus_capacite(ev, c.nom, b) }" :id="'personnage-voies-bonus-'+String(i)+'-'+String(j)"/>
-                                <label class="form-check-label" :for="'personnage-voies-bonus-'+String(i)+'-'+String(j)">{{ b.id }}+{{ b.valeur }}</label>
+                                <input class="form-check-input" type="checkbox" role="switch" :checked="b.opt" @change="function (ev) { choisit_bonus_capacite(ev, vt[0], c.rang, c.nom, b) }" :id="'edition-voies-bonus-'+c.rang+'-'+b.id"/>
+                                <label class="form-check-label" :for="'personnage-voies-bonus-'+c.rang+'-'+b.id">{{ b.id }}+{{ b.valeur }}</label>
                               </div>
                             </div>
                           </div>

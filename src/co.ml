@@ -101,6 +101,9 @@ type bonus_type = [
 
 type caracteristique_ou_bonus = [ caracteristique | bonus_type ] [@@deriving encoding]
 
+let caracteristique_ou_bonus_to_str cb =
+  match Json_encoding.construct caracteristique_ou_bonus_enc cb with `String s -> s | _ -> failwith "caracteristique non valide"
+
 [@@@jsoo
   class type caracteristique_ou_bonus_jsoo = Ezjs_min.js_string
   let caracteristique_ou_bonus_to_jsoo : caracteristique_ou_bonus -> caracteristique_ou_bonus_jsoo Ezjs_min.t = function
@@ -153,7 +156,7 @@ let de_str niveau d =
       if niveau < 6 then `d4 else if niveau < 9 then `d6
       else if niveau < 12 then `d8 else if niveau < 15 then `d10 else `d12
     | _ -> d in
-  match Json_encoding.construct de_enc d with `String s -> s | _ -> assert false
+  match Json_encoding.construct de_enc d with `String s -> s | _ -> failwith "nom de non valide"
 
 type genre_points = [
   | `points_de_vigueur
@@ -231,7 +234,7 @@ type equipement_nom = [
 ] [@@deriving encoding {assoc}, jsoo]
 
 let equipement_of_str s = Json_encoding.destruct equipement_nom_enc (`String s)
-let equipement_to_str e = match Json_encoding.construct equipement_nom_enc e with `String s -> s | _ -> assert false
+let equipement_to_str e = match Json_encoding.construct equipement_nom_enc e with `String s -> s | _ -> failwith "nom equipement non valide"
 
 type ideal =
   | Abnegation
@@ -502,7 +505,7 @@ type voie_type = [
 ] [@@deriving encoding]
 
 let voie_type_of_str s = Json_encoding.destruct voie_type_enc (`String s)
-let voie_type_to_str v = match Json_encoding.construct voie_type_enc v with `String s -> s | _ -> assert false
+let voie_type_to_str v = match Json_encoding.construct voie_type_enc v with `String s -> s | _ -> failwith "nom voie type non compris"
 
 [@@@jsoo
   class type voie_type_jsoo = Ezjs_min.js_string
@@ -611,7 +614,7 @@ type competence = [
 ] [@@deriving encoding {assoc}, jsoo]
 
 let competence_to_str c =
-  match Json_encoding.construct competence_enc c with `String s -> s | _ -> assert false
+  match Json_encoding.construct competence_enc c with `String s -> s | _ -> failwith "nom competence non compris"
 
 type competence_et_point = competence * int [@@deriving encoding, jsoo]
 
@@ -914,16 +917,16 @@ let equipements_profil : profil -> (equipement_nom * int option) list list = fun
   | `Pretre -> [ [`masse, None; `marteau, None; `baton_ferre, None]; [`petit_bouclier, None]; [`chemise_de_mailles, None] ]
 
 let bonus_capacites voies =
-  let rec aux rgs acc = function
+  let rec aux vt rgs acc = function
     | [] -> acc
     | (c: capacite) :: tl ->
-      if not (List.mem c.rang rgs) then aux rgs acc tl else
+      if not (List.mem c.rang rgs) then aux vt rgs acc tl else
       let acc = acc @ (List.filter_map (fun (b: bonus) -> match b.opt with
         | None | Some Some true-> Some (c.nom, b)
         | _ -> None) c.bonus) in
       let acc = if c.sort then acc @ [ c.nom, { id=`PM; valeur=`int 1; opt=None } ] else acc in
-      aux rgs acc tl in
-  List.fold_left (fun acc (l, rgs) -> aux rgs acc l) [] voies
+      aux vt rgs acc tl in
+  List.fold_left (fun acc (vt, l, rgs) -> aux vt rgs acc l) [] voies
 
 let de_recuperation = function
   | Aventuriers -> `d8
@@ -1026,7 +1029,7 @@ let competences_maitrisees ?choix ?(validation=true) (p: personnage) =
     | Demi_elfe -> if List.exists (fun (vt, _) -> vt = `Elfe_haut) p.voies then Elfe_haut else Elfe_sylvain
     | p -> p in
   let$ l = match peuple, choix with
-    | Demi_elfe, _ -> assert false
+    | Demi_elfe, _ -> failwith "pas de competences pour demi elfe"
     | Demi_orc, _ -> Ok [ `athletisme; `intimidation ]
     | Elfe_haut, _ -> Ok [ `connaissance; `divertissement ]
     | Elfe_sylvain, _ -> Ok [ `discretion; `survie ]
