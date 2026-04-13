@@ -641,6 +641,7 @@ type personnage = {
   bonuses: bonus_avec_nom list; [@dft []]
   competences_maitrisees: competence_et_point list; [@dft []]
   competences: competence_et_point list; [@dft []]
+  notes: string; [@dft ""]
 } [@@deriving encoding, jsoo]
 
 let (let$) = Result.bind
@@ -685,6 +686,7 @@ let personnage_vide = {
   des_de_recuperation=points_vide; points_de_chance=points_vide; points_de_mana=points_vide;
   initiative=0; defense=0; equipements=[]; ideal=None; travers=None; description="";
   image=None; voies=[]; bonuses=[]; competences_maitrisees=[]; competences=[];
+  notes=""
 }
 
 let profils_famille = function
