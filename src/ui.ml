@@ -902,7 +902,7 @@ and copie_lien_personnage _app (p: personnage) =
   let origin = to_string Dom_html.window##.location##.origin in
   let pathname = to_string Dom_html.window##.location##.pathname in
   let pathname = match List.rev @@ String.split_on_char '/' pathname with
-    | "index.html" :: tl -> String.concat "/" tl
+    | "index.html" :: tl -> "/" ^ String.concat "/" tl
     | _ -> pathname in
   let s = Format.sprintf "%s%s?perso=%s" origin pathname b64 in
   try

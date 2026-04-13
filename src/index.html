@@ -517,16 +517,18 @@
                 </button>
                 <ul class="list-group collapse" :id="vt[0]">
                   <li v-for="(c, i) in voie(vt[0], vt[1])" class="list-group-item list-group-item-action p-0" :class="(capacite_choisie(vt[0], c.rang)) ? 'active' : ''">
-                    <div class="w-100 d-flex" @click="choisit_capacite(vt[0], c.rang)" role="button">
-                      <span class="border border-secondary border-2 px-3">{{ c.rang }}</span>
-                      <strong class="flex-fill text-bg-light">{{ c.nom }}</strong>
+                    <div @click="choisit_capacite(vt[0], c.rang)" role="button">
+                      <div class="w-100 d-flex">
+                        <span class="border border-secondary border-2 px-3">{{ c.rang }}</span>
+                        <strong class="flex-fill text-bg-light">{{ c.nom }}</strong>
+                      </div>
+                      <div v-if="c.action.length!=0 || c.sort" class="row mx-0">
+                        <div v-if="c.sort" class="col border border-secondary">sort</div>
+                        <div v-if="c.action.length!=0" class="col border border-secondary">{{ c.action.join(' / ') }}</div>
+                      </div>
+                      <p class="mb-0 p-2">{{ c.description }}</p>
+                      <div v-if="c.html" v-html="c.html"></div>
                     </div>
-                    <div v-if="c.action.length!=0 || c.sort" class="row mx-0">
-                      <div v-if="c.sort" class="col border border-secondary">sort</div>
-                      <div v-if="c.action.length!=0" class="col border border-secondary">{{ c.action.join(' / ') }}</div>
-                    </div>
-                    <p class="mb-0 p-2">{{ c.description }}</p>
-                    <div v-if="c.html" v-html="c.html"></div>
                     <div class="d-flex flex-wrap justify-content-center">
                       <div v-for="(b, j) in c.bonus.filter((b) => b.opt!==undefined)" class="p-2">
                         <div class="form-check form-switch">
@@ -630,7 +632,7 @@
             </div>
             <div class="row mx-0 mt-2">
               <div class="col p-0 text-bg-light">Nom de la sauvegarde</div>
-              <div class="col p-0"><input class="form-control py-0" v-model="page.creation.phase.enregistrement.label"/></div>
+              <div class="col p-0"><input class="form-control py-0" v-model="page.creation.phase.enregistrement.label" @keyup.enter="phase_suivante()"/></div>
             </div>
           </div>
         </div>
@@ -725,16 +727,18 @@
                       </button>
                       <ul class="list-group collapse" :id="'edition-'+vt[0]">
                         <li v-for="(c, i) in voie(vt[0], vt[1])" class="list-group-item list-group-item-action p-0" :class="(capacite_choisie(vt[0], c.rang)) ? 'active' : ''">
-                          <div class="w-100 d-flex" role="button" @click="choisit_capacite(vt[0], c.rang)">
-                            <span class="border border-secondary border-2 px-3">{{ c.rang }}</span>
-                            <strong class="flex-fill text-bg-light">{{ c.nom }}</strong>
+                          <div role="button" @click="choisit_capacite(vt[0], c.rang)">
+                            <div class="w-100 d-flex" >
+                              <span class="border border-secondary border-2 px-3">{{ c.rang }}</span>
+                              <strong class="flex-fill text-bg-light">{{ c.nom }}</strong>
+                            </div>
+                            <div v-if="c.action.length!=0 || c.sort" class="row mx-0">
+                              <div v-if="c.sort" class="col border border-secondary">sort</div>
+                              <div v-if="c.action.length!=0" class="col border border-secondary">{{ c.action.join(' / ') }}</div>
+                            </div>
+                            <p class="mb-0 p-2">{{ c.description }}</p>
+                            <div v-if="c.html" v-html="c.html"></div>
                           </div>
-                          <div v-if="c.action.length!=0 || c.sort" class="row mx-0">
-                            <div v-if="c.sort" class="col border border-secondary">sort</div>
-                            <div v-if="c.action.length!=0" class="col border border-secondary">{{ c.action.join(' / ') }}</div>
-                          </div>
-                          <p class="mb-0 p-2">{{ c.description }}</p>
-                          <div v-if="c.html" v-html="c.html"></div>
                           <div class="d-flex flex-wrap justify-content-center">
                             <div v-for="(b, j) in c.bonus.filter((b) => b.opt!==undefined)" class="p-2">
                               <div class="form-check form-switch">
