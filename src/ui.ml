@@ -878,19 +878,18 @@ and [@noconv] choisit_bonus_capacite app (ev: Dom_html.inputElement Dom.event t)
     target##.checked := bool (not checked)
   | _ -> ()
 
-and change_niveau app a = match page_of_jsoo app##.page with
-  | Edition { choix={voies; niveau; competences; _}; perso; _} ->
+and change_niveau app niveau = match page_of_jsoo app##.page with
+  | Edition { choix={voies; competences; _}; perso; _} ->
     let voies, capacites = capacites voies in
-    let perso = { perso with voies; competences; niveau=niveau+a } in
+    let perso = { perso with voies; competences; niveau } in
     let _, _, _, _, pnv, pb, pc = rangs_et_points ~capacites perso in
     wrap app (points_de_competences perso) @@ fun (points_niveau, points_capacites, points_utilises, _) ->
     if pc > pnv+pb then alert app "trop de capacités pour baisser le niveau"
     else if points_niveau + points_capacites < points_utilises then alert app "trop de points de compétences" else (
-      (Unsafe.coerce app)##.page##.edition##.choix##.niveau := niveau + a;
+      (Unsafe.coerce app)##.page##.edition##.choix##.niveau := niveau;
       (Unsafe.coerce app)##.page##.edition##.points_de_maitrise_ := array [|pc; pnv+pb|];
       (Unsafe.coerce app##.page)##.edition##.points_de_competences_ :=
-        array [| points_utilises; points_niveau + points_capacites |]
-    )
+        array [| points_utilises; points_niveau + points_capacites |])
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"
 
 and rang_max _app rgs =
@@ -955,16 +954,13 @@ and ajoute_competence app (arg: competence option) =
         of_listf competence_to_jsoo (List.filter (fun c -> a <> c) l);
       Ok ((Unsafe.coerce app##.page)##.edition##.choix, competences, a)
     | _ -> Error "cette fonction n'est pas accessible sur cette page" in
-
   wrap app r aux
 
-and change_competence app (c: competence) i =
+and ajoute_competence_maitrisee app =
   match page_of_jsoo app##.page with
-  | Creation { phase=Competences { competences; choix; _ }; perso; _ } ->
+  | Creation { phase=Competences { choix; _ }; perso; _ } ->
     wrap app (competences_maitrisees ?choix perso) @@ fun competences_maitrisees ->
-    let competences =
-      if i = 0 then List.filter (fun (_, n) -> n <> 0) competences_maitrisees
-      else List.map (fun (c2, n) -> if c = c2 then c, n+i else c2, n) competences in
+    let competences = List.filter (fun (_, n) -> n <> 0) competences_maitrisees in
     let perso = { perso with competences_maitrisees; competences } in
     wrap app (points_de_competences perso) @@ fun (points_niveau, points_capacites, points_utilises, _) ->
     if points_niveau + points_capacites < points_utilises then
@@ -977,9 +973,25 @@ and change_competence app (c: competence) i =
       (Unsafe.coerce app##.page)##.creation##.phase##.competences##.points :=
         array [| points_utilises; points_niveau + points_capacites |]
     )
+  | _ -> alert app "cette fonction n'est pas accessible sur cette page"
+
+and change_competence app (c: competence) i =
+  match page_of_jsoo app##.page with
+  | Creation { phase=Competences { competences; maitrisees; _ }; perso; _ } ->
+    let competences = List.map (fun (c2, n) -> if c = c2 then c, i else c2, n) competences in
+    let perso = { perso with competences_maitrisees=maitrisees; competences } in
+    wrap app (points_de_competences perso) @@ fun (points_niveau, points_capacites, points_utilises, _) ->
+    if points_niveau + points_capacites < points_utilises then
+      alert app "trop de points de compétences"
+    else (
+      (Unsafe.coerce app##.page)##.creation##.phase##.competences##.competences :=
+        of_listf competence_et_point_to_jsoo competences;
+      (Unsafe.coerce app##.page)##.creation##.phase##.competences##.points :=
+        array [| points_utilises; points_niveau + points_capacites |]
+    )
   | Edition { choix = { competences; niveau; voies; _ }; perso; _ } ->
     let voies, _ = capacites voies in
-    let competences = List.map (fun (c2, n) -> if c = c2 then c, n+i else c2, n) competences in
+    let competences = List.map (fun (c2, n) -> if c = c2 then c, i else c2, n) competences in
     let perso = { perso with voies; competences; niveau } in
     wrap app (points_de_competences perso) @@ fun (points_niveau, points_capacites, points_utilises, _) ->
     if points_niveau + points_capacites < points_utilises then
