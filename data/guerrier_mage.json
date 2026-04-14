@@ -1,0 +1,29 @@
+[
+  {
+    "nom": "Magie en armure",
+    "rang": 4,
+    "description": "Le personnage peut lancer des sorts de magie profane en armure. Le bonus de DEF total des protections portées doit être inférieur ou égal au rang - 2. Par exemple, au rang 4, le personnage peut lancer des sorts en armure de cuir, et au rang 8, il peut porter une armure de plaque. Lorsqu’il respecte cette limitation, il est dispensé du surcoût de mana pour lancer un sort en armure (voir Profils hybrides, page 176). Les bonus magiques des armures ne comptent pas dans le calcul de cette limitation. Cette capacité ne permet pas d’apprendre à utiliser des armures."
+  },
+  {
+    "nom": "Rituel de combat",
+    "rang": 5,
+    "description": "Parmi les sorts infligeant des DM que connaît le personnage, il en choisit un qui lui coûte désormais 1 PM de moins à lancer."
+  },
+  {
+    "nom": "Déflexion arcanique",
+    "rang": 6,
+    "description": "Le combattant dépense 1 PM pour obtenir +2 en DEF contre une attaque. Il peut annoncer cette action après avoir pris connaissance du résultat de l’attaque, de façon à la faire échouer. Il ne peut pas dépenser plus d’un PM par attaque, mais peut utiliser cette capacité plusieurs fois dans le round. À partir du rang 9, il peut dépenser 3 PM pour obtenir +5 en DEF.",
+    "action": "gratuite"
+  },
+  {
+    "nom": "Magie de combat",
+    "rang": 7,
+    "description": "Lorsqu’il utilise la Concentration (L) pour lancer un sort de rang 1 à 3, le combattant peut choisir de faire une attaque au contact gratuite au lieu de réduire son coût."
+  },
+  {
+    "nom": "Frappe des arcanes",
+    "rang": 8,
+    "description": "Le personnage insuffle sa puissance magique dans une attaque au contact : il dépense 1 PM pour obtenir un dé bonus et +1d4° aux DM sur cette attaque.",
+    "action": "gratuite"
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "nom": "Élément de prédilection",
+    "rang": 4,
+    "description": "Le personnage choisit un élément parmi feu, froid, électricité et acide. Lorsqu’il utilise un sort de cet élément, il obtient un bonus de +2 en attaque magique et il augmente de +2 la difficulté de tous les tests destinés à résister au sort."
+  },
+  {
+    "nom": "Résistance élémentaire",
+    "rang": 5,
+    "description": "Le personnage ne subit que la moitié des DM provenant de son élément de prédilection. Il peut transformer un sort élémentaire pour le remplacer par son élément de prédilection en action gratuite."
+  },
+  {
+    "nom": "Invocation d’élémentaire",
+    "rang": 6,
+    "description": "Une fois par combat, le magicien invoque un élémentaire de l’élément de son choix, il lui obéit pendant INT minutes puis disparaît. Il agit au tour du magicien.",
+    "html": "<div class=\"mx-2 mb-2\"><div class=\"row mx-0\"><div class=\"col border\">Élémentaire</div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">AGI</span><span class=\"flex-fill\">+2</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">CON</span><span class=\"flex-fill\">+6*</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">FOR</span><span class=\"flex-fill\">+6*</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">PER</span><span class=\"flex-fill\">0</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">CHA</span><span class=\"flex-fill\">-2</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">INT</span><span class=\"flex-fill\">-2</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">VOL</span><span class=\"flex-fill\">+4</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">DEF</span><span class=\"flex-fill\">19</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">PV</span><span class=\"flex-fill\">niveau x 5</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">INI</span><span class=\"flex-fill\">10</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">Attaque</span><span class=\"flex-fill\">magique du mage</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">DM</span><span class=\"flex-fill\">2d4°+6</span></div><div class=\"row mx-0\"><div class=\"col-3 border p-0 text-bg-light\">Feu</div><div class=\"col-9 border p-0\">+1d4° DM, immunisé au feu</div></div><div class=\"row mx-0\"><div class=\"col-3 border p-0 text-bg-light\">Eau</div><div class=\"col-9 border p-0\">dé bonus en attaque, immunisé à l'acide</div></div><div class=\"row mx-0\"><div class=\"col-3 border p-0 text-bg-light\">Air</div><div class=\"col-9 border p-0\">vol 30 m, immunisé à la foudre</div></div><div class=\"row mx-0\"><div class=\"col-3 border p-0 text-bg-light\">Terre</div><div class=\"col-9 border p-0\">+5 DEF, immunisé au froid</div></div></div></div>",
+    "action": "limitée",
+    "sort": true
+  },
+  {
+    "nom": "Élément puissant",
+    "rang": 7,
+    "description": "Le personnage ajoute +1d4° aux DM de tous les sorts qui infligent des dommages de son élément de prédilection. Les sorts qui infligent des DM sur la durée augmentent seulement leurs DM initiaux (flèche enflammée, etc.).",
+    "action": "attaque"
+  },
+  {
+    "nom": "Métamorphose élémentaire",
+    "rang": 8,
+    "description": "Le personnage peut prendre une seule forme élémentaire de son choix pendant [5 + INT] minutes. La forme élémentaire lui permet de retrancher 5 points à tous les DM subis (RD 5), elle l’immunise aux DM de la forme choisie et lui octroie les capacités suivantes :",
+    "html": "<div class=\"mx-2 mb-2\"><div class=\"mx-0 row\"><div class=\"col-2 p-0 text-bg-light\">Feu</div><div class=\"col-8 p-0\">le personnage ajoute +2d4° DM de feu à toutes ses attaques au contact. Une créature qui s’attaque à lui avec des armes naturelles subit 1d4° DM pour chaque attaque réussie.</div></div><div class=\"mx-0 row\"><div class=\"col-2 p-0 text-bg-light\">Eau</div><div class=\"col-8 p-0\">le personnage guérit toutes ses blessures au rythme de 1d4° PV par round et il peut déformer son corps pour passer dans le moindre interstice.</div></div><div class=\"mx-0 row\"><div class=\"col-2 p-0 text-bg-light\">Terre</div><div class=\"col-8 p-0\">le personnage obtient un bonus de +3 en FOR (+3 attaque et DM au contact et +3 tests de FOR) et en DEF.</div></div><div class=\"mx-0 row\"><div class=\"col-2 p-0 text-bg-light\">Air</div><div class=\"col-8 p-0\">le personnage peut voler (à une vitesse de 20 m par action de mouvement), il divise par deux les DM de ses attaques physiques mais pas ceux des sorts) et sa RD passe à 10.</div></div></div>",
+    "action": "attaque",
+    "sort": true
+  }
+]

@@ -1,0 +1,36 @@
+[
+  {
+    "nom": "Vigueur du printemps",
+    "rang": 4,
+    "description": "Le personnage gagne 2 DR supplémentaires. De plus, lorsqu’il utilise des DR, il relance tous les 1 obtenus.",
+    "bonus": [
+      { "id": "DR", "valeur": 2 }
+    ]
+  },
+  {
+    "nom": "Flamme de l’été",
+    "rang": 5,
+    "description": "S’il a accès à une flamme (une torche suffit), le personnage peut lancer un projectile de feu qui inflige [2d4° + PER] DM de feu à une cible à moins de 30 m sur un test d’attaque magique réussi. De plus, le personnage divise par deux tous les DM de feu subis.",
+    "action": "attaque"
+  },
+  {
+    "nom": "Tourbillon d’automne",
+    "rang": 6,
+    "description": "Le personnage souffle un tourbillon de feuilles mortes aux bords tranchants de 5 m de diamètre à une portée de 10 m. À chaque round, toutes les créatures dans la zone subissent [3d4° + PER] DM ou la moitié sur un test de CON difficulté 10 réussi (durée PER rounds). Le personnage peut le déplacer à chaque round de 10 m par action de mouvement.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Frimas de l’hiver",
+    "rang": 7,
+    "description": "S’il a accès à de l’eau, il peut lancer un projectile de glace qui inflige [4d4° + PER] DM de froid à une cible à moins de 30 m sur un test d’attaque magique réussi. Si la victime rate un test de CON difficulté [10 + PER], elle est ralentie à son prochain tour. De plus, le personnage divise par deux tous les DM de froid subis."
+  },
+  {
+    "nom": "Contrôle climatique",
+    "rang": 8,
+    "description": "Le personnage peut influer sur la météo. Il lui faut 1 min de concentration pour faire varier les conditions météorologiques d’un palier dans l’échelle suivante et il ne peut la faire varier que d’un nombre de paliers maximal égal à sa PER. La modification climatique a une durée de [1d6 + INT] heures et couvre un rayon égal au niveau du personnage exprimé en kilomètres (éventuellement moins). À la fin du sort, la météo reprend son cours normal. Au dernier palier, le personnage peut appeler la foudre sur une cible en vue par une action gratuite une fois par round. L’éclair inflige 4d4° DM.",
+    "html": "<div class=\"mx-2 mb-2\"><ul class=\"list-group\"><li class=\"list-group-item\">Ciel bleu</li><li class=\"list-group-item\">Nuageux</li><li class=\"list-group-item\">Pluie fine et vent faible</li><li class=\"list-group-item\">Pluie dense et vent moyen</li><li class=\"list-group-item\">Pluie intense et vent fort</li><li class=\"list-group-item\">Tempête (trombes d'eau et vent violent)</li></ul></div>",
+    "action": "attaque",
+    "sort": true
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "nom": "Connaissance des arcanes inférieures",
+    "rang": 4,
+    "description": "Le personnage apprend deux sorts de rang 1 de magie profane de son choix.",
+    "voie": { "profils": [ "mage", "barde" ], "rangs": [ 1 ] }
+  },
+  {
+    "nom": "Connaissance des arcanes mineures",
+    "rang": 5,
+    "description": "Le personnage apprend deux sorts de rang 2 de magie profane de son choix.",
+    "voie": { "profils": [ "mage", "barde" ], "rangs": [ 2 ] }
+  },
+  {
+    "nom": "Connaissance des arcanes supérieures",
+    "rang": 6,
+    "description": "Le personnage apprend deux sorts de rang 3 de magie profane de son choix.",
+    "voie": { "profils": [ "mage", "barde" ], "rangs": [ 3 ] }
+  },
+  {
+    "nom": "Connaissance des arcanes majeures",
+    "rang": 7,
+    "description": "Le personnage apprend deux sorts de rang 4 de magie profane de son choix.",
+    "voie": { "profils": [ "mage", "barde" ], "rangs": [ 4 ] }
+  },
+  {
+    "nom": "Connaissance des arcanes suprêmes",
+    "rang": 8,
+    "description": "Le personnage apprend deux sorts de rang 4 de magie profane de son choix.",
+    "voie": { "profils": [ "mage", "barde" ], "rangs": [ 5 ] }
+  }
+]

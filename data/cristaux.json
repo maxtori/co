@@ -1,0 +1,28 @@
+[
+  {
+    "nom": "Premier cristal",
+    "rang": 4,
+    "description": "Le personnage apprend à créer le cristal de son choix. Il peut le porter où le confier à la personne de son choix. Il ne peut activer qu’un seul cristal à la fois.",
+    "html": "<div class=\"mx-2 mb-2\"><table class=\"table\"><thead><tr><th scope=\"col\">Couleur</th><th scope=\"col\">Forme</th><th scope=\"col\">Effet</th></tr></thead><tbody><tr><td>Blanc laiteux</td><td>Fuseau</td><td>Régénration (1 PV/h)</td></tr><tr><td>Bleu incandescent</td><td>Sphère</td><td>+1 PER</td></tr><tr><td>Bleu nuit</td><td>Rhombe</td><td>+5 INI</td></tr><tr><td>Bleu pâle</td><td>Rhombe</td><td>+1 FOR</td></tr><tr><td>Irisé</td><td>Fusequ</td><td>Survivre sans respirer</td></tr><tr><td>Noir fumé</td><td>Prisme</td><td>Résistance feu et froid (10 points)</td></tr><tr><td>Orange</td><td>Fuseau</td><td>Résistance acide et électricité (10 points)</td></tr><tr><td>Violet</td><td>Sphère</td><td>+1 CHA</td></tr><tr><td>Rose laiteux</td><td>Prisme</td><td>+2 DEF</td></tr><tr><td>Rouge sang</td><td>Rhombe</td><td>+1 CON</td></tr><tr><td>Rouge et bleu</td><td>Sphère</td><td>+1 INT</td></tr><tr><td>Rose vif</td><td>Sphère</td><td>+1 AGI</td></tr><tr><td>Translucide</td><td>Fuseau</td><td>Subsister sans boire ni manger</td></tr><tr><td>Vert pâle</td><td>Prisme</td><td>+1 en attaque</td></tr></tbody></table></div>"
+  },
+  {
+    "nom": "Second cristal",
+    "rang": 5,
+    "description": "Le personnage apprend à créer un cristal de son choix. Il peut activer les effets de 2 cristaux simultanément, mais pas plusieurs fois le même sur une personne."
+  },
+  {
+    "nom": "Troisième cristal",
+    "rang": 6,
+    "description": "Le personnage apprend à créer deux nouveaux cristaux de son choix. Il peut activer les effets de 3 cristaux simultanément, mais pas plusieurs fois le même sur une personne."
+  },
+  {
+    "nom": "Quatrième cristal",
+    "rang": 7,
+    "description": "Le personnage apprend à créer deux nouveaux cristaux de son choix. Il peut activer les effets de 4 cristaux simultanément, mais pas plusieurs fois le même sur une personne."
+  },
+  {
+    "nom": "Cinquième cristal",
+    "rang": 8,
+    "description": "Le personnage apprend à créer trois nouveaux cristaux de son choix. Il peut activer les effets de 5 cristaux simultanément, mais pas plusieurs fois le même sur une personne."
+  }
+]

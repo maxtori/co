@@ -9,12 +9,13 @@
     "nom": "Transformation en loup",
     "rang": 5,
     "description": "Le personnage peut prendre la forme d’un loup pendant une durée maximale de 1 h par rang chaque jour. Le personnage conserve toutes ses caractéristiques sauf celles ci-dessous, ainsi que sa valeur d’attaque au contact habituelle.",
+    "html": "<div class=\"mx-2 mb-2\"><div class=\"row mx-0\"><div class=\"col border\">Loup</div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">FOR</span><span class=\"flex-fill\">+3</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">AGI</span><span class=\"flex-fill\">+1</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">DEF</span><span class=\"flex-fill\">12 + rang</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">INI</span><span class=\"flex-fill\">15</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">DM</span><span class=\"flex-fill\">1d4+3</span></div></div></div>",
     "action": "limitée"
   },
   {
     "nom": "Éventration",
     "rang": 6,
-    "description": "Désormais, lorsqu’il obtient 15‑20 sur son attaque de morsure, le lycanthrope ajoute 1d4° aux DM de sa morsure (sous forme de loup ou d’hybride)."
+    "description": "Désormais, lorsqu’il obtient 15-20 sur son attaque de morsure, le lycanthrope ajoute 1d4° aux DM de sa morsure (sous forme de loup ou d’hybride)."
   },
   {
     "nom": "Résistance surnaturelle",

@@ -1,0 +1,38 @@
+[
+  {
+    "nom": "Mur de pierre",
+    "rang": 4,
+    "description": "Le personnage invoque un mur de pierre de 20 m de long pour 4 m de haut (portée 20 m). Le mur est parfaitement rectiligne sur toute sa longueur. Il peut prendre attache sur un mur ou une paroi rocheuse et ainsi boucher complètement un passage. Le mur a une durée d’existence d’INT heures (Solidité 30, RD 20, 30 cm d’épaisseur).",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Litomorphose",
+    "rang": 5,
+    "description": "Le personnage peut modeler la pierre par sa simple volonté (portée 10 m). Il affecte un volume maximal de 1 m3 par niveau et lui donne la forme qu’il désire. Ainsi au niveau 10, il peut percer un tunnel de 1 m de côté pour environ 10 m de long ou au contraire créer une arche de pierre de 1 m de large pour 10 m de long afin de franchir un précipice. La transformation dure INT heures.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Pétrification",
+    "rang": 6,
+    "description": "Le personnage effectue un test opposé d’attaque magique (portée 20 m) contre sa cible. En cas de réussite, la victime est changée en pierre (effet permanent). Sous cette forme, elle a une RD 30, mais un sort de litomorphose lui inflige 4d4° DM sans réduction. Si la victime est de niveau supérieur ou égal au lanceur du sort, elle peut faire un test de CON difficulté [10 + CHA] à la fin de chaque round pour mettre fin au sort.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Séisme",
+    "rang": 7,
+    "description": "Le personnage déclenche un terrible tremblement de terre qui fait s’effondrer les bâtisses dans une zone de 100 m de rayon autour de lui. Les maisonnettes pauvres s’écroulent automatiquement, les villas ont 4 chances sur 6 de s’effondrer, les palais 2 chances sur 6 et les édifices fortifiés 1 chance sur 6. Toute créature présente dans un édifice qui s’effondre subit 4d6 DM (on considère qu’elle sort de l’édifice, sinon elle subit le double de DM). Les DM sont divisés par deux si la bâtisse a résisté. Sous terre, le sort inflige 4d6 DM dans toute la zone.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Forme élémentaire de terre",
+    "rang": 8,
+    "description": "Une fois par jour, le personnage peut se transformer en élémentaire de terre (taille grand), pendant un maximum de CHA minutes. Sous cette forme, il ne peut pas employer d’autres capacités que celles de la voie élémentaire de terre et il ne peut pas parler. S’il est réduit à 0 PV sous cette forme, il reprend sa forme initiale avec les PV qu’il avait au moment de la transformation.",
+    "html": "<div class=\"mx-2 mb-2\"><div class=\"row mx-0\"><div class=\"col border\">Élémentaire de terre</div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">AGI</span><span class=\"flex-fill\">+1</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">CON</span><span class=\"flex-fill\">+6</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">FOR</span><span class=\"flex-fill\">+6*</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">PER</span><span class=\"flex-fill\">--</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">CHA</span><span class=\"flex-fill\">--</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">INT</span><span class=\"flex-fill\">--</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">VOL</span><span class=\"flex-fill\">--</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">DEF</span><span class=\"flex-fill\">23</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">PV</span><span class=\"flex-fill\">niveau x 5</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">INI</span><span class=\"flex-fill\">--</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">Coup de poing</span><span class=\"flex-fill\">attaque magique</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">DM</span><span class=\"flex-fill\">2d4°+6</span></div></div></div>",
+    "action": "attaque",
+    "sort": true
+  }
+]

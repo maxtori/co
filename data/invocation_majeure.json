@@ -1,0 +1,38 @@
+[
+  {
+    "nom": "Monture fantôme",
+    "rang": 4,
+    "description": "Le personnage conjure un cheval fantomatique qui peut le transporter (plus éventuellement un autre cavalier) pendant [1d4° + INT] heures. Cette monture est un peu plus rapide qu’un cheval ordinaire (10 km/période) sauf si elle transporte deux cavaliers (5 km/h). Elle n’est pas ralentie par les terrains difficiles ; à partir du rang 6, elle peut courir sur l’eau et à partir du rang 8, elle peut se déplacer dans les airs. Ce type de monture ne peut être guidée que par son invocateur.",
+    "action": "limitée",
+    "sort": true
+  },
+  {
+    "nom": "Manoir d’outre-monde",
+    "rang": 5,
+    "description": "L’invocateur enchante une porte ordinaire existante (pas une porte artificielle) et, pour une durée allant jusqu’à 1 h/niveau, elle s’ouvre sur un manoir magique au lieu de l’endroit habituel. La porte garde ses caractéristiques originelles (solidité, serrure, etc.), mais ne peut pas être bloquée par magie. Le manoir possède jusqu’à une pièce par niveau, pour une surface totale jusqu’à 50 m2 par niveau de l’invocateur. Il est meublé selon le style choisi par l’invocateur, depuis un taudis lugubre jusqu’à un palais luxueux rempli de victuailles et de vaisselle d’or (aucun objet magique). Les pièces n’ont pas de fenêtre et les objets disparaissent s’ils sortent du manoir. La nourriture qui peut y être trouvée possède des qualités gustatives à la discrétion de l’invocateur. Tous ces aliments désaltèrent ou procurent un effet normal de satiété, mais ils ne nourrissent pas réellement. Si l’invocateur utilise à nouveau ce sort alors qu’un autre manoir était encore actif, le premier disparaît immédiatement. Toutes les créatures à l’intérieur du manoir au moment où il disparaît, sont éjectées devant la porte et subissent 1d6 DM.",
+    "action": "limitée",
+    "sort": true
+  },
+  {
+    "nom": "Navire fantôme",
+    "rang": 6,
+    "description": "Un navire fantôme surgit des profondeurs de la mer et se place sous les ordres du personnage. Il est recouvert d’algues et de coquillages, il n’a pas d’équipage et n’en a nul besoin. Il se déplace au bon vouloir du personnage à une vitesse de 20 km/h. Il peut abriter une vingtaine de personnes, mais peut en transporter jusqu’à cent. Il disparaît au prochain lever de soleil. Le navire fantôme ne peut naviguer à plus d’une journée de la côte la plus proche, les étendues lointaines lui sont interdites… À partir du rang 8, le personnage devient capable d’invoquer une nef fantôme qui navigue dans les airs (considéré comme un sort de rang 8 pour le coût en PM).",
+    "action": "limitée",
+    "sort": true
+  },
+  {
+    "nom": "Chasseur ailé",
+    "rang": 7,
+    "description": "Le personnage invoque à son service une créature ailée de grande taille pendant 24 h. À son arrivée, il doit lui donner la mission de trouver et de lui rapporter une personne ou un objet. Le chasseur se met immédiatement en chasse avec un instinct infaillible et la trouve à moins que la cible ne soit dissimulée par magie (sort de non-détection, par exemple). Le chasseur utilise au mieux ses capacités et son intelligence pour réussir sa mission, mais il ne combat pas, sauf pour se défendre. Il parcourt jusqu’à 25 km/h. En cas de réussite, le chasseur rapporte l’objet ou la créature et le dépose devant l’invocateur. À la fin de la durée du sort, si le chasseur ailé n’a pas pu remplir sa mission, il entre dans une rage destructrice, il retrouve alors le personnage qui l’a invoqué et l’attaque jusqu’à ce qu’il soit vaincu (il n’utilise pas sa capacité d’Enlèvement pour ce combat).",
+    "html": "<div class=\"mx-2 mb-2\"><div class=\"row mx-0\"><div class=\"col border\">Chasseur ailé</div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">AGI</span><span class=\"flex-fill\">+1</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">CON</span><span class=\"flex-fill\">+6</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">FOR</span><span class=\"flex-fill\">+6</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">PER</span><span class=\"flex-fill\">0</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">CHA</span><span class=\"flex-fill\">0</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">INT</span><span class=\"flex-fill\">+2</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">VOL</span><span class=\"flex-fill\">+6</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">DEF</span><span class=\"flex-fill\">18</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">PV</span><span class=\"flex-fill\">50</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">INI</span><span class=\"flex-fill\">12</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">Serres</span><span class=\"flex-fill\">+10</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">DM</span><span class=\"flex-fill\">2d6+6</span></div></div><div class=\"row mx-0\"><div class=\"col-2 text-bg-light\">Vol rapide</div><div class=\"col-10\">Le chasseur ailé obtient une action de mouvement supplémentaire par round lorsqu’il est en vol. Au premier round de combat, la créature obtient un bonus de +5 en attaque et +1d6 aux DM si elle est en vol et attaque une créature au sol, elle peut tenter un enlèvement.</div></div><div class=\"row mx-0\"><div class=\"col-2 text-bg-light\">Enlèvement</div><div class=\"col-10\">Le chasseur ailé peut tenter d’agripper une cible de taille moyenne ou inférieure en action d’attaque. La cible peut faire un test de FOR opposé pour échapper à son étreinte à sa première attaque, en cas d’échec, elle est immobilisée et elle ne peut pas se libérer avant que le serviteur ne décide de la relâcher ou qu’il soit vaincu.</div></div></div>",
+    "action": "limitée",
+    "sort": true
+  },
+  {
+    "nom": "Portail magique",
+    "rang": 8,
+    "description": "Une fois par jour, le personnage peut faire apparaître un portail lumineux pour une durée maximale de [5 + INT] minutes, bien qu’il puisse mettre fin au sort à tout moment. Cette porte apparaît simultanément dans un autre lieu choisi par le magicien, soit à portée de vue, soit à un endroit parfaitement connu du magicien à une portée maximale égale à son niveau × 10 km. Tant qu’il est actif, le portail magique peut être emprunté dans un sens ou dans un autre par toute créature de taille énorme ou inférieure.",
+    "action": "limitée",
+    "sort": true
+  }
+]

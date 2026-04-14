@@ -1,0 +1,37 @@
+[
+  {
+    "nom": "Fuite en avant",
+    "rang": 4,
+    "description": "Le personnage se projette dans le futur, s’il réussit un test d’attaque magique contre une difficulté égale à [10 + durée choisie en min], il disparaît et réapparaît à la fin de la durée choisie. Si un obstacle occupe sa position, il réapparaît au plus près et subit 1d4° DM, s’il s’agit d’un être vivant la créature subit des DM similaires.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Lenteur",
+    "rang": 5,
+    "description": "Le personnage doit emporter un test opposé d’attaque magique contre une créature située à moins de 30 m. Si la cible est de niveau supérieur ou égal au PJ, elle est ralentie pendant 1d4 rounds sinon la durée est doublée. Si la victime réussit son test de résistance, elle ne peut plus être la cible de ce pour le reste du combat.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Décalage",
+    "rang": 6,
+    "description": "Le personnage touche sa cible et doit réussir un test opposé d’attaque magique contre elle. En cas de réussite, il envoie la cible 1d4° min dans le futur (au maximum, moins s’il le souhaite). La victime devient une image transparente, immatérielle et immobile pour la durée du sort. Elle reprend consistance et son activité normale à la fin de celui-ci. Si un obstacle occupe sa position, elle réapparaît au plus près et subit 1d4° DM, s’il s’agit d’un être vivant la créature subit des DM similaires.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Enkystement lointain",
+    "rang": 7,
+    "description": "Une fois par combat, le personnage désigne une cible à moins de 20 m d’un mouvement de la main et un tourbillon de lumière multicolore emporte la victime en un lieu lointain. En cas de succès d’un test opposé d’attaque magique, la cible est instantanément téléportée dans une direction aléatoire (à peu près horizontalement et dans un milieu adapté à sa survie). Les créatures de NC inférieur à la moitié du niveau du magicien sont téléportées à une distance de 2d4° × 100 km, celles de niveau inférieur à 2d4° km et celles de niveau supérieur ou égal à 2d4° × 10 m. Une créature ne peut pas être victime de ce sort plus d’une fois par jour.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Arrêt du temps",
+    "rang": 8,
+    "description": "Le magicien peut arrêter le temps pendant [1d4° + INT] rounds. Seul le magicien peut agir à sa guise pendant cette période, lancer des sorts sur lui-même, se déplacer et déplacer des objets, tant qu’il ne touche pas un autre être vivant ou n’interagit pas avec lui (en lui lançant un sort, par exemple). Dans le cas d’un contact (même magique), le temps reprend instantanément son cours normal. Si vous utilisez la règle optionnelle du contretemps, l’effet se produit sur un résultat de 1 au d4° qui détermine la durée du sort.",
+    "action": "limitée",
+    "sort": true
+  }
+]

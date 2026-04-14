@@ -1,0 +1,31 @@
+[
+  {
+    "nom": "Flèche magique",
+    "rang": 4,
+    "description": "Le personnage enchante ses flèches. S’il obtient un résultat de 1 sur son dé de DM, il remplace ce résultat par le maximum du dé (exemple, 1 sur le d8 devient 8). Cet effet ne s’applique pas aux dés bonus. Les DM de ses flèches sont considérés comme magiques."
+  },
+  {
+    "nom": "Flèche intangible",
+    "rang": 5,
+    "description": "Le personnage enchante sa flèche pour lui permettre de passer au travers des obstacles physiques et des protections. Le joueur réalise un test d’attaque normal, mais remplace la DEF par 10 + AGI de la cible pour fixer sa difficulté. De surcroît, il ignore toutes les pénalités de couverture. S’il sait précisément où se situe sa cible, il peut même tirer à travers un mur ou une porte.",
+    "action": "limitée"
+  },
+  {
+    "nom": "Flèche chercheuse",
+    "rang": 6,
+    "description": "Une fois par jour, l’archer arcanique peut enchanter une flèche afin qu’elle trouve sa cible de façon infaillible. Pour utiliser ce pouvoir, l’archer arcanique doit avoir blessé ou vu directement la créature ciblée moins de 10 rounds (1 min) plus tôt. Il tire ensuite sa flèche en l’air et celle-ci voyage aussi loin que nécessaire (y compris à travers les plans) pour trouver sa cible. L’archer arcanique fait un test d’attaque normal et obtient un bonus de +2d4° aux DM.",
+    "action": "limitée"
+  },
+  {
+    "nom": "Flèche élémentaire",
+    "rang": 7,
+    "description": "Une fois par combat, le personnage enchante ses flèches et choisit une source de DM parmi poison, feu, froid, foudre et acide. Pendant tout le combat, il ajoute +1d4° aux DM de chacune des flèches qu’il tire. Ce bonus aux DM ne peut pas se cumuler à un autre bonus magique élémentaire (arc de feu, sort élémentaire, etc.).",
+    "action": "limitée"
+  },
+  {
+    "nom": "Flèche tueuse",
+    "rang": 8,
+    "description": "Le personnage fabrique et enchante une flèche particulière pour un ennemi unique dont il possède une relique (morceau de peau, griffe, poils, etc.). Il lui faut une journée complète pour créer la flèche et il ne peut en posséder plus d’une à un moment donné (ni pour la même cible ni pour une autre). Lorsqu’il utilise sa flèche contre l’ennemi désigné, il touche automatiquement. Si la cible est d’un niveau inférieur au sien, elle est immédiatement réduite à 0 PV, sinon elle a droit à un test de CON difficulté [10 + rang]. En cas de réussite, la flèche est tout de même un critique automatique.",
+    "action": "limitée"
+  }
+]

@@ -1,0 +1,27 @@
+[
+  {
+    "nom": "Enchantement 1",
+    "rang": 4,
+    "description": "Le personnage peut enchanter des objets magiques dont le niveau de magie maximal est égal à 1. Si vous jouez avec le module high fantasy (voir Atlas d’Osgild & règles optionnelles), vous pouvez si vous le souhaitez doubler ce niveau."
+  },
+  {
+    "nom": "Enchantement 2",
+    "rang": 5,
+    "description": "Le personnage peut enchanter des objets magiques dont le niveau de magie maximal est égal à 2. Si vous jouez avec le module high fantasy (voir Atlas d’Osgild & règles optionnelles), vous pouvez si vous le souhaitez doubler ce niveau."
+  },
+  {
+    "nom": "Enchantement 3",
+    "rang": 6,
+    "description": "Le personnage peut enchanter des objets magiques dont le niveau de magie maximal est égal à 3. Si vous jouez avec le module high fantasy (voir Atlas d’Osgild & règles optionnelles), vous pouvez si vous le souhaitez doubler ce niveau."
+  },
+  {
+    "nom": "Enchantement 4",
+    "rang": 7,
+    "description": "Le personnage peut enchanter des objets magiques dont le niveau de magie maximal est égal à 4. Si vous jouez avec le module high fantasy (voir Atlas d’Osgild & règles optionnelles), vous pouvez si vous le souhaitez doubler ce niveau."
+  },
+  {
+    "nom": "Enchantement 5",
+    "rang": 8,
+    "description": "Le personnage peut enchanter des objets magiques dont le niveau de magie maximal est égal à 5. Si vous jouez avec le module high fantasy (voir Atlas d’Osgild & règles optionnelles), vous pouvez si vous le souhaitez doubler ce niveau."
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "nom": "Familier fantastique",
+    "rang": 3,
+    "description": "Le personnage fait l’acquisition d’un familier fantastique. Le familier récupère tous les PV perdus après une récupération rapide.",
+    "html": "<div class=\"mx-2 mb-2\"><div class=\"row mx-0\"><div class=\"col border\">Familier</div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">AGI</span><span class=\"flex-fill\">+3*</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">CON</span><span class=\"flex-fill\">+2</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">FOR</span><span class=\"flex-fill\">-4</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">PER</span><span class=\"flex-fill\">+2</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">CHA</span><span class=\"flex-fill\">-2</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">INT</span><span class=\"flex-fill\">+1</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">VOL</span><span class=\"flex-fill\">+2</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">DEF</span><span class=\"flex-fill\">14 + rang</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">PV</span><span class=\"flex-fill\">niveau + 2</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">INI</span><span class=\"flex-fill\">--</span></div></div></div>"
+    "action": "attaque"
+  },
+  {
+    "nom": "Pouvoir mineur",
+    "rang": 4,
+    "description": "Le familier confère au personnage un pouvoir magique indiqué dans sa description."
+  },
+  {
+    "nom": "Résistance",
+    "rang": 5,
+    "description": "Le familier obtient une RD de 1 par rang face à tous les types de DM. De plus, le personnage apprend un sort de rang 1 ou 2 de son choix d’un profil indiqué dans la description du familier. Il peut utiliser ce sort deux fois par jour dans le cas d’un rang 1 et une seule fois dans le cas d’un rang 2."
+  },
+  {
+    "nom": "Inséparables",
+    "rang": 6,
+    "description": "Le personnage rappelle son familier à son contact par magie. Le familier est téléporté sur son maître au prix d’une action de mouvement. De plus le familier confère au personnage 1 PC supplémentaire.",
+    "action": "mouvement"
+  },
+  {
+    "nom": "Pouvoir supérieur",
+    "rang": 7,
+    "description": "Le familier confère au personnage un second pouvoir magique indiqué dans sa description, ainsi qu’un bonus de +1 sur la valeur de caractéristique indiquée dans la description du familier."
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "nom": "Ascendance draconique",
+    "rang": 4,
+    "description": "Choisissez une couleur de dragon pour l’ascendance de votre personnage. Il obtient une réduction des DM de 5 (qui passe à 10 au rang 8 de la voie), correspondant au type d’énergie utilisé par le souffle du dragon. De plus, le personnage devient capable de voir dans le noir total comme si c’était de la pénombre jusqu’à 20 m."
+  },
+  {
+    "nom": "Griffes du dragon",
+    "rang": 5,
+    "description": "Une fois par combat, le personnage voit ses muscles se développer de façon spectaculaire pendant [rang] rounds tandis que des griffes poussent subitement au bout de ses doigts. Pendant toute la durée de la transformation, il obtient un bonus de +2 en FOR (attaque et DM) et une attaque de contact de griffes par round en action gratuite (G) infligeant [1d4°+FOR] DM.",
+    "action": "limitée"
+  },
+  {
+    "nom": "Souffle du dragon",
+    "rang": 6,
+    "description": "Une fois par combat, le personnage peut produire un souffle létal correspondant à son ascendance. Ce souffle couvre une zone conique de 5 m de long sur 5 m de large à son extrémité et inflige 5d4° DM. Les victimes peuvent diviser les DM par 2 à condition de réussir un test d’AGI difficulté [8 + rang].",
+    "action": "limitée"
+  },
+  {
+    "nom": "Ailes de dragon",
+    "rang": 7,
+    "description": "Une fois par combat, le personnage déploie des ailes de dragon pendant CON minutes (minimum 1 min). Ces ailes lui permettent de se déplacer en vol à une vitesse de 15 m par action de mouvement. Faire du surplace est une action de mouvement.",
+    "action": "limitée"
+  },
+  {
+    "nom": "Écailles de dragon",
+    "rang": 8,
+    "description": "Le corps du personnage se renforce et se couvre d’écailles lorsqu’il reçoit des blessures graves. Lorsque le personnage passe sous la moitié de ses PV, il gagne une réduction des DM de 5 face à tous les types de dommages."
+  }
+]

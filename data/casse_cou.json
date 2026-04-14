@@ -1,0 +1,35 @@
+{
+  {
+    "nom": "Au pied du mur",
+    "rang": 4,
+    "description": "Lorsque le personnage possède un nombre de PV inférieur ou égal à son niveau, il gagne un dé bonus à tous ses tests (attaque, caractéristique, etc.)."
+  },
+  {
+    "nom": "Mouche du coche",
+    "rang": 5,
+    "description": "Le personnage est toujours en mouvement, il gagne +1 en DEF, puis +1 supplémentaire au rang 7. De plus, s’il sacrifie une action de mouvement, il gagne +2 en DEF supplémentaire jusqu’à son prochain tour.",
+    "bonus": [
+      { "id": "DEF", "valeur": 1 }
+    ]
+  },
+  {
+    "nom": "L’amour du risque",
+    "rang": 6,
+    "description": "Rien de tel qu’une question de vie ou de mort pour vous motiver ! Lorsqu’il réalise une action dans un lieu dangereux (par exemple, au bord d’un précipice ou d’un lac de lave), le personnage gagne un dé bonus à tous ses tests (attaque, caractéristique, etc.). Ce bonus s’applique également aux tests réalisés pour résister à la peur (permanent)."
+  },
+  {
+    "nom": "Poussée d’adrénaline",
+    "rang": 7,
+    "description": "Une fois par round, en dépensant 1d4 PV, le personnage gagne une action de mouvement supplémentaire à son tour.",
+    "bonus": [
+      { "id": "DEF", "valeur": 1 }
+    ]
+  },
+  {
+    "nom": "Attaque kamikaze",
+    "rang": 4,
+    "description": "Le personnage saute sur sa cible et l’agrippe pour la larder de coups au corps à corps. La cible doit être de taille supérieure à la sienne. Le personnage réalise un test opposé d’AGI contre la créature. En cas d’échec, le personnage se retrouve renversé. En cas de réussite, il est perché sur la créature ce qui lui offre les bonus ci-dessous selon la taille de la cible. Pour se débarrasser de lui, la créature doit utiliser une action d’attaque et l’emporter lors d’un test opposé d’AGI. ",
+    "html": "<div class=\"mx-2 mb-2\"><div class=\"mx-0 row\"><div class=\"col-3 p-0 text-bg-light\">Grande</div><div class=\"col-9 p-0\">+2 Att et DEF, +1d4° DM</div></div><div class=\"mx-0 row\"><div class=\"col-3 p-0 text-bg-light\">Énorme</div><div class=\"col-9 p-0\">+3 Att et DEF, +1d4° DM</div></div><div class=\"mx-0 row\"><div class=\"col-3 p-0 text-bg-light\">Colossale</div><div class=\"col-9 p-0\">+4 Att et DEF, +1d4° DM</div></div></div>",
+    "action": "limitée"
+  }
+]

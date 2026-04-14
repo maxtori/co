@@ -1,0 +1,44 @@
+[
+  {
+    "nom": "Sceptre défensif",
+    "rang": 4,
+    "description": "Le bâton du mage est un outil de défense complet, il lui sert aussi bien à parer efficacement en mêlée qu’à se protéger des sorts adverses. Lorsqu’il tient son bâton en main, le personnage gagne un bonus de +1 en DEF et à tous les tests opposés de magie effectués pour résister à des sorts. Ce bonus passe à +2 au rang 6 et +3 au rang 8.",
+    "bonus": [
+      { "id": "DEF", "valeur": 1 }
+    ]
+  },
+  {
+    "nom": "Bâton magique",
+    "rang": 5,
+    "description": "Le personnage choisit un sort de rang 1 de la famille des mages. Il est lié à son bâton et il peut l’utiliser au prix d’une action de mouvement sans dépense de mana. À partir du rang 7, il peut ajouter un sort de rang 2 qui ne coûte pas non plus de point de mana.",
+    "voie": { "profils": [ "mage" ], "rangs": [ 1 ] }
+  },
+  {
+    "nom": "Paralysie",
+    "rang": 6,
+    "description": "Le lanceur de sort paralyse autant de créatures qu’il le peut (cf. ci-après) dans un rayon de 10 m autour de lui pendant [1d4° + INT] rounds. Il doit maintenir sa concentration par une action de mouvement pendant toute la durée du sort. Il peut affecter autant de créatures qu’il souhaite tant que la somme de leurs NC ne dépasse pas son niveau. Les créatures de NC 4 ou plus peuvent se libérer du sort en réussissant un test de CON difficulté 15, une tentative par round (G).",
+    "action": "limitée",
+    "bonus": [
+      { "id": "DEF", "valeur": 1 }
+    ]
+  },
+  {
+    "nom": "Barrière magique",
+    "rang": 7,
+    "description": "Une fois par jour, le lanceur de sort trace une ligne imaginaire de son bâton, qui constitue une frontière invisible que nul ne saurait franchir sans son autorisation. Toute créature qui tente de passer ressent une forte contrainte à rebrousser chemin ; si elle tente de forcer le passage, elle doit réaliser un test opposé d’attaque magique contre le personnage. En cas d’échec, elle subit [5d4° + INT] DM et ne peut faire de nouvelle tentative avant une heure. En cas de succès, elle parvient à franchir la limite et ne subit que la moitié des DM. La frontière mesure un maximum de 20 m de long (sans limite de hauteur) et sa durée est de 24 h.",
+    "action": "limitée",
+    "sort": true,
+    "voie": { "profils": [ "mage" ], "rangs": [ 2 ] }
+  },
+  {
+    "nom": "Métamorphose d'autrui",
+    "rang": 8,
+    "description": "Le lanceur de sort doit réussir un test opposé d’attaque magique contre une cible à une portée de 20 m. Il la transforme en un animal de taille petite ou inférieure de son choix (grenouille et mouton sont les favoris des magiciens). La créature possède 1 PV (grenouille) ou 2 PV (mouton), et si elle est réduite à 0 PV, elle retrouve sa forme initiale et doit faire un test de CON difficulté 10. En cas d’échec, elle meurt. La durée du sort dépend du NC de la cible. Une créature ne peut pas être la cible de ce sort (réussi ou raté) plus d’une fois par combat.",
+    "html": "<div class=\"mx-2 mb-2\"><div class=\"mx-0 row\"><div class=\"col-2 p-0 text-bg-light\">NC 0 à 1</div><div class=\"col-4 p-0\">permanent</div><div class=\"col-2 p-0 text-bg-light\">NC 2</div><div class=\"col-4 p-0\">24 h</div></div><div class=\"mx-0 row\"><div class=\"col-2 p-0 text-bg-light\">NC 3</div><div class=\"col-4 p-0\">1d6 h</div><div class=\"col-2 p-0 text-bg-light\">NC 4</div><div class=\"col-4 p-0\">1d6 minutes</div></div><div class=\"mx-0 row\"><div class=\"col-2 p-0 text-bg-light\">NC 5+</div><div class=\"col-4 p-0\">1d6 rounds</div><div class=\"col-2 p-0 text-bg-light\">NC > mage</div><div class=\"col-4 p-0\">1 round</div></div></div>",
+    "action": "attaque",
+    "sort": true,
+    "bonus": [
+      { "id": "DEF", "valeur": 1 }
+    ]
+  }
+]

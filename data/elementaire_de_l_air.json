@@ -1,0 +1,39 @@
+[
+  {
+    "nom": "Bourrasque",
+    "rang": 4,
+    "description": "Le personnage prend une grande inspiration et souffle une terrible bourrasque. Toutes les créatures face à lui dans un cône de 30 m de long et de large à son extrémité doivent faire un test de FOR difficulté [10 + rang] ou être renversée et repoussées en arrière à une distance qui dépend de leur taille.",
+    "html": "<div class=\"mx-2 mb-2\"><div class=\"mx-0 row\"><div class=\"col-3 p-0 text-bg-light\">petite - moyenne</div><div class=\"col-3 p-0\">20 m, 3d4° DM</div><div class=\"col-3 p-0 text-bg-light\">grande</div><div class=\"col-3 p-0\">10 m, 2d4° DM</div></div><div class=\"mx-0 row\"><div class=\"col-3 p-0 text-bg-light\">énorme</div><div class=\"col-3 p-0\">5 m, 1d4° DM</div><div class=\"col-3 p-0 text-bg-light\">colossale</div><div class=\"col-3 p-0\">seulement renversée</div></div></div>",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Chevaucher les nuées",
+    "rang": 5,
+    "description": "Le personnage et un compagnon supplémentaire par rang peuvent être transportés par les forces du vent sur une distance de 1 km au maximum à la vitesse de 100 m par round. Le personnage doit voir l’endroit où le sort va le transporter et cet endroit doit pouvoir recevoir toutes les personnes qui l’accompagnent.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Mur de vent",
+    "rang": 6,
+    "description": "Le sort crée un mur de vent circulaire de 5 à 10 m de diamètre autour du personnage (au choix) pendant CHA minutes. Il bloque les attaques à distance dans les deux sens (mais pas la magie) et repousse les créatures qui tentent de le franchir. Il leur faut réussir un test de FOR difficulté [10 + rang] pour passer.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Cyclone",
+    "rang": 7,
+    "description": "Le personnage invoque un violent maelström de vents tourbillonnants à une portée de 500 m. Le phénomène occupe un espace de 20 m de diamètre et toutes les créatures présentes dans la zone d’effet subissent 2d4° DM par round. De plus, une cible doit réussir un test de FOR difficulté 15 ou être renversée. Le sort a une durée CHA minutes et le personnage peut déplacer la tornade de 10 m par action de mouvement.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Forme élémentaire d’air",
+    "rang": 8,
+    "description": "Une fois par jour, le personnage peut se transformer en élémentaire d’air (taille grand), pendant un maximum de CHA minutes. Sous cette forme, il ne peut pas employer d’autres capacités que celles de la voie élémentaire de l’air et il ne peut pas parler. S’il est réduit à 0 PV sous cette forme, il reprend sa forme initiale avec les PV qu’il avait au moment de la transformation.",
+    "html": "<div class=\"mx-2 mb-2\"><div class=\"row mx-0\"><div class=\"col border\">Élémentaire d'air</div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">AGI</span><span class=\"flex-fill\">+5*</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">CON</span><span class=\"flex-fill\">+4</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">FOR</span><span class=\"flex-fill\">+4</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">PER</span><span class=\"flex-fill\">--</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">CHA</span><span class=\"flex-fill\">--</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">INT</span><span class=\"flex-fill\">--</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">VOL</span><span class=\"flex-fill\">--</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">DEF</span><span class=\"flex-fill\">25</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">PV</span><span class=\"flex-fill\">niveau x 5</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">INI</span><span class=\"flex-fill\">--</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">Frappe</span><span class=\"flex-fill\">attaque magique</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">DM</span><span class=\"flex-fill\">2d4°+4 (foudre)</span></div></div></div>",
+    "action": "attaque",
+    "sort": true
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "nom": "Ordre du chevalier dragon",
+    "rang": 4,
+    "description": "Le cavalier rejoint l’ordre des chevaliers dragons avec le grade d’apprenti. Lorsqu’il porte les insignes de son ordre ou chevauche son drake, il gagne un bonus de +5 pour tous les tests de persuasion et d’intimidation. De plus, son drake obtient une réduction des DM contre le feu de 10."
+  },
+  {
+    "nom": "Résistance au feu",
+    "rang": 5,
+    "description": "Le cavalier est désormais un membre à part entière de l’ordre des chevaliers Dragon. Il a appris à résister aux flammes les plus féroces et il retranche 5 à tous les DM de feu subis (RD [feu] 5). Cette réduction passe à 10 une fois atteint le rang 7."
+  },
+  {
+    "nom": "Épée de feu",
+    "rang": 6,
+    "description": "Le cavalier peut enflammer son épée pour [5 + CHA] rounds. Elle inflige dès lors +1d4° DM de feu.",
+    "action": "mouvement"
+  },
+  {
+    "nom": "Monture puissante",
+    "rang": 7,
+    "description": "Le drake atteint sa pleine maturité et augmente ses capacités offensives.",
+    "html": "<div class=\"mx-2 mb-2\"><div class=\"row mx-0\"><div class=\"col border\">Drake</div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">AGI</span><span class=\"flex-fill\">0</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">CON</span><span class=\"flex-fill\">+6*</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">FOR</span><span class=\"flex-fill\">+6</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">PER</span><span class=\"flex-fill\">+1</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">CHA</span><span class=\"flex-fill\">0</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">INT</span><span class=\"flex-fill\">-2</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">VOL</span><span class=\"flex-fill\">+2</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">DEF</span><span class=\"flex-fill\">22</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">PV</span><span class=\"flex-fill\">10 + niveau x 6</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">INI</span><span class=\"flex-fill\">--</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">Attaque</span><span class=\"flex-fill\">magique</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">DM</span><span class=\"flex-fill\">2d4°+6</span></div></div></div>"
+  },
+  {
+    "nom": "Souffle enflammé",
+    "rang": 8,
+    "description": "Le drake est désormais capable de cracher du feu au prix d’une action d’attaque une fois par combat. Toutes les cibles situées dans un cône de 10 m de long sur 10 m de large, subissent 8d4° DM de feu, ou la moitié seulement si elles réussissent un test d’AGI difficulté 12.",
+    "action": "attaque"
+  }
+]

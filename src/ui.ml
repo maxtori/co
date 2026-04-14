@@ -216,13 +216,12 @@ let charge_voie ~(perso: personnage) v f =
       let voie = EzEncoding.destruct voie_enc s in
       let voie = List.map (fun (c: capacite) ->
         let bonus = List.flatten @@ List.map (fun b ->
+          let aux = function
+            | [ id ] -> [ { b with id } ]
+            | l -> List.map (fun id -> { b with id; opt=Some None }) l in
           match b.id with
-          | `FAI ->
-            let l = plus_faibles_caracteristiques perso.caracteristiques in
-            begin match l with
-              | [ id ] -> [ { b with id } ]
-              | _ -> List.map (fun id -> { b with id; opt=Some None }) l
-            end
+          | `FAI -> aux @@ plus_faibles_caracteristiques perso.caracteristiques
+          | `HAU -> aux @@ plus_hautes_caracteristiques perso.caracteristiques
           | _ -> [ b ]) c.bonus in
         { c with bonus }) voie in
       voies := (v, voie) :: !voies;

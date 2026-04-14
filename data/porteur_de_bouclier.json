@@ -1,0 +1,37 @@
+[
+  {
+    "nom": "Parade au bouclier",
+    "rang": 4,
+    "description": "Une fois par combat, le personnage peut parer une attaque au contact ou à distance qui le touche avec son bouclier (action gratuite). Il ne subit aucun DM sauf s’il s’agit d’un critique (il ne peut pas le parer).",
+    "action": "gratuite"
+  },
+  {
+    "nom": "Attaque au bouclier",
+    "rang": 5,
+    "description": "Une fois par round, le personnage peut faire une attaque gratuite au bouclier. Il subit un dé malus en attaque et il inflige [1d4°+FOR] DM.",
+    "action": "gratuite"
+  },
+  {
+    "nom": "Bousculade",
+    "rang": 6,
+    "description": "Lorsque le personnage réussit son attaque au bouclier, il peut choisir de faire reculer sa cible de 2 m. Si la cible est d’une taille supérieure à la sienne, il doit emporter un test opposé de FOR. De plus, le personnage augmente de +1 la DEF apportée par son bouclier. Ce bonus passe à +2 au rang 8 de la voie.",
+    "bonus": [
+      { "id": "DEF", "valeur": 1 }
+    ]
+  },
+  {
+    "nom": "Dévier les coups",
+    "rang": 7,
+    "description": "Une fois par round, en action gratuite, le personnage retranche la valeur de DEF de son bouclier (bonus de magie inclus) aux DM subis d’une attaque au contact ou à distance, sauf s’il est surpris.",
+    "action": "gratuite"
+  },
+  {
+    "nom": "Lancer de bouclier",
+    "rang": 8,
+    "description": "Le personnage peut lancer son bouclier à une portée de 20 m par une action d’attaque s’il réussit un test d’attaque à distance, il inflige les DM d’une Attaque au bouclier et la cible doit faire un test de FOR difficulté [10 + FOR du personnage] ou être renversée. Tant que le bouclier est à moins de 20 m du personnage, il peut le faire revenir à son bras (et l’équiper) par une action de mouvement (M).",
+    "action": "attaque",
+    "bonus": [
+      { "id": "DEF", "valeur": 1 }
+    ]
+  }
+]

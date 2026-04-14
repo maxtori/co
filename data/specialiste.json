@@ -12,7 +12,10 @@
   {
     "nom": "Caractéristique fabuleuse",
     "rang": 6,
-    "description": "Le joueur augmente d’un point la valeur de la plus haute caractéristique de son personnage. De plus, lorsqu’il obtient un résultat de 1 sur un test sur cette caractéristique, il peut relancer le dé une fois (il garde le nouveau résultat)."
+    "description": "Le joueur augmente d’un point la valeur de la plus haute caractéristique de son personnage. De plus, lorsqu’il obtient un résultat de 1 sur un test sur cette caractéristique, il peut relancer le dé une fois (il garde le nouveau résultat).",
+    "bonus": [
+      { "id": "HAU", "valeur": 1 }
+    ]
   },
   {
     "nom": "Capacité supérieure",

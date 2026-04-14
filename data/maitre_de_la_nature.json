@@ -1,0 +1,30 @@
+[
+  {
+    "nom": "Amitié animale",
+    "rang": 4,
+    "description": "Le personnage cible un animal à une distance maximale de 10 m et doit faire un test opposé d’attaque magique. En cas de réussite, l’animal se met au service du personnage et le défend pendant PER heures. À la fin du sort, l’animal s’enfuit. La somme des NC des animaux que le personnage garde sous contrôle ne peut à aucun moment dépasser le rang atteint dans la voie. À partir du rang 6, le personnage peut cibler les animaux géants et à partir du rang 8 les animaux fantastiques (griffon, ourhible, hippogriffe, etc.). Si le personnage essaie d’emmener un animal en milieu urbain, le sort prend immédiatement fin.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Seigneur de la nature",
+    "rang": 5,
+    "description": "Choisissez un milieu naturel de prédilection, puis un milieu naturel supplémentaire au rang 7. Lorsque le personnage est dans un milieu naturel de prédilection, il obtient un dé bonus à tous ses tests et récupère 1d4° PV durant chaque récupération rapide. Milieux naturels de prédilection : forêt et jungle, déserts et plaines, montagnes et collines, marais et milieu aquatique, grottes et profondeurs."
+  },
+  {
+    "nom": "Invisibilité aux animaux",
+    "rang": 6,
+    "description": "Lorsqu’il est dans un milieu de prédilection, le personnage est totalement indétectable par les animaux et les insectes même géants, tant qu’il le décide (que ce soit par la vue, l’odorat ou l’ouïe). S’il entreprend une action offensive contre un animal, la capacité prend fin immédiatement et ne sera à nouveau active qu’à la fin d’une récupération rapide."
+  },
+  {
+    "nom": "Monture géante",
+    "rang": 7,
+    "description": "Le personnage obtient une monture géante de son choix (mammouth, dinosaure, aigle géant, etc.). Elle doit être adaptée à un de ses milieux de prédilection et le NC de la créature ne peut pas être supérieur à [rang + PER]. Si le cadre de jeu ne le permet pas, le meneur de jeu peut décider d’interdire les dinosaures de la liste. La monture géante est parfaitement sous contrôle et lorsque le personnage la monte, elle peut attaquer une fois par round sur son ordre (action d’attaque pour la monture, l’ordre est une action gratuite pour le cavalier)."
+  },
+  {
+    "nom": "Magie druidique innée",
+    "rang": 8,
+    "description": "3 fois par jour, lorsqu’il est dans un milieu de prédilection, le personnage peut lancer n’importe quel sort de druide de son choix (le même ou trois sorts différents). Ceci est une action gratuite qui ne peut être utilisée qu’une seule fois par round et ne coûte aucun point de mana.",
+    "action": "gratuite"
+  }
+]

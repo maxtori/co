@@ -1,0 +1,27 @@
+[
+  {
+    "nom": "Secrets d’alcôves",
+    "rang": 4,
+    "description": "Le personnage obtient un bonus de +5 pour tous les tests visant à trouver ou obtenir des informations secrètes ou sensibles, et +5 à tous les tests de perception auditive (PER). De plus, il est capable de suivre une conversation en lisant sur les lèvres en réussissant un test de PER dont la difficulté est égale à la distance entre sa cible et lui en mètres. Il obtient un bonus égal à son rang pour ce test."
+  },
+  {
+    "nom": "À la garde",
+    "rang": 5,
+    "description": "Le personnage développe un sixième sens qui lui assure un coup d’avance sur les gardes et autres forces adverses. Le MJ doit prévenir le joueur 1d4 rounds complets avant que des PNJ n’interviennent sur le lieu où il opère. Il doit aussi indiquer la direction d’où provient la menace. Cette capacité n’est d’aucune utilité contre une embuscade (des adversaire cachés et préparés à l’arrivée des PJ)."
+  },
+  {
+    "nom": "Mémoire eidétique",
+    "rang": 6,
+    "description": "Le personnage a une parfaite mémoire de tout ce qu’il a vu et entendu. Si le joueur le demande, le MJ doit lui rappeler tous les détails relatifs à un lieu qu’il a visité ou à une conversation qu’il a entendue. De plus, le personnage gagne un bonus de +5 à tous ses tests de connaissance (INT) et de recherche d’indice basé sur l’INT."
+  },
+  {
+    "nom": "Caméléon",
+    "rang": 7,
+    "description": "Le personnage peut repérer des lieux, suivre des gens, infiltrer des endroits réservés (avec le costume adapté) sans aucun jet de dé tant qu’il n’entreprend aucune action qui pourrait sérieusement attirer l’attention sur lui. Au prix d’une action de mouvement et en réussissant un test de CHA difficulté 10, il disparaît dans une foule et échappe à d’éventuels poursuivants. Autrement, s’il attaque au round suivant, il obtient un dé bonus et peut effectuer une Attaque sournoise s’il dispose de cette capacité. La difficulté du test de CHA initial peut être modulée selon la densité de la foule."
+  },
+  {
+    "nom": "Réseau",
+    "rang": 4,
+    "description": "Grâce à son réseau de connaissances ou par l’intermédiaire d’autres espions, le personnage peut obtenir de nombreux avantages. Un test réussi de CHA difficulté 10 lui suffit pour obtenir une entrevue avec n’importe quel personnage puissant à tout moment. Une fois par aventure, cela lui permet d’obtenir un service, par exemple une lettre de recommandation, un renseignement réservé à l’élite, des billets pour un bal privé ou même une escorte armée pour l’aider à se rendre dans un endroit dangereux."
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "nom": "Armure de bronze",
+    "rang": 4,
+    "description": "Le personnage acquiert son armure de bronze. Celle-ci se présente sous la forme d’un cube de métal d’environ 50 cm d’arête pour 10 kg, portant son symbole. Sur un simple mot de commande (action de mouvement), l’armure se déploie et recouvre son corps. L’armure confère une RD égale à 3 et n’inflige aucune pénalité d’encombrement.",
+    "bonus": [
+      { "id": "RD", "valeur": 3 }
+    ]
+  },
+  {
+    "nom": "Pouvoir unique",
+    "rang": 5,
+    "description": "Le personnage associe à son armure un sort de son choix de rang 1 à 4 de n’importe quelle voie. Il peut utiliser ce sort plus souvent s’il est moins puissant : [5 - rang] fois par combat.",
+    "action": "limitée"
+  },
+  {
+    "nom": "Armure d'argent",
+    "rang": 6,
+    "description": "L’armure acquiert la couleur de l’argent. Elle octroie une RD 5.",
+    "bonus": [
+      { "id": "RD", "valeur": 2 }
+    ]
+  },
+  {
+    "nom": "Pouvoir puissant",
+    "rang": 7,
+    "description": "Le personnage associe à son armure un sort de son choix de rang 5 à 7 de n’importe quelle voie. Il peut utiliser ce sort plus souvent s’il est moins puissant, mais dans tous les cas pas plus d’une fois par combat : [8 - rang] fois par jour.",
+    "action": "limitée"
+  },
+  {
+    "nom": "Armure d’or",
+    "rang": 8,
+    "description": "L’armure acquiert la couleur de l’or et elle octroie une RD 7.",
+    "bonus": [
+      { "id": "RD", "valeur": 2 }
+    ]
+  }
+]

@@ -1,0 +1,31 @@
+[
+  {
+    "nom": "Caractère d’ours",
+    "rang": 4,
+    "description": "Le personnage gagne un bonus de +5 à tous les tests d’intimidation. Une fois par combat, il peut pousser un terrible grondement en action gratuite. Tous les adversaires à son contact de NC inférieur à son niveau doivent réussir un test de VOL difficulté [6 + rang] ou s’enfuir en courant pendant 1d4 rounds."
+  },
+  {
+    "nom": "Hibernation",
+    "rang": 5,
+    "description": "Le personnage peut dormir sans interruption jusqu’à 2 jours par rang. Durant cette période, il n’a besoin ni d’eau ni de nourriture et ne souffre pas plus du froid que de la chaleur ; il récupère normalement de ses blessures. Après avoir dormi plusieurs jours de suite, le personnage est capable de rester le même nombre de jours sans dormir."
+  },
+  {
+    "nom": "Métamorphose",
+    "rang": 6,
+    "description": "Une fois par jour, le personnage peut prendre la forme d’un ours pendant [1d6+CON] minutes. Le personnage ne doit pas porter d’armure plus lourde que le cuir renforcé pour utiliser cette capacité. Le personnage conserve sa propre INT, mais il a tendance à réagir comme l’animal qu’il est devenu et ne peut plus utiliser ses capacités de profil. Si le personnage est réduit à 0 PV sous cette forme, il reprend forme humaine au début de son prochain tour par une action de mouvement et retrouve les PV qu’il avait avant la transformation.",
+    "html": "<div class=\"mx-2 mb-2\"><div class=\"row mx-0\"><div class=\"col border\">Ours brun</div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">AGI</span><span class=\"flex-fill\">+1</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">CON</span><span class=\"flex-fill\">+6*</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">FOR</span><span class=\"flex-fill\">+6</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">PER</span><span class=\"flex-fill\">+2</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">CHA</span><span class=\"flex-fill\">-2</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">INT</span><span class=\"flex-fill\">--</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">VOL</span><span class=\"flex-fill\">VOL+2</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">DEF</span><span class=\"flex-fill\">12 + rang</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">PV</span><span class=\"flex-fill\">rang x 5</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">INI</span><span class=\"flex-fill\">11</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">Morsure et griffes</span><span class=\"flex-fill\">magique</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">DM</span><span class=\"flex-fill\">2d4+6</span></div></div></div>",
+    "action": "limitée"
+  },
+  {
+    "nom": "Étreinte de l’ours",
+    "rang": 7,
+    "description": "Une fois par combat, le personnage peut se saisir d’un adversaire dont la FOR est inférieure à la sienne et l’écraser entre ses bras puissants. Sur un test d’attaque au contact réussi, le personnage inflige [2d4°+FOR] DM à sa cible et elle est immobilisée entre ses bras. À son tour, la victime peut tenter de se libérer avec un test de FOR en opposition ; en cas d’échec, elle ne peut faire aucune action. À chacun des tours suivants, tant que l’étreinte est maintenue, le personnage inflige à nouveau des DM sans avoir à réaliser son test d’attaque. Cette capacité peut être utilisée sous forme d’ours.",
+    "action": "limitée"
+  },
+  {
+    "nom": "Métamorphose supérieure",
+    "rang": 8,
+    "description": "Les plus puissants guerriers-ours peuvent prendre la forme d’un ours une fois par combat (nécessite de terminer une récupération rapide). Ces métamorphoses durent chaque fois jusqu’à [1d6+CON] heures.",
+    "action": "limitée"
+  }
+]

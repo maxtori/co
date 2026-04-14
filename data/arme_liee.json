@@ -1,0 +1,30 @@
+[
+  {
+    "nom": "Fidèle",
+    "rang": 4,
+    "description": "L’arme est considérée comme magique et octroie au PJ un dé bonus en attaque une fois par combat. Si l’arme est en vue et à moins de 10 m (ou sa portée dans le cas d’une arme de lancer), il peut la faire revenir dans sa main en action gratuite. Si l’arme est saisie par une autre créature, il doit emporter un test opposé de CHA contre la FOR de son adversaire pour la faire revenir dans sa main. Si elle n’est pas en vue, il sait toujours dans quelle direction elle se trouve."
+  },
+  {
+    "nom": "Alliée loyale",
+    "rang": 5,
+    "description": "Une fois par combat, lorsqu’il obtient 1 au test d’attaque avec son arme, le joueur peut le remplacer par la valeur 20."
+  },
+  {
+    "nom": "Arme dansante",
+    "rang": 6,
+    "description": "Une fois par combat, le personnage peut demander à son arme de combattre pour lui. Elle attaque pendant [rang] rounds en utilisant la valeur d’attaque magique du PJ et en infligeant ses DM de base (plus un éventuel bonus de magie si l’arme est enchantée). S’il sombre dans l’inconscience, l’arme continue à veiller sur lui et à attaquer tous les ennemis qui approchent de son corps, tant que la durée totale de la capacité n’est pas atteinte. Ensuite elle devient inerte et tombe au sol.",
+    "action": "mouvement"
+  },
+  {
+    "nom": "Aura élémentaire",
+    "rang": 7,
+    "description": "Une fois par combat, le personnage imprègne son arme d’une aura élémentaire pendant CON minutes. Cette aura lui offre un bonus de +1d4° aux DM qui prennent la forme de feu, d’acide, de froid ou d’électricité. L’élément choisi reste toujours le même. Ce bonus aux DM ne peut pas se cumuler à un autre bonus magique élémentaire (arc de feu, sort élémentaire, etc.).",
+    "action": "attaque"
+  },
+  {
+    "nom": "Milles lames",
+    "rang": 8,
+    "description": "Une fois par jour, le personnage fait couler son propre sang sur son arme : il sacrifie 2d4° PV et invoque les sœurs spirituelles de son arme. Pendant 5 rounds, tous les adversaires du personnage dans un rayon de 10 m autour de lui sont frappés par une arme translucide semblable à la sienne et subissent automatiquement 1d4° DM.",
+    "action": "limitée"
+  }
+]

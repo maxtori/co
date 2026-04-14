@@ -1,0 +1,38 @@
+[
+  {
+    "nom": "Brouillard",
+    "rang": 4,
+    "description": "Le personnage lève un brouillard dense (pénombre dans un rayon de 10 m, puis équivalent au noir total) dans un rayon de 20 m autour de lui. S’il maintient sa concentration, il peut continuer à augmenter le rayon de la zone de 20 m par action limitée à chaque round suivant pendant un maximum de round égal à son niveau. Une fois qu’il cesse sa concentration, le brouillard dure pendant CHA minutes.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Mur acide",
+    "rang": 5,
+    "description": "Le personnage peut créer un mur d'acide rectiligne de 20 m de long pour 4 m de haut (portée 20 m, épaisseur 30 cm). Toute créature qui franchit le mur subit [3d4° + CHA] DM d’acide. Le sort a une durée de CHA minutes.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Armure d’eau",
+    "rang": 6,
+    "description": "Une couche d’eau de quelques centimètres d’épaisseur recouvre le corps du personnage pendant CHA minutes, elle lui donne une RD 3 contre tous les DM physiques et RD 10 contre les DM de feu et d’acide. Enfin le personnage est glissant comme un poisson et ne peut être saisi.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Écartement des eaux",
+    "rang": 7,
+    "description": "Le personnage peut stopper le cours d’une rivière ou écarter les eaux d’un lac. L’eau s’ouvre devant le personnage et se referme derrière lui sur une distance maximale de 1 km (moins selon son choix). Lui et ses compagnons peuvent alors traverser à pied sec pendant une durée de CHA heures.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Forme élémentaire d’eau",
+    "rang": 8,
+    "description": "Une fois par jour, le personnage peut se transformer en élémentaire d’eau (taille grand), pendant un maximum de CHA minutes. Sous cette forme, il ne peut pas employer d’autres capacités que celles de la voie élémentaire de l’eau et il ne peut pas parler. S’il est réduit à 0 PV sous cette forme, il reprend sa forme initiale avec les PV qu’il avait au moment de la transformation.",
+    "html": "<div class=\"mx-2 mb-2\"><div class=\"row mx-0\"><div class=\"col border\">Élémentaire d'eau</div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">AGI</span><span class=\"flex-fill\">+3*</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">CON</span><span class=\"flex-fill\">+5</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">FOR</span><span class=\"flex-fill\">+5</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">PER</span><span class=\"flex-fill\">--</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">CHA</span><span class=\"flex-fill\">--</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">INT</span><span class=\"flex-fill\">--</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">VOL</span><span class=\"flex-fill\">--</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">DEF</span><span class=\"flex-fill\">23</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">PV</span><span class=\"flex-fill\">niveau x 5</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">INI</span><span class=\"flex-fill\">--</span></div></div><div class=\"row mx-0\"><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">Frappe</span><span class=\"flex-fill\">attaque magique</span></div><div class=\"col border p-0 d-flex justify-content-around\"><span class=\"flex-fill text-bg-light\">DM</span><span class=\"flex-fill\">2d4°+5 (acide)</span></div></div></div>",
+    "action": "attaque",
+    "sort": true
+  }
+]

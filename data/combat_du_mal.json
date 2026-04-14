@@ -1,0 +1,31 @@
+[
+  {
+    "nom": "Juste courroux",
+    "rang": 4,
+    "description": "Chaque fois que le personnage est victime d’une Attaque sournoise (voie de l’assassin, profil de voleur) ou d’une Attaque mortelle (capacité de créature), il peut riposter par une attaque au contact en action gratuite.",
+    "action": "gratuite"
+  },
+  {
+    "nom": "Épée de lumière",
+    "rang": 5,
+    "description": "L’arme du personnage brille d’une lumière magique équivalente à une torche pour le reste du combat. Elle occasionne +1d4° DM supplémentaire aux morts-vivants, aux créatures démoniaques ou aux animaux corrompus par le mal. Alternativement, si cette voie est choisie par un barbare qui déteste la magie, la lame ne brille pas et les DM supplémentaires sont juste le fruit de sa hargne.",
+    "action": "mouvement"
+  },
+  {
+    "nom": "Sentir la corruption",
+    "rang": 6,
+    "description": "Le personnage se concentre et détecte si une source maléfique est présente dans un rayon de 20 m autour de lui. Il ne peut ni déterminer sa localisation, ni sa nature. Les sources maléfiques possibles sont les démons, les morts-vivants, les animaux corrompus, les artefacts maléfiques, les lieux maudits.",
+    "action": "limitée"
+  },
+  {
+    "nom": "Frappe suppressive",
+    "rang": 7,
+    "description": "En plus d’infliger des DM normaux, cette attaque oblige la cible à faire un test opposé d’attaque magique contre le personnage. En cas d’échec, elle ne peut utiliser aucun pouvoir magique à son prochain tour.",
+    "action": "limitée"
+  },
+  {
+    "nom": "Résister à la corruption",
+    "rang": 8,
+    "description": "Une fois par combat, le personnage résiste totalement à un sort ou un effet magique de son choix. De plus, il est immunisé aux effets de corruption : drain, affaiblissement, pourriture, empoisonnement ou maladie provoqués par les morts-vivants, les démons ou les animaux maléfiques ou corrompus."
+  }
+]

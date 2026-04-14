@@ -1,0 +1,27 @@
+[
+  {
+    "nom": "Armes dentelées",
+    "rang": 4,
+    "description": "Les armes et les lames du personnage sont dentelées, elles possèdent des formes torturées destinées à provoquer des blessures sanglantes. Le personnage obtient un bonus de +5 à tous ses tests d’intimidation. De plus, lors d’une attaque réussie, il provoque un effet de saignement qui inflige 1 DM par round à la victime pour le reste du combat. Pour stopper cette hémorragie, la victime doit recevoir des soins ou prendre une action limitée et réussir un test d’AGI difficulté 10. Cet effet de saignement passe à 2 DM au rang 8 de la voie. Il ne se cumule pas."
+  },
+  {
+    "nom": "Armure à pointes",
+    "rang": 5,
+    "description": "L’armure et le bouclier du guerrier sont décorés de piques et de lames afin de blesser les créatures qui l’attaquent. À chaque fois qu’une créature attaque au contact le personnage avec des armes naturelles (mains nues, griffes crocs) et qu’elle touche au moins une Défense de 10, elle subit 1d4 DM. Ces DM passent à 1d4° au rang 7."
+  },
+  {
+    "nom": "Blessures affreuses",
+    "rang": 6,
+    "description": "Les blessures infligées par les attaques au contact du personnage sont très longues à guérir. Les effets de soins ou de régénération sont divisés par 2 lorsqu’il s’agit de guérir ces DM."
+  },
+  {
+    "nom": "Hémorragie interne",
+    "rang": 7,
+    "description": "Lorsque le personnage inflige un critique, la victime subit 1d4° DM supplémentaires à chaque round suivant pendant 3 rounds."
+  },
+  {
+    "nom": "Impitoyable",
+    "rang": 4,
+    "description": "Lorsque l’écorcheur rate une attaque, il inflige tout de même 1d4° DM à sa cible (de même nature que les DM habituels de son attaque)."
+  }
+]

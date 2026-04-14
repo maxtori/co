@@ -1,0 +1,37 @@
+[
+  {
+    "nom": "Cécité",
+    "rang": 4,
+    "description": "Le personnage doit emporter un test opposé d’attaque magique contre une cible à une portée de 20 m. En cas de succès la cible est aveuglée (-5 en Init., Att et DEF, -10 en attaque à distance). La durée du sort est de 1d6 rounds si la cible est d’un NC inférieur au niveau personnage, sinon elle est d’un round seulement.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Œil magique",
+    "rang": 5,
+    "description": "Le personnage détache son œil et l’envoie explorer son environnement. Il voit par cet œil et le déplace en volant de 10 m par action de mouvement pour une durée d’INT min. L’œil possède une DEF 20 et 1 PV. S’il est réduit à 0 PV, l’œil est détruit et le mage perd 1d6 PV (son œil repousse immédiatement).",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Motif hypnotique",
+    "rang": 6,
+    "description": "Le personnage crée dans le ciel un tableau coloré hypnotique dans lequel chacun voit une scène différente qui le touche au plus profond de son être. Chaque créature à portée (20 m) doit réussir un test d’INT difficulté [12 + INT du magicien] ou cesser ce qu’elle faisait pour regarder intensément le tableau. Elle ne prête plus du tout attention à son environnement, toutefois, si elle est attaquée, elle riposte bien qu’elle reprenne immédiatement sa contemplation dès son adversaire vaincu ou en fuite. Le sort a une durée d’INT min et il n’affecte que les créatures dont le NC est inférieur au rang atteint dans la voie.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Vision de la vérité",
+    "rang": 7,
+    "description": "Pendant INT min, le personnage voit à travers les illusions et les déguisements, même magiques, comme s’ils n’existaient pas. Il voit aussi les créatures invisibles. Au prix d’une action de mouvement, il peut se concentrer sur l’aura d’une créature à moins de 20 m, et s’il réussit un test opposé d’attaque magique, il apprend son niveau approximatif, ses PV et ses pouvoirs particuliers.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Invisibilité supérieure",
+    "rang": 8,
+    "description": "Au choix, le personnage peut lancer invisibilité (rang 3 de la voie de la magie universelle) sur lui-même plus un nombre d’alliés égal à son INT (durée [1d4° + INT] minutes) ou il lance invisibilité supérieure seulement sur lui-même. Dans ce cas, il reste invisible même s’il utilise des actions offensives, mais la durée est exprimée en rounds. Ses adversaires l’attaquent comme s’ils étaient aveuglés (-5 en Att et en DEF, -10 aux attaques à distance, ne peut être ciblé par les sorts).",
+    "action": "attaque",
+    "sort": true
+  }
+]

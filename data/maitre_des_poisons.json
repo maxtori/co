@@ -1,0 +1,27 @@
+[
+  {
+    "nom": "Connaissance du poison",
+    "rang": 4,
+    "description": "Le personnage peut effectuer un test d’INT difficulté 10 pour reconnaître, identifier ou détecter un poison. Il n’a plus besoin de test d’INT pour réussir à appliquer un poison sur une arme."
+  },
+  {
+    "nom": "Poison rapide",
+    "rang": 5,
+    "description": "Le personnage sait fabriquer du poison « rapide » en petite quantité. Avant chaque combat, ses armes (trois au maximum) sont enduites de ce poison. La première attaque réussie provoque 3d4° DM supplémentaires. Si la victime réussit un test de CON difficulté [10 + INT], elle ne subit que la moitié des DM."
+  },
+  {
+    "nom": "Poison affaiblissant",
+    "rang": 6,
+    "description": "Le voleur peut remplacer le poison rapide par un poison affaiblissant, les effets ne sont appliqués que sur la première attaque réussie avec cette arme. Si la victime rate un test de CON difficulté 12, elle est affaiblie pour le reste du combat (voir états préjudiciables)."
+  },
+  {
+    "nom": "Résistance au poison",
+    "rang": 7,
+    "description": "À force de manipuler les poisons, le personnage a développé des immunités. Lorsqu’il est empoisonné, faites un test de CON difficulté 10. En cas de succès, il ne subit aucun effet ; s’il rate, il subit la moitié des DM."
+  },
+  {
+    "nom": "Poisons virulents",
+    "rang": 8,
+    "description": "Le personnage sait fabriquer en petites quantités les poisons « lent » et « mortel » (voir page 238), il peut en utiliser [1 + INT] doses par jour (cumul des deux sortes de poisons). La difficulté de résistance à ces poisons est de [12 + INT]."
+  }
+]

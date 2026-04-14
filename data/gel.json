@@ -1,0 +1,36 @@
+[
+  {
+    "nom": "Verglas",
+    "rang": 4,
+    "description": "Un verglas glissant recouvre le sol sur une surface de 10 m de diamètre pendant INT minutes (vous pouvez stopper le sort plus tôt). Dans cette zone, pour rester debout il faut réussir un test d’AGI de difficulté 10 à son tour, s’y déplacer ou combattre demande un test de difficulté 15. Un échec signifie que la créature est renversée se relever nécessite de réussir un nouveau test d’AGI difficulté 15 et prend un round. Ramper en dehors de la zone demande un round complet.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Coeur de glace",
+    "rang": 5,
+    "description": "Vous divisez par deux tous les DM de froid que vous subissez et vous êtes désormais immunisé à la peur."
+  },
+  {
+    "nom": "Souffle glacial",
+    "rang": 6,
+    "description": "Le mage ouvre la bouche et souffle un blizzard glacial et des éclats de glace tranchants. Le sort affecte toutes les créatures dans un cône approximatif de 20 m de long sur 20 m de large à son extrémité. Les victimes subissent [4d4° + INT] DM et sont ralenties pour 1 round si elles ratent un test de CON difficulté [10 + INT]. Sinon, elles subissent seulement la moitié des DM et ne sont pas ralenties.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Présence glaciale",
+    "rang": 7,
+    "description": "L’ensorceleur transforme son corps en glace vivante, il gagne +4 en DEF, est immunisé au froid et divise les DM de feu par deux. Les créatures qui le touchent ou l’attaquent avec des armes naturelles subissent 1d4° DM. Lorsqu’il marche, il gèle le sol et peut se déplacer sur l’eau en la transformant en glace. Le sort a une durée de [1d6 + INT] minutes.",
+    "action": "attaque",
+    "sort": true
+  },
+  {
+    "nom": "Cryogénisation",
+    "rang": 8,
+    "description": "Le mage projette un rayon de froid absolu sur sa cible. S’il réussit un test opposé d’attaque magique ou si la cible est volontaire, elle est congelée dans une gangue de glace de la forme d’un énorme cristal. La gangue peut être détruite en lui infligeant 50 DM ; sinon, elle se brise d’elle-même après une durée qui dépend du NC de la créature.",
+    "html": "<div class=\"mx-2 mb-2\"><div class=\"mx-0 row\"><div class=\"col-2 p-0 text-bg-light\">NC 0-1</div><div class=\"col-4 p-0\">INT siècles</div><div class=\"col-2 p-0 text-bg-light\">NC 2</div><div class=\"col-4 p-0\">INT années</div></div><div class=\"mx-0 row\"><div class=\"col-2 p-0 text-bg-light\">NC 3</div><div class=\"col-4 p-0\">INT jours</div><div class=\"col-2 p-0 text-bg-light\">NC 4</div><div class=\"col-4 p-0\">INT heures</div></div><div class=\"mx-0 row\"><div class=\"col-2 p-0 text-bg-light\">NC 5</div><div class=\"col-4 p-0\">INT minutes</div><div class=\"col-2 p-0 text-bg-light\">NC 6+</div><div class=\"col-4 p-0\">INT rounds</div></div></div>",
+    "action": "attaque",
+    "sort": true
+  }
+]

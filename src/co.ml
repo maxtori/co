@@ -1,9 +1,9 @@
-type famille =
-  | Aventuriers
-  | Combattants
-  | Mages
-  | Mystiques
-[@@deriving encoding {assoc}, jsoo]
+type famille = [
+  | `Aventuriers
+  | `Combattants
+  | `Mages
+  | `Mystiques
+] [@@deriving encoding {assoc; lower}, jsoo]
 
 type profil_aventurier = [
   | `Arquebusier
@@ -55,6 +55,7 @@ type profil = [
 
 type profil_ou_famille = [
   | profil
+  | famille
   | `famille
 ] [@@deriving encoding]
 
@@ -63,8 +64,11 @@ type profil_ou_famille = [
   let profil_ou_famille_to_jsoo : profil_ou_famille -> profil_ou_famille_jsoo Ezjs_min.t = function
     | `famille -> Ezjs_min.string "famille"
     | #profil as p -> profil_to_jsoo p
+    | #famille as f -> famille_to_jsoo f
   let profil_ou_famille_of_jsoo : profil_ou_famille_jsoo Ezjs_min.t -> profil_ou_famille = fun p ->
-    try (profil_of_jsoo p :> profil_ou_famille) with _ -> `famille
+    try (profil_of_jsoo p :> profil_ou_famille) with _ ->
+    try (famille_of_jsoo p :> profil_ou_famille) with _ ->
+      `famille
 ]
 
 type peuple =
@@ -91,12 +95,14 @@ type caracteristique = [
 type bonus_type = [
   | `DEF
   | `INI
-  | `FAI
   | `PV
   | `PC
-  | `PR
+  | `DR
   | `PM
   | `PCM
+  | `FAI
+  | `HAU
+  | `RD
 ] [@@deriving encoding {assoc}, jsoo]
 
 type caracteristique_ou_bonus = [ caracteristique | bonus_type ] [@@deriving encoding]
@@ -627,6 +633,7 @@ type personnage = {
   points_de_mana: points_avec_max;
   initiative: int; [@dft 0]
   defense: int; [@dft 0]
+  reduction_de_degats: int; [@dft 0]
   equipements: equipement_et_nombre list; [@dft []]
   ideal: ideal option;
   travers: travers option;
@@ -674,21 +681,22 @@ let caracteristiques_par_defaut peuple = match peuple with
 let points_vide = { courant = 0; max = 0 }
 
 let personnage_vide = {
-  nom=""; niveau=1; famille=Aventuriers; profil=`Arquebusier; peuple=Demi_elfe;
+  nom=""; niveau=1; famille=`Aventuriers; profil=`Arquebusier; peuple=Demi_elfe;
   caracteristiques=caracteristiques_par_defaut None;
   caracteristiques_base=caracteristiques_par_defaut (Some Demi_elfe);
-  points_de_vigueur=points_vide;
-  des_de_recuperation=points_vide; points_de_chance=points_vide; points_de_mana=points_vide;
-  initiative=0; defense=0; equipements=[]; ideal=None; travers=None; description="";
+  points_de_vigueur=points_vide; des_de_recuperation=points_vide;
+  points_de_chance=points_vide; points_de_mana=points_vide;
+  initiative=0; defense=0; reduction_de_degats=0;
+  equipements=[]; ideal=None; travers=None; description="";
   image=None; voies=[]; bonuses=[]; competences_maitrisees=[]; competences=[];
-  notes=""
+  notes="";
 }
 
 let profils_famille = function
-  | Aventuriers -> List.map snd profil_aventurier_assoc
-  | Combattants -> List.map snd profil_combattant_assoc
-  | Mages -> List.map snd profil_mage_assoc
-  | Mystiques -> List.map snd profil_mystique_assoc
+  | `Aventuriers -> List.map snd profil_aventurier_assoc
+  | `Combattants -> List.map snd profil_combattant_assoc
+  | `Mages -> List.map snd profil_mage_assoc
+  | `Mystiques -> List.map snd profil_mystique_assoc
 
 let profils () =
   List.map (fun (_, f) -> f, profils_famille f) famille_assoc
@@ -741,6 +749,14 @@ let plus_faibles_caracteristiques c =
       aux acc (i+1)
     | acc -> acc in
   aux [] (-3)
+
+let plus_hautes_caracteristiques c =
+  let rec aux acc i = match acc with
+    | [] ->
+      let acc = caracteristique_avec_valeur c [] i in
+      aux acc (i-1)
+    | acc -> acc in
+  aux [] 10
 
 let verifie_caracteristiques c =
   let acc = [] in
@@ -798,7 +814,7 @@ let ajoute_bonus ?(factor=1) p l =
     | `INI -> { acc with initiative = acc.initiative + v }
     | `PV -> { acc with points_de_vigueur = { max = acc.points_de_vigueur.max + v; courant = acc.points_de_vigueur.courant + v } }
     | `PC -> { acc with points_de_chance = { max = acc.points_de_chance.max + v; courant = acc.points_de_chance.courant + v } }
-    | `PR -> { acc with des_de_recuperation = { max = acc.des_de_recuperation.max + v; courant = acc.des_de_recuperation.courant + v } }
+    | `DR -> { acc with des_de_recuperation = { max = acc.des_de_recuperation.max + v; courant = acc.des_de_recuperation.courant + v } }
     | `PM -> { acc with points_de_mana = { max = acc.points_de_mana.max + v; courant = acc.points_de_mana.courant + v } }
     | _ -> acc
   ) p l
@@ -843,6 +859,7 @@ let voies_capacite ~famille ~rangs capacites =
       let profils = List.fold_left (fun acc pf ->
         match pf with
         | `famille -> acc @ profils_famille famille
+        | #famille as f -> acc @ profils_famille f
         | #profil as p -> acc @ [ p ]
       ) [] profils in
       let voies = match profils with [] -> toutes_voies () | _ -> List.flatten @@ List.map voies_profil profils in
@@ -872,14 +889,14 @@ let remplit_caracteristiques p def_equipement agi_max  =
   let p = { p with caracteristiques } in
   let aux p max = let courant = if p.courant = 0 || p.courant = p.max then max else p.courant in { courant; max } in
   let points_de_vigueur = aux p.points_de_vigueur @@ p.niveau * p.caracteristiques.constitution + (1+p.niveau) * (match p.famille with
-    | Aventuriers -> 4
-    | Combattants -> 5
-    | Mages -> 3
-    | Mystiques -> 4) in
+    | `Aventuriers -> 4
+    | `Combattants -> 5
+    | `Mages -> 3
+    | `Mystiques -> 4) in
   let des_de_recuperation = aux p.des_de_recuperation @@ 2 + p.caracteristiques.constitution + (match p.famille with
-    | Mystiques -> 1 | _ -> 0) in
+    | `Mystiques -> 1 | _ -> 0) in
   let points_de_chance = aux p.points_de_chance @@ 2 + p.caracteristiques.charisme + (match p.famille with
-    | Aventuriers -> 1 | _ -> 0) in
+    | `Aventuriers -> 1 | _ -> 0) in
   let initiative = 10 + p.caracteristiques.perception in
   let defense = 10 + min agi_max p.caracteristiques.agilite + def_equipement in
   let points_de_mana0 = p.points_de_mana in
@@ -939,10 +956,10 @@ let bonus_capacites voies =
   List.fold_left (fun acc (vt, l, rgs) -> aux vt rgs acc l) [] voies
 
 let de_recuperation = function
-  | Aventuriers -> `d8
-  | Combattants -> `d10
-  | Mages -> `d6
-  | Mystiques -> `d8
+  | `Aventuriers -> `d8
+  | `Combattants -> `d10
+  | `Mages -> `d6
+  | `Mystiques -> `d8
 
 let rang_max = List.fold_left max 0
 
@@ -1008,6 +1025,7 @@ let verifie_voies ?(validate=true) ~capacites p =
           let profils = List.fold_left (fun acc pf ->
             match pf with
             | `famille -> acc @ profils_famille p.famille
+            | #famille as f -> acc @ profils_famille f
             | #profil as p -> acc @ [ p ]
           ) [] profils in
           List.exists (fun p -> List.mem v (voies_profil p)) profils) capacites in
