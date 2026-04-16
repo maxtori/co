@@ -387,15 +387,24 @@ let sauvergarde_fichier_persistent nom a f =
     let url = Dom_html.window##._URL##createObjectURL fi in
     f nom url
 
+let assoc_voie vt = match List.assoc_opt vt !voies with
+  | None -> failwith (Format.sprintf "voie %s non chargée" (voie_type_to_str vt))
+  | Some v -> v
+
 let capacites l =
   let voies, lc = List.split @@ List.filter_map (fun (vt, rgs) ->
-    let v = List.assoc vt !voies in
+    let v = assoc_voie vt in
     let v = List.filter (fun c -> List.mem c.rang rgs) v in
-    match v with
-    | [] -> None
-    | _ -> Some ((vt, rgs), v)
+    match v with [] -> None | _ -> Some ((vt, rgs), v)
   ) l in
   voies, List.flatten lc
+
+let voies_possibles ?voies (perso: personnage) =
+  let rg_mage = rang_max @@ Option.value ~default:[] @@ List.assoc_opt `Mage perso.voies in
+  List.map (fun x -> x, if (rg_mage >= 1 && perso.famille = `Mages) then [ 1 ] else [1; 2; 3; 4; 5]) (voies_peuple perso.peuple) @
+  List.map (fun x -> x, [1; 2; 3; 4; 5]) (voies_profil perso.profil) @
+  voies_prestige ~niveau:perso.niveau perso.famille @
+  (match voies with None -> [] | Some l -> voies_capacites ~famille:perso.famille l)
 
 (* methods *)
 
@@ -422,11 +431,7 @@ and edition app = match page_of_jsoo app##.page with
     let travers = match perso.travers with None -> "" | Some t -> travers_to_str t in
     chargement_voies ~perso (List.map fst perso.voies) @@ fun l ->
     let l = List.map (fun (vt, v) -> vt, v, List.assoc vt perso.voies) l in
-    let rg_mage = rang_max @@ Option.value ~default:[] @@ List.assoc_opt `Mage perso.voies in
-    let voies =
-      List.map (fun x -> x, if rg_mage >= 1 then [ 1 ] else [1; 2; 3; 4; 5]) (voies_peuple perso.peuple) @
-      List.map (fun x -> x, [1; 2; 3; 4; 5]) (voies_profil perso.profil) @
-      (voies_capacites ~famille:perso.famille l) in
+    let voies = voies_possibles ~voies:l perso in
     let voies_perso, capacites = capacites perso.voies in
     let _, _, _, _, pnv, pb, pc = rangs_et_points ~capacites perso in
     begin match points_de_competences perso with
@@ -522,8 +527,7 @@ and phase_suivante app =
           let perso = remplit_caracteristiques perso def_equipement agi_max in
           let phase = match possibilites with
             | [] ->
-              let voies = List.map (fun v -> v, [1; 2; 3; 4; 5]) @@
-                voies_peuple perso.peuple @ voies_profil perso.profil in
+              let voies = voies_possibles perso in
               let _, _, _, _, _, _, pc = rangs_et_points ~capacites:[] perso in
               Voies { niveau=1; voies; choix=[]; points_de_maitrise=0, pc; bonuses_optionnels=[] }
             | _ ->
@@ -535,8 +539,7 @@ and phase_suivante app =
         else alert app "caracteristiques non valables"
       | Equipements { choix; _ } ->
         let equipements = perso.equipements @ choix in
-        let voies = List.map (fun v -> v, [1; 2; 3; 4; 5]) @@
-          voies_peuple perso.peuple @ voies_profil perso.profil in
+        let voies = voies_possibles perso in
         let perso = { perso with equipements } in
         let _, _, _, _, pn, _, _ = rangs_et_points ~capacites:[] perso in
         let phase = Voies { niveau=1; voies; choix=[]; points_de_maitrise=0, pn; bonuses_optionnels=[] } in
@@ -616,45 +619,37 @@ and capacite_choisie app vt rg =
 and choisit_capacite app vt rg =
   let change_capacites lv bonuses =
     let vt = voie_type_of_jsoo vt in
-    let v = List.assoc vt !voies in
+    let v = assoc_voie vt in
     let rec aux modifie acc bonuses bonuses_supprimes = function
-      | [] when not modifie -> List.rev ((vt, List.init rg (fun i -> i+1)) :: acc), bonuses, bonuses_supprimes
+      | [] when not modifie -> List.rev ((vt, [ rg ]) :: acc), bonuses, bonuses_supprimes
       | [] -> List.rev acc, bonuses, bonuses_supprimes
       | (vt0, rgs0) :: tl ->
-        let rg0 = rang_max rgs0 in
         let acc, modifie, supprime =
-          if vt <> vt0 then (vt0, rgs0) :: acc, modifie, []
-          else if rg0 < rg then (vt, rgs0 @ List.init (rg - rg0) (fun i -> i+rg0+1)) :: acc, true, []
-          else if rg0 = rg && List.length rgs0 = 1 then acc, true, rgs0
-          else if rg0 = rg then (vt, List.filter (fun i -> i <> rg0) rgs0) :: acc, true, [ rg0 ]
-          else (vt, List.filter (fun i -> i <= rg) rgs0) :: acc, true,
-               List.filter (fun i -> i > rg) rgs0 in
-        let noms_supprime = List.filter_map (fun rg ->
-          Option.map (fun (c: capacite) -> c.nom) (List.find_opt (fun c -> c.rang = rg) v)
-        ) supprime in
-        let bonuses = List.filter (fun (n, _) -> not (List.mem n noms_supprime)) bonuses in
-        let bonuses_supprimes = bonuses_supprimes @ List.flatten (List.filter_map (fun rg ->
-          Option.map (fun (c: capacite) -> List.map (fun b -> c.rang, b.id) c.bonus)
-            (List.find_opt (fun c -> c.rang = rg) v)) supprime) in
+          if vt <> vt0 then (vt0, rgs0) :: acc, modifie, false else
+          let rgs, supprime =
+            if List.mem rg rgs0 then List.filter (fun rg0 -> rg <> rg0) rgs0, true
+            else rgs0 @ [ rg ], false in
+          (vt, rgs) :: acc, true, supprime in
+        if not supprime then aux modifie acc bonuses bonuses_supprimes tl else
+        let capacite_supprimee = (List.find (fun c -> c.rang = rg) v) in
+        let bonuses = List.filter (fun (n, _) -> not (n = capacite_supprimee.nom)) bonuses in
+        let bonuses_supprimes = bonuses_supprimes @ List.map (fun b -> capacite_supprimee.rang, b.id) capacite_supprimee.bonus in
         aux modifie acc bonuses bonuses_supprimes tl in
     aux false [] bonuses [] lv in
-  let rafraichit_voies ~perso x peuple profil famille l1 =
-    let rg_mage = rang_max @@ Option.value ~default:[] @@ List.assoc_opt `Mage l1 in
-    chargement_voies ~perso (List.map fst l1) @@ fun l ->
-    let l1 = List.map (fun (vt, v) -> vt, v, List.assoc vt l1) l in
-    let voies =
-      List.map (fun x -> x, if rg_mage >= 1 then [1] else [1; 2; 3; 4; 5]) (voies_peuple peuple) @
-      List.map (fun x -> x, [1; 2; 3; 4; 5]) (voies_profil profil) @
-      (voies_capacites ~famille l1) in
+  let rafraichit_voies ~perso x =
+    chargement_voies ~perso (List.map fst perso.voies) @@ fun l ->
+    let l1 = List.map (fun (vt, v) -> vt, v, List.assoc vt perso.voies) l in
+    let voies = voies_possibles ~voies:l1 perso in
     chargement_voies ~perso (List.map fst voies) @@ fun _ ->
     x##.voies := of_listf voie_et_rangs_to_jsoo voies in
   match page_of_jsoo app##.page with
   | Creation { phase; perso; _ } ->
     begin match phase with
-      | Voies { choix; bonuses_optionnels; _ } ->
+      | Voies { choix; bonuses_optionnels; niveau; _ } ->
         let voies, bonuses, bonus_supprimes = change_capacites choix bonuses_optionnels in
         let voies, capacites = capacites voies in
-        begin match verifie_voies ~validate:false ~capacites { perso with voies } with
+        let perso = { perso with voies; niveau } in
+        begin match verifie_voies ~validate:false ~capacites perso with
           | Error e -> alert app e
           | Ok (pc, pn) ->
             (Unsafe.coerce app)##.page##.creation##.phase##.voies##.choix := of_listf voie_et_rangs_to_jsoo voies;
@@ -665,14 +660,15 @@ and choisit_capacite app vt rg =
               | None -> ()
               | Some elt -> (Unsafe.coerce elt)##.checked := _false
             ) bonus_supprimes;
-            rafraichit_voies ~perso (Unsafe.coerce app)##.page##.creation##.phase##.voies perso.peuple perso.profil perso.famille voies
+            rafraichit_voies ~perso (Unsafe.coerce app)##.page##.creation##.phase##.voies
         end
       | _ -> ()
     end
   | Edition { choix={voies; niveau; bonuses; _}; perso; _} ->
     let voies, bonuses, bonus_supprimes = change_capacites voies bonuses in
     let voies, capacites = capacites voies in
-    begin match verifie_voies ~validate:false ~capacites { perso with niveau; voies } with
+    let perso = { perso with voies; niveau } in
+    begin match verifie_voies ~validate:false ~capacites perso with
       | Error e -> alert app e
       | Ok (pc, pn) ->
         (Unsafe.coerce app)##.page##.edition##.choix##.voies := of_listf voie_et_rangs_to_jsoo voies;
@@ -683,7 +679,7 @@ and choisit_capacite app vt rg =
           | None -> ()
           | Some elt -> (Unsafe.coerce elt)##.checked := _false
         ) bonus_supprimes;
-        rafraichit_voies ~perso (Unsafe.coerce app)##.page##.edition perso.peuple perso.profil perso.famille voies
+        rafraichit_voies ~perso (Unsafe.coerce app)##.page##.edition
     end
   | _ -> ()
 
@@ -921,25 +917,39 @@ and [@noconv] choisit_bonus_capacite app (ev: Dom_html.inputElement Dom.event t)
   | _ -> ()
 
 and change_niveau app niveau =
-  match page_of_jsoo app##.page with
-  | Creation { phase=Voies {choix; _}; perso; _ } ->
-    let voies, capacites = capacites choix in
-    let perso = { perso with voies; niveau } in
+  let aux (perso: personnage) nv0 vp0 f =
+    let perso = { perso with niveau } in
+    let aux2 f =
+      if (nv0 = 2 && niveau = 3) || (nv0 = 4 && niveau = 5) ||
+         (nv0 = 3 && niveau = 2) || (nv0 = 5 && niveau = 4) then
+        let voies_possibles = voies_possibles perso in
+        chargement_voies ~perso (List.map fst voies_possibles) @@ fun _ ->
+        let voies, capacites = capacites perso.voies in
+        let voies = List.map (fun (vt, rgs) -> vt, assoc_voie vt, rgs) voies in
+        let voies_capacites = voies_capacites ~famille:perso.famille voies in
+        f (voies_possibles @ voies_capacites) capacites
+      else
+      let _voies, capacites = capacites perso.voies in
+      f vp0 capacites in
+    aux2 @@ fun voies_possibles capacites ->
     let _, _, _, _, pnv, pb, pc = rangs_et_points ~capacites perso in
-    if pc > pnv+pb then alert app "trop de capacités pour baisser le niveau" else (
-      (Unsafe.coerce app)##.page##.creation##.phase##.voies##.niveau := niveau;
-      (Unsafe.coerce app)##.page##.creation##.phase##.voies##.points_de_maitrise_ := array [|pc; pnv+pb|])
-  | Edition { choix={voies; competences; _}; perso; _} ->
-    let voies, capacites = capacites voies in
-    let perso = { perso with voies; competences; niveau } in
-    let _, _, _, _, pnv, pb, pc = rangs_et_points ~capacites perso in
-    wrap app (points_de_competences perso) @@ fun (points_niveau, points_capacites, points_utilises, _) ->
     if pc > pnv+pb then alert app "trop de capacités pour baisser le niveau"
-    else if points_niveau + points_capacites < points_utilises then alert app "trop de points de compétences" else (
+    else f perso pc (pnv+pb) voies_possibles in
+  match page_of_jsoo app##.page with
+  | Creation { phase=Voies {choix; niveau=nv0; voies=vp0; _}; perso; _ } ->
+    aux { perso with voies=choix } nv0 vp0 @@ fun _perso pu pn voies_possibles ->
+    (Unsafe.coerce app)##.page##.creation##.phase##.voies##.niveau := niveau;
+    (Unsafe.coerce app)##.page##.creation##.phase##.voies##.points_de_maitrise_ := array [|pu; pn|];
+    (Unsafe.coerce app)##.page##.creation##.phase##.voies##.voies := of_listf voie_et_rangs_to_jsoo voies_possibles
+  | Edition { choix={voies; competences; niveau=nv0; _}; perso; voies=vp0; _} ->
+    aux { perso with voies; competences } nv0 vp0 @@ fun perso pu pn voies_possibles ->
+    wrap app (points_de_competences perso) @@ fun (points_niveau, points_capacites, points_utilises, _) ->
+    if points_niveau + points_capacites < points_utilises then alert app "trop de points de compétences" else (
       (Unsafe.coerce app)##.page##.edition##.choix##.niveau := niveau;
-      (Unsafe.coerce app)##.page##.edition##.points_de_maitrise_ := array [|pc; pnv+pb|];
+      (Unsafe.coerce app)##.page##.edition##.points_de_maitrise_ := array [|pu; pn|];
       (Unsafe.coerce app##.page)##.edition##.points_de_competences_ :=
-        array [| points_utilises; points_niveau + points_capacites |])
+        array [| points_utilises; points_niveau + points_capacites |];
+      (Unsafe.coerce app##.page)##.edition##.voies_ := of_listf voie_et_rangs_to_jsoo voies_possibles)
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"
 
 and rang_max _app rgs =

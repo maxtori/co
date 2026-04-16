@@ -2,7 +2,7 @@
   {
     "nom": "Destin héroïque",
     "rang": 4,
-    "description": "Le personnage gagne 1 PC. Il gagne un PC supplémentaire au rang 6 et un dernier au rang 8. De plus, une fois par combat, vous pouvez donner un bonus de +1d4° à un compagnon en vue sur un test de votre choix.";
+    "description": "Le personnage gagne 1 PC. Il gagne un PC supplémentaire au rang 6 et un dernier au rang 8. De plus, une fois par combat, vous pouvez donner un bonus de +1d4° à un compagnon en vue sur un test de votre choix.",
     "bonus": [
       { "id": "PC", "valeur": 1 }
     ]

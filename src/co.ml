@@ -497,12 +497,105 @@ type voie_peuple = [
   | `Nain
 ] [@@deriving encoding {lower}, jsoo]
 
+type voie_prestige_generique = [
+  | `Expert
+  | `Specialiste
+  | `Lycanthrope
+  | `Sang_dragon
+  | `Familier_fantastique
+] [@@deriving encoding {lower; assoc}, jsoo]
+
+type voie_prestige_aventurier = [
+  | `Archer_arcanique
+  | `Casse_cou
+  | `Chasseur_de_prime
+  | `Duelliste
+  | `Espion
+  | `Flibustier
+  | `Heros
+  | `Maitre_des_poisons
+  | `Ombres
+  | `Pacte_feerique
+  | `Touche_a_tout
+  | `Tueur_a_gages
+] [@@deriving encoding {lower; assoc}, jsoo]
+
+type voie_prestige_combattant = [
+  | `Arme_liee
+  | `Armes_a_deux_mains
+  | `Ours
+  | `Combat_du_mal
+  | `Combattant_des_tunnels
+  | `Colosse
+  | `Chevalier_dragon
+  | `Danseur_de_guerre
+  | `Ecorcheur
+  | `Guerrier_mage
+  | `Porteur_de_bouclier
+  | `Tueur_de_geants
+] [@@deriving encoding {lower; assoc}, jsoo]
+
+type voie_prestige_mage = [
+  | `Archimage
+  | `Chaos
+  | `Cristaux
+  | `Elementaliste
+  | `Gel
+  | `Invocation_majeure
+  | `Mage_de_guerre
+  | `Magie_de_l_esprit
+  | `Magie_des_mots
+  | `Magie_du_temps
+  | `Maitre_des_sorts
+  | `Vision
+] [@@deriving encoding {lower; assoc}, jsoo]
+
+type voie_prestige_mystique = [
+  | `Armure_sacree
+  | `Changeforme
+  | `Combat_mystique
+  | `Elementaire_de_l_air
+  | `Elementaire_de_l_eau
+  | `Elementaire_du_feu
+  | `Elementaire_de_la_terre
+  | `Guerisseur
+  | `Maitre_de_la_nature
+  | `Saisons
+  | `Templier
+  | `Vermines
+] [@@deriving encoding {lower; assoc}, jsoo]
+
+type voie_prestige = [
+  | voie_prestige_generique
+  | voie_prestige_aventurier
+  | voie_prestige_combattant
+  | voie_prestige_mage
+  | voie_prestige_mystique
+ ] [@@deriving encoding]
+
+[@@@jsoo
+  class type voie_prestige_jsoo = Ezjs_min.js_string
+  let voie_prestige_to_jsoo : voie_prestige -> voie_prestige_jsoo Ezjs_min.t = function
+    | #voie_prestige_generique as v -> voie_prestige_generique_to_jsoo v
+    | #voie_prestige_aventurier as v -> voie_prestige_aventurier_to_jsoo v
+    | #voie_prestige_combattant as v -> voie_prestige_combattant_to_jsoo v
+    | #voie_prestige_mage as v -> voie_prestige_mage_to_jsoo v
+    | #voie_prestige_mystique as v -> voie_prestige_mystique_to_jsoo v
+  let voie_prestige_of_jsoo : voie_prestige_jsoo Ezjs_min.t -> voie_prestige = fun v ->
+    try (voie_prestige_generique_of_jsoo v :> voie_prestige) with _ ->
+    try (voie_prestige_aventurier_of_jsoo v :> voie_prestige) with _ ->
+    try (voie_prestige_combattant_of_jsoo v :> voie_prestige) with _ ->
+    try (voie_prestige_mage_of_jsoo v :> voie_prestige) with _ ->
+      (voie_prestige_mystique_of_jsoo v :> voie_prestige)
+  let voie_prestige_jsoo_conv = voie_prestige_to_jsoo, voie_prestige_of_jsoo
+]
 type voie_type = [
   | voie_aventurier
   | voie_combattant
   | voie_mage
   | voie_mystique
   | voie_peuple
+  | voie_prestige
 ] [@@deriving encoding]
 
 let voie_type_of_str s = Json_encoding.destruct voie_type_enc (`String s)
@@ -516,12 +609,14 @@ let voie_type_to_str v = match Json_encoding.construct voie_type_enc v with `Str
     | #voie_mage as v -> voie_mage_to_jsoo v
     | #voie_mystique as v -> voie_mystique_to_jsoo v
     | #voie_peuple as v -> voie_peuple_to_jsoo v
+    | #voie_prestige as v -> voie_prestige_to_jsoo v
   let voie_type_of_jsoo : voie_type_jsoo Ezjs_min.t -> voie_type = fun v ->
     try (voie_aventurier_of_jsoo v :> voie_type) with _ ->
     try (voie_combattant_of_jsoo v :> voie_type) with _ ->
     try (voie_mage_of_jsoo v :> voie_type) with _ ->
     try (voie_mystique_of_jsoo v :> voie_type) with _ ->
-      (voie_peuple_of_jsoo v :> voie_type)
+    try (voie_peuple_of_jsoo v :> voie_type) with _ ->
+      (voie_prestige_of_jsoo v :> voie_type)
   let voie_type_jsoo_conv = voie_type_to_jsoo, voie_type_of_jsoo
 ]
 
@@ -829,7 +924,7 @@ let voies_peuple = function
   | Humain -> [ `Humain ]
   | Nain -> [ `Nain ]
 
-let voies_profil = function
+let voies_profil : profil -> voie_type list = function
   | `Arquebusier -> List.map snd voie_arquebusier_assoc
   | `Barde -> List.map snd voie_barde_assoc
   | `Rodeur -> List.map snd voie_rodeur_assoc
@@ -844,6 +939,22 @@ let voies_profil = function
   | `Druide -> List.map snd voie_druide_assoc
   | `Moine -> List.map snd voie_moine_assoc
   | `Pretre -> List.map snd voie_pretre_assoc
+
+let voies_prestige ~niveau famille =
+  let generique =
+    if niveau = 3 || niveau = 4 then [ `Familier_fantastique, [ 3; 4; 5; 6; 7 ] ]
+    else if niveau < 5 then [] else
+    let l = List.map snd voie_prestige_generique_assoc in
+    List.map (function
+      | `Familier_fantastique ->  `Familier_fantastique, [ 3; 4; 5; 6; 7 ]
+      | v -> v, [ 4; 5; 6; 7; 8 ]) l in
+  if niveau < 5 then generique else
+  let v = match famille with
+    | `Aventuriers -> List.map snd voie_prestige_aventurier_assoc
+    | `Combattants -> List.map snd voie_prestige_combattant_assoc
+    | `Mages -> List.map snd voie_prestige_mage_assoc
+    | `Mystiques -> List.map snd voie_prestige_mystique_assoc in
+  generique @ List.map (fun v -> v, [ 4; 5; 6; 7; 8 ]) v
 
 let toutes_voies () = List.map snd @@
   voie_arquebusier_assoc @ voie_barde_assoc @ voie_rodeur_assoc @ voie_voleur_assoc @
@@ -875,7 +986,7 @@ let voies_capacite ~famille ~rangs capacites =
   ) [] capacites in
   l
 
-let voies_capacites ~famille l =
+let voies_capacites ~(famille: famille) l =
   List.fold_left (fun acc (_vt, capacites, rangs) ->
     let l2 = voies_capacite ~famille ~rangs capacites in
     let l2 = List.filter (fun (vt2, _) ->
@@ -993,46 +1104,68 @@ let verifie_voies ?(validate=true) ~capacites p =
     (rg_max <= 3 && p.niveau >= rg_max) || (rg_max = 4 && p.niveau >= 5) ||
     (rg_max = 5 && p.niveau >= 7) || (rg_max = 6 && p.niveau >= 9) ||
     (rg_max = 7 && p.niveau >= 11) || (rg_max = 8 && p.niveau >= 13) in
-  let profil_check = List.fold_left (fun acc (v, _) ->
-    if not acc then acc else
-    match p.profil, p.peuple, v with
-    | _, Demi_elfe, (`Elfe_haut | `Elfe_sylvain | `Humain)
-    | _, Demi_orc, `Demi_orc
-    | _, Elfe_haut, `Elfe_haut
-    | _, Elfe_sylvain, `Elfe_sylvain
-    | _, Gnome, `Gnome
-    | _, Halfelin, `Halfelin
-    | _, Humain, `Humain
-    | _, Nain, `Nain
-    | `Arquebusier, _, #voie_arquebusier
-    | `Barde, _, #voie_barde
-    | `Rodeur, _, #voie_rodeur
-    | `Voleur, _, #voie_voleur
-    | `Barbare, _, #voie_barbare
-    | `Chevalier, _, #voie_chevalier
-    | `Guerrier, _, #voie_guerrier
-    | `Ensorceleur, _, (#voie_ensorceleur | #voie_mage)
-    | `Forgesort, _, (#voie_forgesort | #voie_mage)
-    | `Magicien, _, (#voie_magicien | #voie_mage)
-    | `Sorcier, _, (#voie_sorcier | #voie_mage)
-    | `Druide, _, #voie_druide
-    | `Moine, _, #voie_moine
-    | `Pretre, _, #voie_pretre -> true
-    | _ ->
-      let b = List.exists (fun (c: capacite) -> match c.voie with
-        | None -> false
-        | Some { profils; _ } ->
-          let profils = List.fold_left (fun acc pf ->
-            match pf with
-            | `famille -> acc @ profils_famille p.famille
-            | #famille as f -> acc @ profils_famille f
-            | #profil as p -> acc @ [ p ]
-          ) [] profils in
-          List.exists (fun p -> List.mem v (voies_profil p)) profils) capacites in
-      b
-    ) true p.voies in
+  let rangs_consecutifs rg0 rgs =
+    let rec aux rg0 = function
+      | [] -> Ok ()
+      | rg :: rgs ->
+        if rg <> rg0+1 then Error "capacités de rangs non consécutifs"
+        else aux rg rgs in
+    aux (rg0-1) rgs in
+  let voies_capacites = List.flatten @@ List.filter_map (fun (c: capacite) ->
+    Option.bind c.voie @@ fun { profils; rangs } ->
+    let profils = List.fold_left (fun acc pf ->
+      match pf with
+      | `famille -> acc @ profils_famille p.famille
+      | #famille as f -> acc @ profils_famille f
+      | #profil as p -> acc @ [ p ]
+    ) [] profils in
+    let voies = List.flatten @@ List.map (fun p -> voies_profil p) profils in
+    Some (List.map (fun v -> v, rangs) voies)
+  ) capacites in
+  let profil_check = List.fold_left (fun acc (v, rgs) -> match acc with
+    | Error e -> Error e
+    | Ok () ->
+      match p.famille, p.profil, p.peuple, v with
+      | _, _, Demi_elfe, (`Elfe_haut | `Elfe_sylvain | `Humain)
+      | _, _, Demi_orc, `Demi_orc
+      | _, _, Elfe_haut, `Elfe_haut
+      | _, _, Elfe_sylvain, `Elfe_sylvain
+      | _, _, Gnome, `Gnome
+      | _, _, Halfelin, `Halfelin
+      | _, _, Humain, `Humain
+      | _, _, Nain, `Nain
+      | _, `Arquebusier, _, #voie_arquebusier
+      | _, `Barde, _, #voie_barde
+      | _, `Rodeur, _, #voie_rodeur
+      | _, `Voleur, _, #voie_voleur
+      | _, `Barbare, _, #voie_barbare
+      | _, `Chevalier, _, #voie_chevalier
+      | _, `Guerrier, _, #voie_guerrier
+      | _, `Ensorceleur, _, (#voie_ensorceleur | #voie_mage)
+      | _, `Forgesort, _, (#voie_forgesort | #voie_mage)
+      | _, `Magicien, _, (#voie_magicien | #voie_mage)
+      | _, `Sorcier, _, (#voie_sorcier | #voie_mage)
+      | _, `Druide, _, #voie_druide
+      | _, `Moine, _, #voie_moine
+      | _, `Pretre, _, #voie_pretre -> rangs_consecutifs 1 rgs
+      | _, _, _, `Familier_fantastique when p.niveau >= 3 -> rangs_consecutifs 3 rgs
+      | _, _, _, #voie_prestige_generique
+      | `Aventuriers, _, _, #voie_prestige_aventurier
+      | `Combattants, _, _, #voie_prestige_combattant
+      | `Mages, _, _, #voie_prestige_mage
+      | `Mystiques, _, _, #voie_prestige_mystique when p.niveau >= 5 -> rangs_consecutifs 4 rgs
+      | _ ->
+        let b = List.exists (fun (v0, rgs0) ->
+          v = v0 && List.for_all (fun rg -> List.mem rg rgs0) rgs
+        ) voies_capacites in
+        if b then Ok () else Error "voie pas dans le profil"
+  ) (Ok ()) p.voies in
+  let nb_voie_prestige = List.fold_left (fun acc (v, _) ->
+    match v with #voie_prestige -> acc + 1 | _ -> acc
+  ) 0 p.voies in
   let peuple_mage_check = rg_peuple <= 1 || rg_mage < 1  in
-  if not profil_check then Error "voie pas dans le profil" else
+  let$ () = profil_check in
+  if nb_voie_prestige > 1 then Error "une seule voie de prestige permise" else
   if not niveau_capacite_check then Error "rang de capacite trop haut" else
   if not peuple_mage_check then Error "voie de peuple et mage ne peuvent pas être suivies ensemble" else
   if points_capacite > points_niveau + points_bonus then Error "trop de capacites" else
