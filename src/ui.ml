@@ -10,8 +10,8 @@ type phase_creation =
       choix: caracteristiques; choix_bonus: (bonus_avec_nom list * int) option
     }
   | Equipements of {
-      possibilites: equipement_et_nombre list list;
-      choix: equipement_et_nombre list }
+      possibilites: (equipement_nom * int option) list list;
+      choix: (equipement_nom * int option) list }
   | Voies of {
       niveau: int; voies: voie_et_rangs list; choix: voie_et_rangs list;
       points_de_maitrise: int * int; bonuses_optionnels: bonus_avec_nom list }
@@ -67,8 +67,9 @@ type choix_edition = {
   bonuses: bonus_avec_nom list;
   bonus: bonus_avec_nom;
   voies: voie_et_rangs list;
-  equipements: equipement_et_nombre list;
+  equipements: equipement_nom_ou_custom list;
   equipement: equipement_nom * int;
+  equipement_custom: (string * equipement) option;
   description: string;
   image: string option;
   image_url: string option;
@@ -83,7 +84,7 @@ type edition = {
   label: string;
   perso: personnage;
   voies: voie_et_rangs list;
-  equipements: equipement_et_nombre list;
+  equipements: equipement_nom list;
   choix: choix_edition;
   ids: caracteristique_ou_bonus list;
   ideaux: string list;
@@ -290,6 +291,9 @@ let personnage_of_b64 s =
     Some (EzEncoding.destruct personnage_enc (to_string s))
   with _ -> None
 
+let equipements_connus (l: equipement_nom_ou_custom list) =
+  List.filter_map (function `connu (e, _) -> Some e | _ -> None) l
+
 let route ?(loading=true) ?path app p =
   app##.tsp := Int32.to_int (to_int32 date##now) / 1000;
   let p0, p1 = unproxy app##.page, unproxy p in
@@ -309,12 +313,12 @@ let route ?(loading=true) ?path app p =
       | [] -> f app
       | ({perso; _}: avec_label) :: tl ->
         chargement_voies_async ~perso (List.map fst perso.voies);
-        chargement_equipements_async (List.map fst perso.equipements);
+        chargement_equipements_async (equipements_connus perso.equipements);
         aux tl in
     aux l
   | Personnage {perso; _} ->
     chargement_voies ~perso (List.map fst perso.voies) @@ fun _ ->
-    chargement_equipements (List.map fst perso.equipements) @@ fun _ ->
+    chargement_equipements (equipements_connus perso.equipements) @@ fun _ ->
     begin match perso.image with
       | None -> f app
       | Some nom_fichier ->
@@ -330,12 +334,12 @@ let route ?(loading=true) ?path app p =
     chargement_voies ~perso (List.map fst voies) @@ fun _ ->
     f app
   | Creation { phase = Equipements {possibilites; _}; perso = {equipements; _}; _ } ->
-    chargement_equipements (List.map fst (equipements @ List.flatten possibilites)) @@ fun _ ->
+    chargement_equipements ((equipements_connus equipements) @ List.map fst (List.flatten possibilites)) @@ fun _ ->
     f app
   | Edition { voies; equipements=l; choix={equipements; _}; perso; _ } ->
     chargement_voies ~perso (List.map fst voies) @@ fun _ ->
-    chargement_equipements (List.map fst equipements) @@ fun _ ->
-    chargement_equipements_async (List.map fst l);
+    chargement_equipements (equipements_connus equipements) @@ fun _ ->
+    chargement_equipements_async l;
     f app
   | _ -> f app
 
@@ -391,6 +395,10 @@ let assoc_voie vt = match List.assoc_opt vt !voies with
   | None -> failwith (Format.sprintf "voie %s non chargée" (voie_type_to_str vt))
   | Some v -> v
 
+let assoc_equipement e = match List.assoc_opt e !equipements with
+  | None -> failwith (Format.sprintf "equipement %s non chargé" (equipement_to_str e))
+  | Some e -> e
+
 let capacites l =
   let voies, lc = List.split @@ List.filter_map (fun (vt, rgs) ->
     let v = assoc_voie vt in
@@ -443,13 +451,14 @@ and edition app = match page_of_jsoo app##.page with
           voies=voies_perso; equipements=perso.equipements; equipement=(`autre "", 1);
           description=perso.description; image_url=to_optdef to_string app##.image; image=perso.image;
           nom=perso.nom; ideal; travers; competences=perso.competences; ajout_competence=None;
+          equipement_custom=None;
         } in
         let competences = List.filter (fun c ->
           Option.is_none (List.assoc_opt c perso.competences)
         ) (List.map snd competence_assoc) in
         let edition = {
           label; perso; voies; choix; ids;
-          equipements=List.map (fun (_, e) -> e, None) equipement_nom_assoc;
+          equipements=List.map snd equipement_nom_assoc;
           ideaux = "" :: (List.map fst ideal_assoc);
           travers_options = "" :: (List.map fst travers_assoc);
           competences; points_de_maitrise=pc, pnv+pb;
@@ -468,25 +477,23 @@ and [@noconv] importation app (ev: Dom_html.inputElement Dom.event t) =
   | _ -> ()
 
 and voie app vt rgs =
-  match List.assoc_opt (voie_type_of_jsoo vt) !voies with
-  | None -> log_str "voie non trouvée"; undefined
-  | Some v ->
-    let rgs = to_list rgs in
-    let perso_bonuses = match page_of_jsoo app##.page with
-      | Edition { choix = { bonuses; _ }; _ } -> bonuses
-      | _ -> [] in
-    let v = List.fold_left (fun acc (c: capacite) ->
-      if not (List.mem c.rang rgs) then acc else
-      let bonus = List.filter_map (fun b -> match b.opt with
-        | None -> None
-        | Some _ ->
-          if List.exists (fun (n2, b2) -> n2 = c.nom && b.id = b2.id) perso_bonuses then
-            Some { b with opt=Some (Some true) }
-          else Some { b with opt=Some (Some false) }
-      ) c.bonus in
-      acc @ [ { c with bonus } ]
-    ) [] v in
-    def (voie_to_jsoo v)
+  let v = assoc_voie (voie_type_of_jsoo vt) in
+  let rgs = to_list rgs in
+  let perso_bonuses = match page_of_jsoo app##.page with
+    | Edition { choix = { bonuses; _ }; _ } -> bonuses
+    | _ -> [] in
+  let v = List.fold_left (fun acc (c: capacite) ->
+    if not (List.mem c.rang rgs) then acc else
+    let bonus = List.filter_map (fun b -> match b.opt with
+      | None -> None
+      | Some _ ->
+        if List.exists (fun (n2, b2) -> n2 = c.nom && b.id = b2.id) perso_bonuses then
+          Some { b with opt=Some (Some true) }
+        else Some { b with opt=Some (Some false) }
+    ) c.bonus in
+    acc @ [ { c with bonus } ]
+  ) [] v in
+  voie_to_jsoo v
 
 and phase_suivante app =
   match page_of_jsoo app##.page with
@@ -517,11 +524,12 @@ and phase_suivante app =
         if verifie_caracteristiques choix then
           let l = equipements_profil perso.profil in
           let leq, possibilites = List.partition (function [ _ ] -> true | _ -> false) l in
-          let leq = List.flatten leq in
+          let leq = List.map (fun (e, n) -> `connu (e, n)) @@ List.flatten leq in
           let perso = { perso with caracteristiques_base=choix; bonuses; equipements=leq } in
-          let def_equipement, agi_max = List.fold_left (fun (def, agi) (e, _) ->
-            match List.assoc_opt e !equipements with
-            | Some Armure { defense; agilite_max; _ } ->
+          let def_equipement, agi_max = List.fold_left (fun (def, agi) e ->
+            let e = match e with `connu (e, _) -> assoc_equipement e | `custom (_, e) -> e in
+            match e with
+            | Armure { defense; agilite_max; _ } ->
               def + defense, Option.fold ~none:agi ~some:(fun a -> min a agi) agilite_max
             | _ -> def, agi) (0, 8) perso.equipements in
           let perso = remplit_caracteristiques perso def_equipement agi_max in
@@ -538,7 +546,7 @@ and phase_suivante app =
           route app (page_to_jsoo p)
         else alert app "caracteristiques non valables"
       | Equipements { choix; _ } ->
-        let equipements = perso.equipements @ choix in
+        let equipements = perso.equipements @ List.map (fun (e, n) -> `connu (e, n)) choix in
         let voies = voies_possibles perso in
         let perso = { perso with equipements } in
         let _, _, _, _, pn, _, _ = rangs_et_points ~capacites:[] perso in
@@ -550,10 +558,11 @@ and phase_suivante app =
         let l, capacites = capacites l in
         let perso = { perso with niveau; voies=l } in
         wrap app (verifie_voies ~capacites perso) @@ fun _ ->
-        let bonus_voies = bonus_capacites @@ List.filter_map (fun (vt, rg) -> Option.map (fun v -> vt, v, rg) @@ List.assoc_opt vt !voies) l in
-        let def_equipement, agi_max = List.fold_left (fun (def, agi) (e, _) ->
-          match List.assoc_opt e !equipements with
-          | Some Armure { defense; agilite_max; _ } ->
+        let bonus_voies = bonus_capacites @@ List.map (fun (vt, rg) -> vt, assoc_voie vt, rg) l in
+        let def_equipement, agi_max = List.fold_left (fun (def, agi) e ->
+          let e = match e with `connu (e, _) -> assoc_equipement e | `custom (_, e) -> e in
+          match e with
+          | Armure { defense; agilite_max; _ } ->
             def + defense, Option.fold ~none:agi ~some:(fun a -> min a agi) agilite_max
           | _ -> def, agi) (0, 8) perso.equipements in
         let perso = { perso with bonuses = perso.bonuses @ bonus_voies @ bonuses_optionnels } in
@@ -759,17 +768,19 @@ and lance_de app des =
   des##.resultat := def r
 
 and equipements _app l kind =
-  let l = to_listf equipement_et_nombre_of_jsoo l in
+  let l = to_listf equipement_nom_ou_custom_of_jsoo l in
   let kind = to_optdef to_string kind in
-  of_list @@ List.filter_map (fun (e, nombre) -> match List.assoc_opt e !equipements, kind with
-    | Some (Arme a), (None | Some "arme") ->
-      let arme = List.map (function Distance {portee; _} -> Distance {portee; nombre} | a -> a) a.arme in
-      Some (array [| Unsafe.inject (equipement_nom_to_jsoo e); Unsafe.inject (equipement_to_jsoo (Arme { a with arme })) |])
-    | Some (Armure _ as eq), (None | Some "armure") ->
-      Some (array [| Unsafe.inject (equipement_nom_to_jsoo e); Unsafe.inject (equipement_to_jsoo eq) |])
-    | Some (Autre _ as eq), (None | Some "autre") ->
-      Some (array [| Unsafe.inject (equipement_nom_to_jsoo e); Unsafe.inject (equipement_to_jsoo eq) |])
-    | _ -> None) l
+  of_listf equipement_et_nom_to_jsoo @@ List.filter_map (fun (e: equipement_nom_ou_custom) ->
+    let en, e, nombre = match e with
+      | `connu (e, n) -> e, assoc_equipement e, n
+      | `custom (en, e) -> `autre en, e, None in
+    match e, kind with
+      | Arme a, (None | Some "arme") ->
+        let arme = List.map (function Distance {portee; _} -> Distance {portee; nombre} | a -> a) a.arme in
+        Some (en, Arme { a with arme })
+      | Armure _ as eq, (None | Some "armure") -> Some (en, eq)
+      | Autre _ as eq, (None | Some "autre") -> Some (en, eq)
+      | _ -> None) l
 
 and edite app = match page_of_jsoo app##.page with
   | Edition e ->
@@ -793,9 +804,10 @@ and edite app = match page_of_jsoo app##.page with
           | Some _ -> acc
         ) perso.bonuses bonus_voies in
         let perso = { perso with bonuses } in
-        let def_equipement, agi_max = List.fold_left (fun (def, agi) (e, _) ->
-          match List.assoc_opt e !equipements with
-          | Some Armure { defense; agilite_max; _ } ->
+        let def_equipement, agi_max = List.fold_left (fun (def, agi) e ->
+          let e = match e with `connu (e, _) -> assoc_equipement e | `custom (_, e) -> e in
+          match e with
+          | Armure { defense; agilite_max; _ } ->
             def + defense, Option.fold ~none:agi ~some:(fun a -> min a agi) agilite_max
           | _ -> def, agi) (0, 8) perso.equipements in
         let perso = remplit_caracteristiques perso def_equipement agi_max in
@@ -820,15 +832,31 @@ and edite app = match page_of_jsoo app##.page with
 and retire_equipement app e = match page_of_jsoo app##.page with
   | Edition { choix={equipements; _}; _} ->
     let e = equipement_nom_of_jsoo e in
-    let equipements = List.filter (fun (x, _) -> x <> e) equipements in
-    (Unsafe.coerce app)##.page##.edition##.choix##.equipements := of_listf equipement_et_nombre_to_jsoo equipements;
+    let equipements = List.filter (function `connu (en, _) -> en <> e | `custom (en, _) -> (`autre en) <> e) equipements in
+    (Unsafe.coerce app)##.page##.edition##.choix##.equipements := of_listf equipement_nom_ou_custom_to_jsoo equipements;
   | _ -> ()
 
 and ajoute_equipement app = match page_of_jsoo app##.page with
-  | Edition { choix = { equipement=e, nb; equipements; _ }; _ } ->
-    let equipement = e, (if nb = 1 then None else Some nb) in
+  | Edition { choix = { equipement=e, nb; equipements; equipement_custom; _ }; _ } ->
+    let equipement = match e, equipement_custom with
+      | `autre ("arme_contact_custom" | "arme_distance_custom" | "armure_custom" | "autre_custom"), Some (en, eq) ->
+        let eq = match eq with
+          | Autre { description; prix } -> Autre { description; prix=if prix = Some "" then None else prix }
+          | Armure { defense; agilite_max; prix; notes } ->
+            let prix = if prix = Some "" then None else prix in
+            let notes = if prix = Some "" then None else notes in
+            Armure { defense; agilite_max; prix; notes }
+          | Arme { arme; dommage; prix; typ; notes } ->
+            let prix = if prix = Some "" then None else prix in
+            let notes = if prix = Some "" then None else notes in
+            Arme { arme; dommage; prix; typ; notes } in
+        `custom (en, eq)
+      | _ -> `connu (e, (if nb = 1 then None else Some nb)) in
     let equipements = equipements @ [ equipement ] in
-    (Unsafe.coerce app)##.page##.edition##.choix##.equipements := of_listf equipement_et_nombre_to_jsoo equipements
+    (Unsafe.coerce app##.page)##.edition##.choix##.equipements := of_listf equipement_nom_ou_custom_to_jsoo equipements;
+    (Unsafe.coerce app##.page)##.edition##.choix##.equipement :=
+      array [| Unsafe.inject (equipement_nom_to_jsoo (`autre "")); Unsafe.inject undefined |];
+    (Unsafe.coerce app##.page)##.edition##.choix##.equipement_custom_ := undefined
   | _ -> alert app "cette fonction n'est pas accessible sur cette page"
 
 and ajoute_bonus app = match page_of_jsoo app##.page with
@@ -1123,6 +1151,26 @@ and choisit_bonus_des app b =
   (Unsafe.coerce app)##.des##.bonus := b;
   (Unsafe.coerce app)##.des##.choix := array [||]
 
+and [@noconv] charge_custom_equipement app (ev: Dom_html.inputElement Dom.event t) =
+  match Opt.to_option ev##.target with
+  | None -> ()
+  | Some target ->
+    let kind = to_string target##.value in
+    match kind with
+    | "arme_contact_custom" -> (Unsafe.coerce app##.page)##.edition##.choix##.equipement_custom_ :=
+        def @@ array [| Unsafe.inject (string ""); Unsafe.inject @@ equipement_to_jsoo (Arme {
+          arme = [Contact {deux_mains=None}]; dommage=(1, `d6);
+          prix=None; typ=`contondants; notes=None }) |]
+    | "arme_distance_custom" -> (Unsafe.coerce app##.page)##.edition##.choix##.equipement_custom_ :=
+        def @@ array [| Unsafe.inject (string ""); Unsafe.inject @@ equipement_to_jsoo (Arme {
+          arme = [Distance {portee=20; nombre=None}]; dommage=(1, `d6);
+          prix=None; typ=`perforants; notes=None }) |]
+    | "armure_custom" -> (Unsafe.coerce app##.page)##.edition##.choix##.equipement_custom_ :=
+        def @@ array [| Unsafe.inject (string ""); Unsafe.inject @@ equipement_to_jsoo (Armure {
+          defense=1; agilite_max=None; prix=None; notes=None }) |]
+    | "autre_custom" -> (Unsafe.coerce app##.page)##.edition##.choix##.equipement_custom_ :=
+        def @@ array [|Unsafe.inject (string ""); Unsafe.inject @@ equipement_to_jsoo (Autre { description=""; prix=None }) |]
+    | _ -> (Unsafe.coerce app##.page)##.edition##.choix##.equipement_custom_ := undefined
 
 [%%mounted fun app ->
   let elt_erreur = Dom_html.getElementById "erreur-modal" in

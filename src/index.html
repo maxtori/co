@@ -288,7 +288,7 @@
           </div>
           <template v-for="(e, i) in equipements(page.personnage.perso.equipements, 'arme')">
             <div v-for="(a, j) in e[1].arme.arme" class="row mx-0">
-              <span class="col p-0 text-bg-light" :class="(i==0 && j==0) ? '' : 'border-top'">{{ (a.nombre!==undefined && a.nombre!=1) ? String(a.nombre)+' ' : '' }}{{ pp_equipement(e[0]) }}</span>
+              <span class="col p-0 text-bg-light" :class="(i==0 && j==0) ? '' : 'border-top'" role="button" data-bs-toggle="collapse" :data-bs-target="'#personnage-equipement-arme-'+String(i)">{{ (a.nombre!==undefined && a.nombre!=1) ? String(a.nombre)+' ' : '' }}{{ pp_equipement(e[0]) }}</span>
               <template v-if="a.contact!==undefined">
                 <span class="col border p-0" role="button" @click="charge_modal_des(e[1].arme.dommage[1], page.personnage.perso.caracteristiques.force, e[1].arme.dommage[0], 'Dommage')">
                   {{ e[1].arme.dommage[0]}}{{e[1].arme.dommage[1] }} {{ (page.personnage.perso.caracteristiques.force > 0) ? '+' : '' }}{{ page.personnage.perso.caracteristiques.force }}
@@ -302,14 +302,17 @@
                 <span class="col border p-0">{{ a.distance.portee }} m, {{e[1].arme.type }}</span>
               </template>
             </div>
+            <div class="collapse p-2" :id="'personnage-equipement-arme-'+String(i)">{{ e[1].arme.notes }}</div>
           </template>
           <div id="autres-equipements" class="collapse">
-            <div v-for="e in equipements(page.personnage.perso.equipements, 'armure')" class="row mx-0">
-              <span class="col border p-0 text-bg-light">{{ pp_equipement(e[0]) }}</span>
+            <div v-for="(e, i) in equipements(page.personnage.perso.equipements, 'armure')" class="row mx-0">
+              <span class="col border p-0 text-bg-light" role="button" data-bs-toggle="collapse" :data-bs-target="'#personnage-equipement-armure-'+String(i)">{{ pp_equipement(e[0]) }}</span>
               <span class="col border p-0">DEF+{{ e[1].armure.defense }}</span>
+              <div class="collapse p-2" :id="'personnage-equipement-armure-'+String(i)">{{ e[1].armure.notes }}</div>
             </div>
-            <div v-for="e in equipements(page.personnage.perso.equipements, 'autre')" class="row mx-0">
-              <span class="col border p-0">{{ pp_equipement(e[0]) }}</span>
+            <div v-for="(e, i) in equipements(page.personnage.perso.equipements, 'autre')" class="row mx-0">
+              <span class="col border p-0" role="button" data-bs-toggle="collapse" :data-bs-target="'#personnage-equipement-autre-'+String(i)">{{ pp_equipement(e[0]) }}</span>
+              <div class="collapse p-2" :id="'personnage-equipement-autre-'+String(i)">{{ e[1].autre.description }}</div>
             </div>
           </div>
           <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas(4)"></div>
@@ -774,19 +777,91 @@
                 <div class="accordion-body p-0">
                   <ul class="list-group">
                     <li v-for="e in page.edition.choix.equipements" class="list-group-item p-0 text-center">
-                      <div class="w-100 d-flex">
-                        <span class="flex-fill py-2">{{ pp_equipement(e[0]) }}</span>
-                        <button class="btn py-2" @click="retire_equipement(e[0])"><i class="bi bi-trash3"></i></button>
+                      <div v-if="e.connu!==undefined" class="w-100 d-flex">
+                        <span class="flex-fill py-2">{{ pp_equipement(e.connu[0]) }}</span>
+                        <button class="btn py-2" @click="retire_equipement(e.connu[0])"><i class="bi bi-trash3"></i></button>
+                      </div>
+                      <div v-else-if="e.custom!==undefined" class="w-100 d-flex">
+                        <span class="flex-fill py-2">{{ pp_equipement(e.custom[0]) }}</span>
+                        <button class="btn py-2" @click="retire_equipement(e.custom[0])"><i class="bi bi-trash3"></i></button>
                       </div>
                     </li>
                     <li class="list-group-item p-0 text-center">
                       <div class="w-100 d-flex">
-                        <select class="form-select" v-model="page.edition.choix.equipement[0]">
-                          <option></option>
-                          <option v-for="e in page.edition.equipements" :value="e[0]">{{ pp_equipement(e[0]) }}</option>
+                        <select class="form-select" v-model="page.edition.choix.equipement[0]" @change="charge_custom_equipement">
+                          <option value=""></option>
+                          <option value="arme_contact_custom">Arme de contact sur mesure</option>
+                          <option value="arme_distance_custom">Arme à distance sur mesure</option>
+                          <option value="armure_custom">Armure sur mesure</option>
+                          <option value="autre_custom">Autre sur mesure</option>
+                          <option v-for="e in page.edition.equipements" :value="e">{{ pp_equipement(e) }}</option>
                         </select>
-                        <input class="form-control" v-model="page.edition.choix.equipement[1]" type="number" style="max-width:60px"/>
-                        <button class="btn btn-secondary py-2" @click="ajoute_equipement()">Ajouter</button>
+                        <input class="form-control" v-model="page.edition.choix.equipement[1]" type="number" style="max-width:60px" :disabled="['', 'arme_contact_custom', 'arme_distance_custom', 'armure_custom', 'autre_custom'].includes(page.edition.choix.equipement[0])"/>
+                        <button class="btn btn-secondary py-2" @click="ajoute_equipement()" :disabled="page.edition.choix.equipement[0]==''">Ajouter</button>
+                      </div>
+                      <div v-if="['arme_contact_custom', 'arme_distance_custom'].includes(page.edition.choix.equipement[0])" class="mb-3">
+                        <div class="row mx-0">
+                          <div class="col-2 text-bg-light">Nom</div>
+                          <div class="col-6 px-0">
+                            <input class="form-control py-0" v-model="page.edition.choix.equipement_custom[0]"/>
+                          </div>
+                          <div class="col-2 text-bg-light">Prix</div>
+                          <div class="col-2 px-0">
+                            <input class="form-control py-0" v-model="page.edition.choix.equipement_custom[1].arme.prix"/>
+                          </div>
+                          <div class="col-2 text-bg-light">Dégats</div>
+                          <div class="col-4 px-0 d-flex">
+                            <input type="number" class="form-control py-0" v-model="page.edition.choix.equipement_custom[1].arme.dommage[0]"/>
+                            <select class="form-control py-0" v-model="page.edition.choix.equipement_custom[1].arme.dommage[1]">
+                              <option v-for="d in ['d4', 'd4°', 'd6', 'd8', 'd10', 'd12', 'd20']" :value="d">{{ d }}</option>
+                            </select>
+                          </div>
+                          <div class="col-2 text-bg-light">Type</div>
+                          <div class="col-4 px-0">
+                            <select class="form-control py-0" v-model="page.edition.choix.equipement_custom[1].arme.type">
+                              <option v-for="t in ['contondants', 'perforants', 'tranchants']" :value="t">{{ t }}</option>
+                            </select>
+                          </div>
+                          <template v-if="page.edition.choix.equipement[0]=='arme_distance_custom'">
+                            <div class="col-2 offset-4 text-bg-light">Portée</div>
+                            <div class="col-2 px-0">
+                              <input type="number" class="form-control py-0" v-model="page.edition.choix.equipement_custom[1].arme.arme[0].distance.portee"/>
+                            </div>
+                          </template>
+                        </div>
+                        <textarea class="form-control" placeholder="notes" v-model="page.edition.choix.equipement_custom[1].arme.notes"></textarea>
+                      </div>
+                      <div v-else-if="page.edition.choix.equipement[0]=='armure_custom'" class="mb-3">
+                        <div class="row mx-0">
+                          <div class="col-2 text-bg-light">Nom</div>
+                          <div class="col-6 px-0">
+                            <input class="form-control py-0" v-model="page.edition.choix.equipement_custom[0]"/>
+                          </div>
+                          <div class="col-2 text-bg-light">Prix</div>
+                          <div class="col-2 px-0">
+                            <input class="form-control py-0" v-model="page.edition.choix.equipement_custom[1].armure.prix"/>
+                          </div>
+                        </div>
+                        <div class="row mx-0">
+                          <div class="col-2 offset-4 text-bg-light">Défense</div>
+                          <div class="col-2 px-0">
+                            <input type="number" class="form-control py-0" v-model="page.edition.choix.equipement_custom[1].armure.defense"/>
+                          </div>
+                        </div>
+                        <textarea class="form-control" placeholder="notes" v-model="page.edition.choix.equipement_custom[1].armure.notes"></textarea>
+                      </div>
+                      <div v-else-if="page.edition.choix.equipement[0]=='autre_custom'" class="mb-3">
+                        <div class="row mx-0">
+                          <div class="col-2 text-bg-light">Nom</div>
+                          <div class="col-6 px-0">
+                            <input class="form-control py-0" v-model="page.edition.choix.equipement_custom[0]"/>
+                          </div>
+                          <div class="col-2 text-bg-light">Prix</div>
+                          <div class="col-2 px-0">
+                            <input class="form-control py-0" v-model="page.edition.choix.equipement_custom[1].autre.prix"/>
+                          </div>
+                        </div>
+                        <textarea class="form-control" placeholder="description" v-model="page.edition.choix.equipement_custom[1].autre.description"></textarea>
                       </div>
                     </li>
                   </ul>
@@ -893,7 +968,7 @@
                   <div class="row mx-0 mt-2">
                     <div class="col text-bg-light">Description</div>
                   </div>
-                  <textarea class="form-control" v-model="page.edition.choix.description"></textarea>
+                  <textarea class="form-control" v-model="page.edition.choix.description" rows="8"></textarea>
                   <div v-if="has_storage" class="row mx-0 mt-2">
                     <div class="col py-0 text-bg-light">Image</div>
                     <div class="col p-0">
@@ -912,7 +987,7 @@
               </button>
               <div id="edition-notes" class="accordion-collapse collapse" data-bs-parent="#edition-accordeon">
                 <div class="accordion-body p-0">
-                  <textarea class="form-control" v-model="page.edition.perso.notes" rows="5"></textarea>
+                  <textarea class="form-control" v-model="page.edition.perso.notes" rows="8"></textarea>
                 </div>
               </div>
             </div>

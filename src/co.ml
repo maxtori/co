@@ -181,7 +181,7 @@ type equipement =
   | Arme of {
     arme: arme_type list; [@dft [Contact {deux_mains=None}]] dommage: int * de;
     prix: string option; typ: dommage_type [@key "type"]; notes: string option }
-  | Armure of { defense: int; agilite_max: int option; prix: string option }
+  | Armure of { defense: int; agilite_max: int option; prix: string option; notes: string option }
   | Autre of { description: string; prix: string option }
 [@@deriving encoding, jsoo {snake; remove_prefix=false; remove_undefined}]
 
@@ -681,7 +681,13 @@ type points_avec_max = {
   max: int;
 } [@@deriving encoding, jsoo]
 
-type equipement_et_nombre = equipement_nom * int option [@@deriving encoding, jsoo]
+type equipement_nom_ou_custom = [
+  | `connu of equipement_nom * int option
+  | `custom of string * equipement
+] [@@deriving encoding, jsoo]
+
+type equipement_et_nom = equipement_nom * equipement [@@deriving encoding, jsoo]
+
 type voie_et_rangs = voie_type * int list [@@deriving encoding, jsoo]
 
 type competence = [
@@ -729,7 +735,7 @@ type personnage = {
   initiative: int; [@dft 0]
   defense: int; [@dft 0]
   reduction_de_degats: int; [@dft 0]
-  equipements: equipement_et_nombre list; [@dft []]
+  equipements: equipement_nom_ou_custom list; [@dft []]
   ideal: ideal option;
   travers: travers option;
   description: string; [@dft ""]
