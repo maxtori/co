@@ -820,6 +820,7 @@ and edite app = match page_of_jsoo app##.page with
             else if points_niveau + points_capacites < points_utilises then
               alert app "trop de points de compétences"
             else (
+              let perso = { perso with reduction_de_degats = 0 } in
               edition_personnage app e.label perso;
               let p = Personnage {label=e.label; perso} in
               route app (page_to_jsoo p)
@@ -990,6 +991,7 @@ and copie_lien_personnage _app (p: personnage) =
   let pathname = to_string Dom_html.window##.location##.pathname in
   let pathname = match List.rev @@ String.split_on_char '/' pathname with
     | "index.html" :: tl -> "/" ^ String.concat "/" tl
+    | [""; ""] -> ""
     | _ -> pathname in
   let s = Format.sprintf "%s%s?perso=%s" origin pathname b64 in
   try
