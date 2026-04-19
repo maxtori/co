@@ -990,7 +990,7 @@ and copie_lien_personnage _app (p: personnage) =
   let origin = to_string Dom_html.window##.location##.origin in
   let pathname = to_string Dom_html.window##.location##.pathname in
   let pathname = match List.rev @@ String.split_on_char '/' pathname with
-    | "index.html" :: tl -> "/" ^ String.concat "/" tl
+    | "index.html" :: tl -> "/" ^ String.concat "/" (List.rev @@ List.filter (fun s -> s <> "") tl)
     | [""; ""] -> ""
     | _ -> pathname in
   let s = Format.sprintf "%s%s?perso=%s" origin pathname b64 in
@@ -1223,7 +1223,8 @@ let () =
   try match perso_param, Opt.to_option (Unsafe.coerce Dom_html.window##.history)##.state with
     | Some perso, _ ->
       let label = Format.sprintf "%s_%d" perso.nom perso.niveau in
-      route app ~path:"/" (page_to_jsoo (Personnage {label; perso}))
+      let path = to_string Dom_html.window##.location##.pathname in
+      route app ~path (page_to_jsoo (Personnage {label; perso}))
     | _, Some p ->
       begin match page_of_jsoo p with
         | Chargement -> init app
