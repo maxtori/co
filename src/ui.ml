@@ -587,7 +587,7 @@ and phase_suivante app =
         let perso = { perso with competences_maitrisees; competences } in
         wrap app (points_de_competences perso) @@
         fun (points_niveau, points_capacites, points_utilises, points_maitrise_utilises) ->
-        if points_capacites > points_maitrise_utilises then
+        if points_utilises - points_maitrise_utilises > points_niveau then
           alert app (Format.sprintf "au moins %d points de compétence doivent être utilisés par des compétences du profil" points_capacites)
         else if points_niveau + points_capacites < points_utilises then
           alert app "trop de points de compétences"
@@ -815,7 +815,7 @@ and edite app = match page_of_jsoo app##.page with
         begin match points_de_competences perso with
           | Error e -> alert app e
           | Ok (points_niveau, points_capacites, points_utilises, points_maitrise_utilises) ->
-            if points_capacites > points_maitrise_utilises then
+            if points_utilises - points_maitrise_utilises > points_niveau then
               alert app (Format.sprintf "au moins %d points de compétence doivent être utilisés par des compétences du profil" points_capacites)
             else if points_niveau + points_capacites < points_utilises then
               alert app "trop de points de compétences"
