@@ -1095,10 +1095,10 @@ and change_competence app (c: competence) i =
       (Unsafe.coerce app##.page)##.creation##.phase##.competences##.points :=
         array [| points_utilises; points_niveau + points_capacites |]
     )
-  | Edition { choix = { competences; niveau; voies; _ }; perso; _ } ->
+  | Edition { choix = { competences; niveau; voies; bonuses; _ }; perso; _ } ->
     let voies, _ = capacites voies in
     let competences = List.map (fun (c2, n) -> if c = c2 then c, i else c2, n) competences in
-    let perso = { perso with voies; competences; niveau } in
+    let perso = { perso with voies; competences; niveau; bonuses } in
     wrap app (points_de_competences perso) @@ fun (points_niveau, points_capacites, points_utilises, _) ->
     if points_niveau + points_capacites < points_utilises then
       alert app "trop de points de compétences"
@@ -1124,9 +1124,9 @@ and supprime_competence app (c: competence) =
     (Unsafe.coerce app##.page)##.creation##.phase##.competences##.possibilites :=
       of_listf competence_to_jsoo (possibilites @ [ c ])
 
-  | Edition { choix = { competences; _ }; perso; competences=possibilites; _ } ->
+  | Edition { choix = { competences; bonuses; _ }; perso; competences=possibilites; _ } ->
     let competences = List.remove_assoc c competences in
-    let perso = { perso with competences } in
+    let perso = { perso with competences; bonuses } in
     wrap app (points_de_competences perso) @@ fun (points_niveau, points_capacites, points_utilises, _) ->
     (Unsafe.coerce app##.page)##.edition##.choix##.competences :=
       of_listf competence_et_point_to_jsoo competences;
