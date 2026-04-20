@@ -332,6 +332,7 @@ let route ?(loading=true) ?path app p =
     end
   | Creation { phase = Voies {voies; _}; perso; _ } ->
     chargement_voies ~perso (List.map fst voies) @@ fun _ ->
+    chargement_equipements (equipements_connus perso.equipements) @@ fun _ ->
     f app
   | Creation { phase = Equipements {possibilites; _}; perso = {equipements; _}; _ } ->
     chargement_equipements ((equipements_connus equipements) @ List.map fst (List.flatten possibilites)) @@ fun _ ->
@@ -525,6 +526,7 @@ and phase_suivante app =
           let l = equipements_profil perso.profil in
           let leq, possibilites = List.partition (function [ _ ] -> true | _ -> false) l in
           let leq = List.map (fun (e, n) -> `connu (e, n)) @@ List.flatten leq in
+          chargement_equipements (equipements_connus leq) @@ fun _ ->
           let perso = { perso with caracteristiques_base=choix; bonuses; equipements=leq } in
           let def_equipement, agi_max = List.fold_left (fun (def, agi) e ->
             let e = match e with `connu (e, _) -> assoc_equipement e | `custom (_, e) -> e in
