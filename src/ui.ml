@@ -279,12 +279,12 @@ let personnage_to_b64 p =
   let cs = Unsafe.global##._TextEncoder in
   let encoder = new%js cs in
   let uint8a = encoder##encode (string s) in
-  let b = uint8a##toBase64 in
+  let b = uint8a##toBase64 (object%js val alphabet = string "base64url" val omitPadding = _true end) in
   to_string b
 
 let personnage_of_b64 s =
   try
-    let a = Unsafe.global##._Uint8Array##fromBase64 (string s) in
+    let a = Unsafe.global##._Uint8Array##fromBase64 (string s) (object%js val alphabet = string "base64url" end) in
     let cs = Unsafe.global##._TextDecoder in
     let decoder = new%js cs in
     let s = decoder##decode a in
@@ -1215,7 +1215,7 @@ let () =
     _false);
   let perso_param =
     let search = to_string Dom_html.window##.location##.search in
-    if search  = "" then None else
+    if search = "" then None else
     let l = String.split_on_char '&' (String.sub search 1 (String.length search - 1)) in
     let l = List.map (fun s -> match String.split_on_char '=' s with
       | [] -> s, None | [ k ] -> k, None
