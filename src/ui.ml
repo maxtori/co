@@ -586,6 +586,7 @@ and phase_suivante app =
         route app (page_to_jsoo p)
       | Competences { choix; competences; _ }  ->
         wrap app (competences_maitrisees ?choix perso) @@ fun competences_maitrisees ->
+        let competences = List.filter (fun (_, n) -> n > 0) competences in
         let perso = { perso with competences_maitrisees; competences } in
         wrap app (points_de_competences perso) @@
         fun (points_niveau, points_capacites, points_utilises, points_maitrise_utilises) ->
@@ -813,7 +814,8 @@ and edite app = match page_of_jsoo app##.page with
             def + defense, Option.fold ~none:agi ~some:(fun a -> min a agi) agilite_max
           | _ -> def, agi) (0, 8) perso.equipements in
         let perso = remplit_caracteristiques perso def_equipement agi_max in
-        let perso = { perso with competences=e.choix.competences } in
+        let competences = List.filter (fun (_, n) -> n > 0) e.choix.competences in
+        let perso = { perso with competences } in
         begin match points_de_competences perso with
           | Error e -> alert app e
           | Ok (points_niveau, points_capacites, points_utilises, points_maitrise_utilises) ->
