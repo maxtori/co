@@ -74,7 +74,7 @@ let cadre l =
     | Some (e, n) ->
       let connexion = Option.map (fun (e, _) -> demi e) (List.assoc_opt `gauche l) in
       courbes ?connexion bas e n in
-  let gauche = match List.assoc_opt `bas l with
+  let gauche = match List.assoc_opt `gauche l with
     | None ->
       let connexion = match List.assoc_opt `haut l with
         | None -> "vline to 0"

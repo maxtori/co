@@ -400,6 +400,14 @@ let assoc_equipement e = match List.assoc_opt e !equipements with
   | None -> failwith (Format.sprintf "equipement %s non chargé" (equipement_to_str e))
   | Some e -> e
 
+let defense_agilite equipements =
+  List.fold_left (fun (def, agi) e ->
+    let e = match e with `connu (e, _) -> assoc_equipement e | `custom (_, e) -> e in
+    match e with
+    | Armure { defense; agilite_max; _ } ->
+      def + defense, Option.fold ~none:agi ~some:(fun a -> min a agi) agilite_max
+    | _ -> def, agi) (0, 8) equipements
+
 let capacites l =
   let voies, lc = List.split @@ List.filter_map (fun (vt, rgs) ->
     let v = assoc_voie vt in
@@ -528,12 +536,7 @@ and phase_suivante app =
           let leq = List.map (fun (e, n) -> `connu (e, n)) @@ List.flatten leq in
           chargement_equipements (equipements_connus leq) @@ fun _ ->
           let perso = { perso with caracteristiques_base=choix; bonuses; equipements=leq } in
-          let def_equipement, agi_max = List.fold_left (fun (def, agi) e ->
-            let e = match e with `connu (e, _) -> assoc_equipement e | `custom (_, e) -> e in
-            match e with
-            | Armure { defense; agilite_max; _ } ->
-              def + defense, Option.fold ~none:agi ~some:(fun a -> min a agi) agilite_max
-            | _ -> def, agi) (0, 8) perso.equipements in
+          let def_equipement, agi_max = defense_agilite perso.equipements in
           let perso = remplit_caracteristiques perso def_equipement agi_max in
           let phase = match possibilites with
             | [] ->
@@ -561,12 +564,7 @@ and phase_suivante app =
         let perso = { perso with niveau; voies=l } in
         wrap app (verifie_voies ~capacites perso) @@ fun _ ->
         let bonus_voies = bonus_capacites @@ List.map (fun (vt, rg) -> vt, assoc_voie vt, rg) l in
-        let def_equipement, agi_max = List.fold_left (fun (def, agi) e ->
-          let e = match e with `connu (e, _) -> assoc_equipement e | `custom (_, e) -> e in
-          match e with
-          | Armure { defense; agilite_max; _ } ->
-            def + defense, Option.fold ~none:agi ~some:(fun a -> min a agi) agilite_max
-          | _ -> def, agi) (0, 8) perso.equipements in
+        let def_equipement, agi_max = defense_agilite perso.equipements in
         let perso = { perso with bonuses = perso.bonuses @ bonus_voies @ bonuses_optionnels } in
         let perso = remplit_caracteristiques perso def_equipement agi_max in
         wrap app (competences_maitrisees ~validation:false perso) @@ fun maitrisees ->
@@ -807,12 +805,7 @@ and edite app = match page_of_jsoo app##.page with
           | Some _ -> acc
         ) perso.bonuses bonus_voies in
         let perso = { perso with bonuses } in
-        let def_equipement, agi_max = List.fold_left (fun (def, agi) e ->
-          let e = match e with `connu (e, _) -> assoc_equipement e | `custom (_, e) -> e in
-          match e with
-          | Armure { defense; agilite_max; _ } ->
-            def + defense, Option.fold ~none:agi ~some:(fun a -> min a agi) agilite_max
-          | _ -> def, agi) (0, 8) perso.equipements in
+        let def_equipement, agi_max = defense_agilite perso.equipements in
         let perso = remplit_caracteristiques perso def_equipement agi_max in
         let competences = List.filter (fun (_, n) -> n > 0) e.choix.competences in
         let perso = { perso with competences } in
