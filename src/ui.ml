@@ -480,9 +480,12 @@ and edition app = match page_of_jsoo app##.page with
 and [@noconv] importation app (ev: Dom_html.inputElement Dom.event t) =
   match Opt.to_option ev##.target, page_of_jsoo app##.page with
   | Some target, Importation key ->
-    let f = List.hd @@ Dom.list_of_nodeList target##.files in
-    importation_personnage app key f @@ fun app p ->
-    route app (page_to_jsoo (Personnage {label=p.label; perso=p.perso}))
+    (match Opt.to_option target##.files with
+     | Some files ->
+       let f = List.hd @@ Dom.list_of_nodeList files in
+       importation_personnage app key f @@ fun app p ->
+       route app (page_to_jsoo (Personnage {label=p.label; perso=p.perso}))
+     | None -> ())
   | _ -> ()
 
 and voie app vt rgs =
@@ -879,18 +882,18 @@ and pp_voie _app v =
 
 and [@noconv] charge_image app (ev: Dom_html.inputElement Dom.event t) =
   let aux ~nom ~label target f =
-    let fichier = List.hd @@ Dom.list_of_nodeList target##.files in
+    let fichier = List.hd @@ Dom.list_of_nodeList (Option.get @@ Opt.to_option target##.files) in
     ouverture_image fichier @@ fun a ->
     let nom = if nom = "" then label else nom in
     let ext = Filename.extension (to_string fichier##.name) in
     let nom_fichier = String.lowercase_ascii (nom ^ ext) in
     sauvergarde_fichier_persistent nom_fichier a f in
   match Opt.to_option ev##.target, page_of_jsoo app##.page with
-  | Some target, Creation { label; phase=Enregistrement {nom; _}; _ } ->
+  | Some target, Creation { label; phase=Enregistrement {nom; _}; _ } when Opt.test target##.files ->
     aux ~nom ~label target @@ fun nom_fichier url ->
     (Unsafe.coerce app)##.page##.creation##.phase##.enregistrement##.image_url_ := def url;
     (Unsafe.coerce app)##.page##.creation##.phase##.enregistrement##.image := def (string nom_fichier)
-  | Some target, Edition { label; perso={ nom; _ }; _ } ->
+  | Some target, Edition { label; perso={ nom; _ }; _ } when Opt.test target##.files ->
     aux ~nom ~label target @@ fun nom_fichier url ->
     (Unsafe.coerce app)##.page##.edition##.choix##.image_url_ := def url;
     (Unsafe.coerce app)##.page##.edition##.choix##.image := def (string nom_fichier)
