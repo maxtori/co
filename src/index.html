@@ -269,15 +269,15 @@
           <div class="row mx-0">
             <div class="col p-0 d-flex justify-content-around">
               <span class="flex-fill border">Contact</span>
-              <span class="flex-fill text-bg-light" role="button" @click="charge_modal_des('d20', page.personnage.perso.niveau + page.personnage.perso.caracteristiques.force, 1, 'Attaque au contact')">{{ (page.personnage.perso.niveau + page.personnage.perso.caracteristiques.force).toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+              <span class="flex-fill text-bg-light" role="button" @click="charge_modal_des('d20', page.personnage.perso.attaques.contact, 1, 'Attaque au contact')">{{ (page.personnage.perso.attaques.contact).toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
             </div>
             <div class="col p-0 d-flex justify-content-around">
               <span class="flex-fill border">Distance</span>
-              <span class="flex-fill text-bg-light" role="button" @click="charge_modal_des('d20', page.personnage.perso.niveau + page.personnage.perso.caracteristiques.agilite, 1, 'Attaque à distance')">{{ (page.personnage.perso.niveau + page.personnage.perso.caracteristiques.agilite).toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+              <span class="flex-fill text-bg-light" role="button" @click="charge_modal_des('d20', page.personnage.perso.attaques.distance, 1, 'Attaque à distance')">{{ (page.personnage.perso.attaques.distance).toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
             </div>
             <div class="col p-0 d-flex justify-content-around">
               <span class="flex-fill border">Magique</span>
-              <span class="flex-fill text-bg-light" role="button" @click="charge_modal_des('d20', page.personnage.perso.niveau + page.personnage.perso.caracteristiques.volonte, 1, 'Attaque magique')">{{ (page.personnage.perso.niveau + page.personnage.perso.caracteristiques.volonte).toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+              <span class="flex-fill text-bg-light" role="button" @click="charge_modal_des('d20', page.personnage.perso.attaques.magique, 1, 'Attaque magique')">{{ (page.personnage.perso.attaques.magique).toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
             </div>
           </div>
           <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas(3)"></div>
@@ -290,7 +290,7 @@
             <div v-for="(a, j) in e[1].arme.arme" class="row mx-0">
               <span class="col p-0 text-bg-light" :class="(i==0 && j==0) ? '' : 'border-top'" role="button" data-bs-toggle="collapse" :data-bs-target="'#personnage-equipement-arme-'+String(i)">{{ (a.nombre!==undefined && a.nombre!=1) ? String(a.nombre)+' ' : '' }}{{ pp_equipement(e[0]) }}</span>
               <template v-if="a.contact!==undefined">
-                <span class="col border p-0" role="button" @click="charge_modal_des(e[1].arme.dommage[1], page.personnage.perso.caracteristiques.force, e[1].arme.dommage[0], 'Dommage')">
+                <span class="col border p-0" role="button" @click="charge_modal_des(e[1].arme.dommage[1], page.personnage.perso.degats, e[1].arme.dommage[0], 'Dommage')">
                   {{ e[1].arme.dommage[0] }}{{ e[1].arme.dommage[1] }}{{ (page.personnage.perso.caracteristiques.force==0) ? '' : page.personnage.perso.caracteristiques.force.toLocaleString('fr-FR', {signDisplay:'always'}) }}
                 </span>
                 <span class="col border p-0">

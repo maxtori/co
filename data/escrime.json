@@ -1,7 +1,10 @@
 [
   {
     "nom": "Précision",
-    "description": "Le barde peut remplacer sa FOR par son AGI pour ses tests d’attaque au contact (mais pas aux DM) lorsqu’il emploie une arme légère à une main (les armes légères sont la dague, l’épée courte et la rapière)."
+    "description": "Le barde peut remplacer sa FOR par son AGI pour ses tests d’attaque au contact (mais pas aux DM) lorsqu’il emploie une arme légère à une main (les armes légères sont la dague, l’épée courte et la rapière).",
+    "bonus": [
+      { "id": "ATT", "valeur": "AGI" }
+    ]
   },
   {
     "nom": "Feinte",

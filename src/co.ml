@@ -103,6 +103,8 @@ type bonus_type = [
   | `FAI
   | `HAU
   | `RD
+  | `ATT
+  | `DEG
 ] [@@deriving encoding {assoc}, jsoo]
 
 type caracteristique_ou_bonus = [ caracteristique | bonus_type ] [@@deriving encoding]
@@ -134,8 +136,10 @@ type valeur = [
     | `int i -> Ezjs_min.Unsafe.inject i
     | `car c -> Ezjs_min.Unsafe.inject (caracteristique_to_jsoo c)
   let valeur_of_jsoo : valeur_jsoo Ezjs_min.t -> valeur = fun v ->
-    try (`int (Float.to_int @@ Ezjs_min.float_of_number @@ Ezjs_min.Unsafe.coerce v))
-    with _ -> `car (caracteristique_of_jsoo (Ezjs_min.Unsafe.coerce v))
+    let s = Ezjs_min.to_string (Ezjs_min.typeof v) in
+    if s = "number" then
+      `int (Float.to_int @@ Ezjs_min.float_of_number @@ Ezjs_min.Unsafe.coerce v)
+    else `car (caracteristique_of_jsoo (Ezjs_min.Unsafe.coerce v))
   let valeur_jsoo_conv = valeur_to_jsoo, valeur_of_jsoo
 ]
 
@@ -720,6 +724,12 @@ let competence_to_str c =
 
 type competence_et_point = competence * int [@@deriving encoding, jsoo]
 
+type attaques = {
+  contact: int;
+  distance: int;
+  magique: int;
+} [@@deriving encoding, jsoo]
+
 type personnage = {
   nom: string;
   niveau: int; [@dft 1]
@@ -745,6 +755,8 @@ type personnage = {
   competences_maitrisees: competence_et_point list; [@dft []]
   competences: competence_et_point list; [@dft []]
   notes: string; [@dft ""]
+  attaques: attaques; [@dft {contact=0; distance=0; magique=0}]
+  degats: int;
 } [@@deriving encoding, jsoo]
 
 let (let$) = Result.bind
@@ -780,6 +792,7 @@ let caracteristiques_par_defaut peuple = match peuple with
         intelligence=1; volonte=1 }
 
 let points_vide = { courant = 0; max = 0 }
+let attaques_vide = { contact = 0; distance = 0; magique = 0 }
 
 let personnage_vide = {
   nom=""; niveau=1; famille=`Aventuriers; profil=`Arquebusier; peuple=Demi_elfe;
@@ -790,7 +803,7 @@ let personnage_vide = {
   initiative=0; defense=0; reduction_de_degats=0;
   equipements=[]; ideal=None; travers=None; description="";
   image=None; voies=[]; bonuses=[]; competences_maitrisees=[]; competences=[];
-  notes="";
+  notes=""; attaques=attaques_vide; degats=0;
 }
 
 let profils_famille = function
@@ -1001,6 +1014,18 @@ let voies_capacites ~(famille: famille) l =
     acc @ l2
   ) [] l
 
+let attaques p =
+  let contact = match List.find_opt (fun (_, b) -> b.id = `ATT && b.opt = Some (Some true)) p.bonuses with
+    | None -> p.niveau + p.caracteristiques.force
+    | Some (_, b) -> match b.valeur with
+      | `int i -> p.niveau + i
+      | `car c -> p.niveau + valeur_caracteristique p.caracteristiques c in
+  {
+    contact;
+    distance = p.niveau + p.caracteristiques.agilite;
+    magique = p.niveau + p.caracteristiques.volonte;
+  }
+
 let remplit_caracteristiques p def_equipement agi_max  =
   let caracteristiques = ajoute_caracteristiques p.caracteristiques_base p.bonuses in
   let p = { p with caracteristiques } in
@@ -1021,7 +1046,13 @@ let remplit_caracteristiques p def_equipement agi_max  =
                    initiative; defense; points_de_mana={courant=0; max=0} } in
   let p = ajoute_bonus p p.bonuses in
   let points_de_mana = aux points_de_mana0 @@ if p.points_de_mana.max = 0 then 0 else p.points_de_mana.max + p.caracteristiques.volonte in
-  { p with points_de_mana }
+  let attaques = attaques p in
+  let degats = match List.find_opt (fun (_, b) -> b.id = `DEG && b.opt = Some (Some true)) p.bonuses with
+    | None -> p.caracteristiques.force
+    | Some (_, b) -> match b.valeur with
+      | `int i -> i
+      | `car c -> valeur_caracteristique p.caracteristiques c in
+  { p with points_de_mana; attaques; degats }
 
 let equipements_profil : profil -> (equipement_nom * int option) list list = function
   | `Arquebusier ->

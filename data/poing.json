@@ -1,7 +1,10 @@
 [
   {
     "nom": "Poings de fer",
-    "description": "Lorsqu’il combat à mains nues, le moine peut (s’il le souhaite) remplacer sa FOR par son AGI pour ses tests d’attaque au contact et il inflige [1d6+FOR] DM létaux (Voir « DM temporaires » page 219). Ces DM augmentent à chaque rang suivant : 1d8 au rang 2, 1d10 au rang 3, 1d12 au rang 4 et enfin 2d6 au rang 5."
+    "description": "Lorsqu’il combat à mains nues, le moine peut (s’il le souhaite) remplacer sa FOR par son AGI pour ses tests d’attaque au contact et il inflige [1d6+FOR] DM létaux (Voir « DM temporaires » page 219). Ces DM augmentent à chaque rang suivant : 1d8 au rang 2, 1d10 au rang 3, 1d12 au rang 4 et enfin 2d6 au rang 5.",
+    "bonus": [
+      { "id": "ATT", "valeur": "AGI", "opt": null }
+    ]
   },
   {
     "nom": "Peau de fer",
