@@ -1251,8 +1251,10 @@ let points_de_competences (p: personnage) =
   let rec aux acc accm = function
     | [] -> Ok (acc, accm)
     | (c, n) :: tl ->
-      if n < 0 then Error "points de compétence négatifs" else
-      match List.assoc_opt c p.competences_maitrisees with
+      if n < 0 then Error (Format.sprintf "points de compétence négatifs pour %s" (competence_to_str c))
+      else if n > p.niveau + 5 || n > 15 then
+        Error (Format.sprintf "points de compétence trop haut pour %s" (competence_to_str c))
+      else match List.assoc_opt c p.competences_maitrisees with
       | None -> aux (acc + 2*n) accm tl
       | Some m ->
         if n - m < 0 then
