@@ -177,35 +177,35 @@
             <div class="col p-0 text-bg-light" :style="wavy_haut(1)">Caractéristiques</div>
           </div>
           <div class="row mx-0">
-            <div class="col p-0 d-flex justify-content-around">
+            <div class="col p-0 d-flex justify-content-around" role="button" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.agilite, 1, 'Agilité')">
               <span class="flex-fill border">AGI</span>
-              <span class="flex-fill text-bg-light" role="button" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.agilite, 1, 'Agilité')">{{ page.personnage.perso.caracteristiques.agilite.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+              <span class="flex-fill text-bg-light">{{ page.personnage.perso.caracteristiques.agilite.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
             </div>
-            <div class="col p-0 d-flex justify-content-around">
+            <div class="col p-0 d-flex justify-content-around" role="button" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.constitution, 1, 'Constitution')">
               <span class="flex-fill border">CON</span>
-              <span class="flex-fill text-bg-light" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.constitution, 1, 'Constitution')">{{ page.personnage.perso.caracteristiques.constitution.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+              <span class="flex-fill text-bg-light" >{{ page.personnage.perso.caracteristiques.constitution.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
             </div>
-            <div class="col p-0 d-flex justify-content-around">
+            <div class="col p-0 d-flex justify-content-around" role="button" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.force, 1, 'Force')">
               <span class="flex-fill border">FOR</span>
-              <span class="flex-fill text-bg-light" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.force, 1, 'Force')">{{ page.personnage.perso.caracteristiques.force.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+              <span class="flex-fill text-bg-light">{{ page.personnage.perso.caracteristiques.force.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
             </div>
           </div>
           <div class="row mx-0">
-            <div class="col border p-0 d-flex justify-content-around">
+            <div class="col border p-0 d-flex justify-content-around" role="button" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.perception, 1, 'Perception')">
               <span class="flex-fill">PER</span>
-              <span class="flex-fill text-bg-light" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.perception, 1, 'Perception')">{{ page.personnage.perso.caracteristiques.perception.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+              <span class="flex-fill text-bg-light">{{ page.personnage.perso.caracteristiques.perception.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
             </div>
-            <div class="col border p-0 d-flex justify-content-around">
+            <div class="col border p-0 d-flex justify-content-around" role="button" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.charisme, 1, 'Charisme')">
               <span class="flex-fill">CHA</span>
-              <span class="flex-fill text-bg-light" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.charisme, 1, 'Charisme')">{{ page.personnage.perso.caracteristiques.charisme.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+              <span class="flex-fill text-bg-light">{{ page.personnage.perso.caracteristiques.charisme.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
             </div>
-            <div class="col border p-0 d-flex justify-content-around">
+            <div class="col border p-0 d-flex justify-content-around" role="button" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.intelligence, 1, 'Intelligence')">
               <span class="flex-fill">INT</span>
-              <span class="flex-fill text-bg-light" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.intelligence, 1, 'Intelligence')">{{ page.personnage.perso.caracteristiques.intelligence.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+              <span class="flex-fill text-bg-light">{{ page.personnage.perso.caracteristiques.intelligence.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
             </div>
-            <div class="col border p-0 d-flex justify-content-around">
+            <div class="col border p-0 d-flex justify-content-around" role="button" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.volonte, 1, 'Volonté')">
               <span class="flex-fill">VOL</span>
-              <span class="flex-fill text-bg-light" @click="charge_modal_des('d20', page.personnage.perso.caracteristiques.volonte, 1, 'Volonté')">{{ page.personnage.perso.caracteristiques.volonte.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+              <span class="flex-fill text-bg-light">{{ page.personnage.perso.caracteristiques.volonte.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
             </div>
           </div>
 
@@ -226,17 +226,17 @@
           </div>
 
           <div class="row mx-0">
-            <div class="col p-0 d-flex w-50">
+            <div class="col p-0 d-flex w-50" role="button" @click="charge_modal_points('points_de_vigueur')">
               <span class="w-75 flex-fill border">Points de vigueur</span>
-              <span class="w-25 flex-fill text-bg-light" role="button" @click="charge_modal_points('points_de_vigueur')">
+              <span class="w-25 flex-fill text-bg-light">
                 <span>{{ page.personnage.perso.points_de_vigueur.courant }}</span>
                 /
                 <span>{{ page.personnage.perso.points_de_vigueur.max }}</span>
               </span>
             </div>
-            <div class="col p-0 d-flex w-50">
+            <div class="col p-0 d-flex w-50" role="button" @click="charge_modal_points('points_de_chance')">
               <span class="w-75 flex-fill border">Points de chance</span>
-              <span class="w-25 flex-fill text-bg-light" role="button" @click="charge_modal_points('points_de_chance')">
+              <span class="w-25 flex-fill text-bg-light">
                 <span>{{ page.personnage.perso.points_de_chance.courant }}</span>
                 /
                 <span>{{ page.personnage.perso.points_de_chance.max }}</span>
@@ -252,9 +252,9 @@
                 <span>{{ page.personnage.perso.des_de_recuperation.max }}</span>
               </span>
             </div>
-            <div class="col p-0 d-flex w-50">
+            <div class="col p-0 d-flex w-50" role="button" @click="charge_modal_points('points_de_mana')">
               <span class="w-75 flex-fill border">Points de mana</span>
-              <span class="w-25 flex-fill text-bg-light" role="button" @click="charge_modal_points('points_de_mana')">
+              <span class="w-25 flex-fill text-bg-light">
                 <span>{{ page.personnage.perso.points_de_mana.courant }}</span>
                 /
                 <span>{{ page.personnage.perso.points_de_mana.max }}</span>
@@ -267,17 +267,17 @@
             <div class="col p-0 text-bg-light" :style="wavy_haut(3)">Attaques</div>
           </div>
           <div class="row mx-0">
-            <div class="col p-0 d-flex justify-content-around">
+            <div class="col p-0 d-flex justify-content-around" role="button" @click="charge_modal_des('d20', page.personnage.perso.attaques.contact, 1, 'Attaque au contact')">
               <span class="flex-fill border">Contact</span>
-              <span class="flex-fill text-bg-light" role="button" @click="charge_modal_des('d20', page.personnage.perso.attaques.contact, 1, 'Attaque au contact')">{{ (page.personnage.perso.attaques.contact).toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+              <span class="flex-fill text-bg-light">{{ (page.personnage.perso.attaques.contact).toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
             </div>
-            <div class="col p-0 d-flex justify-content-around">
+            <div class="col p-0 d-flex justify-content-around" role="button" @click="charge_modal_des('d20', page.personnage.perso.attaques.distance, 1, 'Attaque à distance')">
               <span class="flex-fill border">Distance</span>
-              <span class="flex-fill text-bg-light" role="button" @click="charge_modal_des('d20', page.personnage.perso.attaques.distance, 1, 'Attaque à distance')">{{ (page.personnage.perso.attaques.distance).toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+              <span class="flex-fill text-bg-light">{{ (page.personnage.perso.attaques.distance).toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
             </div>
-            <div class="col p-0 d-flex justify-content-around">
+            <div class="col p-0 d-flex justify-content-around" role="button" @click="charge_modal_des('d20', page.personnage.perso.attaques.magique, 1, 'Attaque magique')">
               <span class="flex-fill border">Magique</span>
-              <span class="flex-fill text-bg-light" role="button" @click="charge_modal_des('d20', page.personnage.perso.attaques.magique, 1, 'Attaque magique')">{{ (page.personnage.perso.attaques.magique).toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+              <span class="flex-fill text-bg-light">{{ (page.personnage.perso.attaques.magique).toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
             </div>
           </div>
           <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas(3)"></div>
@@ -322,9 +322,9 @@
             <div class="col p-0 text-bg-light" :style="wavy_haut(5)">Compétences</div>
           </div>
           <div class="row mx-0">
-            <div class="col-4 p-0 d-flex justify-content-around" v-for="c in page.personnage.perso.competences">
+            <div class="col-4 p-0 d-flex justify-content-around" v-for="c in page.personnage.perso.competences" role="button" @click="charge_modal_des_competence('d20', bonus_competence(c), 1, pp_competence(c[0]))">
               <span class="border" style="width:65%">{{ pp_competence(c[0]) }}</span>
-              <span class="text-bg-light" style="width:35%" role="button" @click="charge_modal_des_competence('d20', bonus_competence(c), 1, pp_competence(c[0]))">+{{ bonus_competence(c).map((x) => x[1]).join('/+') }}</span>
+              <span class="text-bg-light" style="width:35%">+{{ bonus_competence(c).map((x) => x[1]).join('/+') }}</span>
             </div>
             <div v-if="page.personnage.perso.competences.length % 3 == 1" class="col-8 p-0 text-bg-light"></div>
             <div v-else-if="page.personnage.perso.competences.length % 3 == 2" class="col-4 p-0 text-bg-light"></div>
