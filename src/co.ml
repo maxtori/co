@@ -918,8 +918,20 @@ let ajoute_caracteristiques ?(factor=1) c l =
       | _ -> acc
   ) c l
 
+let attaques p =
+  let contact = match List.find_opt (fun (_, b) -> b.id = `ATT) p.bonuses with
+    | None -> p.niveau + p.caracteristiques.force
+    | Some (_, b) -> match b.valeur with
+      | `int i -> p.niveau + i
+      | `car c -> p.niveau + valeur_caracteristique p.caracteristiques c in
+  {
+    contact;
+    distance = p.niveau + p.caracteristiques.agilite;
+    magique = p.niveau + p.caracteristiques.volonte;
+  }
+
 let ajoute_bonus ?(factor=1) p l =
-  List.fold_left (fun acc (_, b) ->
+  let p = List.fold_left (fun acc (_, b) ->
     let v = factor * (match b.valeur with
       | `int i -> i
       | `car c -> valeur_caracteristique acc.caracteristiques c) in
@@ -931,7 +943,14 @@ let ajoute_bonus ?(factor=1) p l =
     | `DR -> { acc with des_de_recuperation = { max = acc.des_de_recuperation.max + v; courant = acc.des_de_recuperation.courant + v } }
     | `PM -> { acc with points_de_mana = { max = acc.points_de_mana.max + v; courant = acc.points_de_mana.courant + v } }
     | _ -> acc
-  ) p l
+  ) p l in
+  let attaques = attaques p in
+  let degats = match List.find_opt (fun (_, b) -> b.id = `DEG && b.opt = Some (Some true)) p.bonuses with
+    | None -> p.caracteristiques.force
+    | Some (_, b) -> match b.valeur with
+      | `int i -> i
+      | `car c -> valeur_caracteristique p.caracteristiques c in
+  { p with attaques; degats }
 
 let voies_peuple = function
   | Demi_elfe -> [ `Elfe_haut; `Elfe_sylvain; `Humain ]
@@ -1014,18 +1033,6 @@ let voies_capacites ~(famille: famille) l =
     acc @ l2
   ) [] l
 
-let attaques p =
-  let contact = match List.find_opt (fun (_, b) -> b.id = `ATT && b.opt = Some (Some true)) p.bonuses with
-    | None -> p.niveau + p.caracteristiques.force
-    | Some (_, b) -> match b.valeur with
-      | `int i -> p.niveau + i
-      | `car c -> p.niveau + valeur_caracteristique p.caracteristiques c in
-  {
-    contact;
-    distance = p.niveau + p.caracteristiques.agilite;
-    magique = p.niveau + p.caracteristiques.volonte;
-  }
-
 let remplit_caracteristiques p def_equipement agi_max  =
   let caracteristiques = ajoute_caracteristiques p.caracteristiques_base p.bonuses in
   let p = { p with caracteristiques } in
@@ -1046,13 +1053,7 @@ let remplit_caracteristiques p def_equipement agi_max  =
                    initiative; defense; points_de_mana={courant=0; max=0} } in
   let p = ajoute_bonus p p.bonuses in
   let points_de_mana = aux points_de_mana0 @@ if p.points_de_mana.max = 0 then 0 else p.points_de_mana.max + p.caracteristiques.volonte in
-  let attaques = attaques p in
-  let degats = match List.find_opt (fun (_, b) -> b.id = `DEG && b.opt = Some (Some true)) p.bonuses with
-    | None -> p.caracteristiques.force
-    | Some (_, b) -> match b.valeur with
-      | `int i -> i
-      | `car c -> valeur_caracteristique p.caracteristiques c in
-  { p with points_de_mana; attaques; degats }
+  { p with points_de_mana }
 
 let equipements_profil : profil -> (equipement_nom * int option) list list = function
   | `Arquebusier ->
@@ -1245,8 +1246,8 @@ let competences_maitrisees ?choix ?(validation=true) (p: personnage) =
 
 let points_de_competences (p: personnage) =
   let points_niveau = 3 * p.niveau in
-  let points_capacites = List.fold_left (fun acc (_, b) -> match b.id, b.valeur, b.opt with
-    | `PCM, `int n, (None | Some Some true) -> acc+n
+  let points_capacites = List.fold_left (fun acc (_, b) -> match b.id, b.valeur with
+    | `PCM, `int n -> acc+n
     | _ -> acc) 0 p.bonuses in
   let rec aux acc accm = function
     | [] -> Ok (acc, accm)
