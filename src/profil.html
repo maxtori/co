@@ -1,0 +1,18 @@
+<div>
+  <div class="accordion" id="familles-accordeon" style="--bs-body-bg:none">
+    <div v-for="f in profils" class="accordion-item">
+      <button class="accordion-button d-flex collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#'+f[0]">
+        {{ f[0] }}
+      </button>
+      <div :id="f[0]" class="accordion-collapse collapse" data-bs-parent="#familles-accordeon">
+        <div class="accordion-body p-0">
+          <ul class="list-group">
+            <li v-for="p in f[1]" class="list-group-item" :class="(choix && choix[1]==p) ? 'active' : ''">
+              <div @click="choisit(f[0], p)" role="button">{{ p }}</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

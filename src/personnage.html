@@ -1,0 +1,308 @@
+<div class="text-center">
+  <div class="row mx-0 py-2">
+    <div class="col px-0 collapsed" role="button" data-bs-toggle="collapse" data-bs-target="#perso-description">
+      <h1>{{ p.nom }}</h1>
+    </div>
+    <div class="col px-0">
+      <h1>
+        <span class="px-4 py-1 text-bg-light" :style="wavy_cadre(0)">
+          {{ p.niveau }}
+        </span>
+      </h1>
+    </div>
+  </div>
+  <div id="perso-description" class="collapse">
+    <img v-if="image!==undefined" :src="image" class="w-50 my-2">
+    <p class="my-2" v-if="p.description">{{ p.description }}</p>
+  </div>
+
+  <div class="row mx-0 pt-1 text-bg-light" :style="wavy_haut(0)"></div>
+  <div class="row mx-0">
+    <div class="col p-0 border">
+      {{ p.famille }}
+    </div>
+    <div class="col p-0 border">
+      {{ p.profil }}
+    </div>
+  </div>
+  <div v-if="p.ideal && p.travers" class="row mx-0">
+    <div class="col p-0 border">
+      {{ p.ideal }}
+    </div>
+    <div class="col p-0 border">
+      {{ p.travers }}
+    </div>
+  </div>
+  <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas(0)"></div>
+
+  <!-- personnage caracteristiques -->
+  <div class="row mx-0 mt-3">
+    <div class="col p-0 text-bg-light" :style="wavy_haut(1)">Caractéristiques</div>
+  </div>
+  <div class="row mx-0">
+    <div class="col p-0 d-flex justify-content-around" role="button" @click="charge_modal_des('d20', p.caracteristiques.agilite, 1, 'Agilité')">
+      <span class="flex-fill border">AGI</span>
+      <span class="flex-fill text-bg-light">{{ p.caracteristiques.agilite.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+    </div>
+    <div class="col p-0 d-flex justify-content-around" role="button" @click="charge_modal_des('d20', p.caracteristiques.constitution, 1, 'Constitution')">
+      <span class="flex-fill border">CON</span>
+      <span class="flex-fill text-bg-light" >{{ p.caracteristiques.constitution.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+    </div>
+    <div class="col p-0 d-flex justify-content-around" role="button" @click="charge_modal_des('d20', p.caracteristiques.force, 1, 'Force')">
+      <span class="flex-fill border">FOR</span>
+      <span class="flex-fill text-bg-light">{{ p.caracteristiques.force.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+    </div>
+  </div>
+  <div class="row mx-0">
+    <div class="col border p-0 d-flex justify-content-around" role="button" @click="charge_modal_des('d20', p.caracteristiques.perception, 1, 'Perception')">
+      <span class="flex-fill">PER</span>
+      <span class="flex-fill text-bg-light">{{ p.caracteristiques.perception.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+    </div>
+    <div class="col border p-0 d-flex justify-content-around" role="button" @click="charge_modal_des('d20', p.caracteristiques.charisme, 1, 'Charisme')">
+      <span class="flex-fill">CHA</span>
+      <span class="flex-fill text-bg-light">{{ p.caracteristiques.charisme.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+    </div>
+    <div class="col border p-0 d-flex justify-content-around" role="button" @click="charge_modal_des('d20', p.caracteristiques.intelligence, 1, 'Intelligence')">
+      <span class="flex-fill">INT</span>
+      <span class="flex-fill text-bg-light">{{ p.caracteristiques.intelligence.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+    </div>
+    <div class="col border p-0 d-flex justify-content-around" role="button" @click="charge_modal_des('d20', p.caracteristiques.volonte, 1, 'Volonté')">
+      <span class="flex-fill">VOL</span>
+      <span class="flex-fill text-bg-light">{{ p.caracteristiques.volonte.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+    </div>
+  </div>
+
+  <div class="row mx-0">
+    <div class="col p-0 d-flex justify-content-around">
+      <span class="flex-fill border">Initiative</span>
+      <span class="flex-fill text-bg-light">{{ p.initiative }}</span>
+    </div>
+    <div class="col p-0 d-flex justify-content-around">
+      <span class="flex-fill border">Défense</span>
+      <span class="flex-fill text-bg-light">{{ p.defense }}</span>
+    </div>
+  </div>
+  <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas(1)"></div>
+
+  <div class="row mx-0 mt-3">
+    <div class="col p-0 text-bg-light" :style="wavy_haut(2)">Points et Dés</div>
+  </div>
+
+  <div class="row mx-0">
+    <div class="col p-0 d-flex w-50" role="button" @click="charge_modal_points('points_de_vigueur')">
+      <span class="w-75 flex-fill border">Points de vigueur</span>
+      <span class="w-25 flex-fill text-bg-light">
+        <span>{{ p.points_de_vigueur.courant }}</span>
+        /
+        <span>{{ p.points_de_vigueur.max }}</span>
+      </span>
+    </div>
+    <div class="col p-0 d-flex w-50" role="button" @click="charge_modal_points('points_de_chance')">
+      <span class="w-75 flex-fill border">Points de chance</span>
+      <span class="w-25 flex-fill text-bg-light">
+        <span>{{ p.points_de_chance.courant }}</span>
+        /
+        <span>{{ p.points_de_chance.max }}</span>
+      </span>
+    </div>
+  </div>
+  <div class="row mx-0">
+    <div class="col p-0 d-flex w-50">
+      <span class="w-75 flex-fill border">Dés de récupération</span>
+      <span class="w-25 flex-fill text-bg-light" role="button" @click="charge_modal_points('des_de_recuperation')">
+        <span>{{ p.des_de_recuperation.courant }}</span>
+        /
+        <span>{{ p.des_de_recuperation.max }}</span>
+      </span>
+    </div>
+    <div class="col p-0 d-flex w-50" role="button" @click="charge_modal_points('points_de_mana')">
+      <span class="w-75 flex-fill border">Points de mana</span>
+      <span class="w-25 flex-fill text-bg-light">
+        <span>{{ p.points_de_mana.courant }}</span>
+        /
+        <span>{{ p.points_de_mana.max }}</span>
+      </span>
+    </div>
+  </div>
+  <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas(2)"></div>
+
+  <div class="row mx-0 mt-3">
+    <div class="col p-0 text-bg-light" :style="wavy_haut(3)">Attaques</div>
+  </div>
+  <div class="row mx-0">
+    <div class="col p-0 d-flex justify-content-around" role="button" @click="charge_modal_des('d20', p.attaques.contact, 1, 'Attaque au contact')">
+      <span class="flex-fill border">Contact</span>
+      <span class="flex-fill text-bg-light">{{ (p.attaques.contact).toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+    </div>
+    <div class="col p-0 d-flex justify-content-around" role="button" @click="charge_modal_des('d20', p.attaques.distance, 1, 'Attaque à distance')">
+      <span class="flex-fill border">Distance</span>
+      <span class="flex-fill text-bg-light">{{ (p.attaques.distance).toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+    </div>
+    <div class="col p-0 d-flex justify-content-around" role="button" @click="charge_modal_des('d20', p.attaques.magique, 1, 'Attaque magique')">
+      <span class="flex-fill border">Magique</span>
+      <span class="flex-fill text-bg-light">{{ (p.attaques.magique).toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+    </div>
+  </div>
+  <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas(3)"></div>
+
+  <!-- personnage equipements -->
+  <div class="row mx-0 mt-3">
+    <div class="col p-0 text-bg-light collapsed" role="button" data-bs-toggle="collapse" data-bs-target="#autres-equipements" :style="wavy_haut(4)">Équipements</div>
+  </div>
+  <div class="row mx-0">
+    <div class="col-3 p-0 row mx-0" @click="charge_modal_pieces('pp')">
+      <span class="col border">pp</span>
+      <span class="col text-bg-light">{{ p.bourse.pp }}</span>
+    </div>
+    <div class="col-3 p-0 row mx-0" @click="charge_modal_pieces('po')">
+      <span class="col border">po</span>
+      <span class="col text-bg-light">{{ p.bourse.po }}</span>
+    </div>
+    <div class="col-3 p-0 row mx-0" @click="charge_modal_pieces('pa')">
+      <span class="col border">pa</span>
+      <span class="col text-bg-light">{{ p.bourse.pa }}</span>
+    </div>
+    <div class="col-3 p-0 row mx-0" @click="charge_modal_pieces('pc')">
+      <span class="col border">pc</span>
+      <span class="col text-bg-light">{{ p.bourse.pc }}</span>
+    </div>
+  </div>
+  <template v-for="(e, i) in equipements['arme']">
+    <div v-for="(a, j) in e[1].arme.arme" class="row mx-0">
+      <span class="col p-0 text-bg-light" :class="(i==0 && j==0) ? '' : 'border-top'" role="button" data-bs-toggle="collapse" :data-bs-target="'#personnage-equipement-arme-'+String(i)">{{ (a.nombre!==undefined && a.nombre!=1) ? String(a.nombre)+' ' : '' }}{{ pp_equipement(e[0]) }}</span>
+      <template v-if="a.contact!==undefined">
+        <span class="col border p-0" role="button" @click="charge_modal_des(e[1].arme.dommage[1], p.degats, e[1].arme.dommage[0], 'Dommage')">
+          {{ e[1].arme.dommage[0] }}{{ e[1].arme.dommage[1] }}{{ (p.caracteristiques.force==0) ? '' : p.caracteristiques.force.toLocaleString('fr-FR', {signDisplay:'always'}) }}
+        </span>
+        <span class="col border p-0">
+          {{ e[1].arme.type }}
+        </span>
+      </template>
+      <template v-else>
+        <span class="col border p-0" role="button" @click="charge_modal_des(e[1].arme.dommage[1], 0, e[1].arme.dommage[0], 'Dommage')">{{ e[1].arme.dommage[0]}}{{e[1].arme.dommage[1] }}</span>
+        <span class="col border p-0">{{ a.distance.portee }} m, {{e[1].arme.type }}</span>
+      </template>
+    </div>
+    <div v-if="e[1].arme.notes" class="collapse p-2" :id="'personnage-equipement-arme-'+String(i)">{{ e[1].arme.notes }}</div>
+  </template>
+  <div id="autres-equipements" class="collapse">
+    <div v-for="(e, i) in equipements['armure']" class="row mx-0">
+      <span class="col border p-0 text-bg-light" role="button" data-bs-toggle="collapse" :data-bs-target="'#personnage-equipement-armure-'+String(i)">{{ pp_equipement(e[0]) }}</span>
+      <span class="col border p-0">DEF+{{ e[1].armure.defense }}</span>
+      <div class="collapse p-2" :id="'personnage-equipement-armure-'+String(i)">{{ e[1].armure.notes }}</div>
+    </div>
+    <div v-for="(e, i) in equipements['autre']" class="row mx-0">
+      <span class="col border p-0" role="button" data-bs-toggle="collapse" :data-bs-target="'#personnage-equipement-autre-'+String(i)">{{ pp_equipement(e[0]) }}</span>
+      <div class="collapse p-2" :id="'personnage-equipement-autre-'+String(i)">{{ e[1].autre.description }}</div>
+    </div>
+  </div>
+  <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas(4)"></div>
+
+  <!-- personnage competences -->
+  <div v-if="p.competences.length!==0">
+    <div class="row mx-0 mt-3">
+      <div class="col p-0 text-bg-light" :style="wavy_haut(5)">Compétences</div>
+    </div>
+    <div class="row mx-0">
+      <div class="col-4 p-0 d-flex justify-content-around" v-for="c in p.competences" role="button" @click="charge_modal_des_competence('d20', bonus_competence(c), 1, pp_competence(c[0]))">
+        <span class="border" style="width:65%">{{ pp_competence(c[0]) }}</span>
+        <span class="text-bg-light" style="width:35%">+{{ bonus_competence(c).map((x) => x[1]).join('/+') }}</span>
+      </div>
+      <div v-if="p.competences.length % 3 == 1" class="col-8 p-0 text-bg-light"></div>
+      <div v-else-if="p.competences.length % 3 == 2" class="col-4 p-0 text-bg-light"></div>
+    </div>
+    <div class="row mx-0 pb-1 text-bg-light" :style="wavy_bas(5)"></div>
+  </div>
+
+  <!-- personnage voies -->
+  <div v-if="p.voies.length!==0">
+    <div class="row mx-0 mt-3">
+      <div class="col p-0 text-bg-light" :style="wavy_haut(6)">Capacités</div>
+    </div>
+    <div class="accordion" id="voies-accordeon" style="--bs-body-bg:none">
+      <div v-for="v in p.voies" class="accordion-item">
+        <button class="accordion-button d-flex collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#'+v[0]">
+          <span class="flex-fill">{{ pp_voie(v[0]) }}</span>
+          <span class="me-3 badge text-bg-light">
+            <span class="m-2">Rang</span>
+            <span class="m-2">{{ rang_max(v[1]) }}</span>
+          </span>
+        </button>
+        <div :id="v[0]" class="accordion-collapse collapse" data-bs-parent="#voies-accordeon">
+          <div class="accordion-body p-0">
+
+            <div class="accordion" :id="'voie-accordeon-'+v[0]">
+              <div v-for="(c, i) in voies[v[0]]" class="accordion-item">
+                <button class="accordion-button d-flex collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#'+v[0]+'-'+String(i)">
+                  <span class="flex-fill">{{ c.nom }}</span>
+                  <span class="me-3">{{ c.rang }}</span>
+                </button>
+                <div :id="v[0]+'-'+String(i)" class="accordion-collapse collapse" :data-bs-parent="'#voie-accordeon-'+v[0]">
+                  <div class="accordion-body p-0">
+                    <div v-if="c.action.length!=0 || c.sort" class="text-bg-light row mx-0" :style="wavy_bas(6)">
+                      <div v-if="c.sort" class="col">sort</div>
+                      <div v-if="c.action.length!=0" class="col">{{ c.action.join(' / ') }}</div>
+                    </div>
+                    <p class="p-2 mb-0">{{ c.description }}</p>
+                    <div v-if="c.html" v-html="c.html"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- points modal -->
+  <div id="points-modal" class="modal" @[hide_modal]="vide_points()">
+    <div class="modal-dialog modal-dialog-centered">
+      <div v-if="points" class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title mx-auto">{{ points.titre }}
+            <span class="badge text-bg-light ms-4">/ {{ points.points.max }}</span>
+          </h2>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex justify-content-center">
+            <button class="btn btn-light" @click="points.points.courant=points.points.courant-1"><i class="bi bi-dash"></i></button>
+            <input type="number" class="form-control text-center" v-model="points.points.courant" style="width:60px"/>
+            <button class="btn btn-light" @click="points.points.courant=points.points.courant+1"><i class="bi bi-plus"></i></button>
+          </div>
+          <div id="des-recuperation" class="m-2">
+          </div>
+          <h4 v-if="points.genre=='des_de_recuperation'" class="text-center">
+            <span>Points de vigueur: </span>
+            <span v-if="points.resultat!==undefined">
+              {{ p.points_de_vigueur.courant - points.resultat }} + {{ points.resultat }} =
+            </span>
+            <span> {{ p.points_de_vigueur.courant }} / {{ p.points_de_vigueur.max }}</span>
+          </h4>
+        </div>
+        <div class="modal-footer">
+          <button v-if="points.genre=='des_de_recuperation'" class="btn btn-secondary mx-auto" @click="lance_de_recuperation(points)">Lancer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- pieces modal -->
+  <div id="pieces-modal" class="modal" @[hide_modal]="vide_pieces()">
+    <div class="modal-dialog modal-dialog-centered">
+      <div v-if="pieces" class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title mx-auto">{{ pieces.titre }}</h2>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex justify-content-center">
+            <button class="btn btn-light" @click="pieces.quantite=pieces.quantite-1"><i class="bi bi-dash"></i></button>
+            <input type="number" class="form-control text-center" v-model="pieces.quantite" style="width:60px"/>
+            <button class="btn btn-light" @click="pieces.quantite=pieces.quantite+1"><i class="bi bi-plus"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

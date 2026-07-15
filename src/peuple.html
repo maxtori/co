@@ -1,0 +1,7 @@
+<div>
+  <ul class="list-group">
+    <li v-for="p in peuples" class="list-group-item" :class="(choix && choix==p) ? 'active' : ''">
+      <div @click="choisit(p)" role="button">{{ pp_peuple(p) }}</div>
+    </li>
+  </ul>
+</div>

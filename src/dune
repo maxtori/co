@@ -7,10 +7,13 @@
 
 (executable
  (name ui)
- (modules wavy ui)
+ (modules common wavy profil peuple caracteristiques equipements niveau voies competences bonuses sauvegarde creation personnage personnages edition backup ui)
  (preprocess (pps ppx_deriving_jsoo vue-ppx))
+ (preprocessor_deps profil.html peuple.html caracteristiques.html equipements.html niveau.html voies.html competences.html bonuses.html sauvegarde.html creation.html personnage.html personnages.html edition.html backup.html)
  (libraries ezjs_idb ezjs_fetch co)
- (modes js))
+ (modes js)
+ (js_of_ocaml (flags (:standard --pretty)))
+)
 
 (install
   (package co)

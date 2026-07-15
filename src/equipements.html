@@ -1,0 +1,132 @@
+<div class="text-center">
+
+  <ul class="list-group p-0">
+    <li v-for="e in equipements" class="list-group-item p-0">
+      <div class="row mx-0">
+        <span class="col-4 border p-0 text-bg-light">{{ (e[1].arme!==undefined && e[1].arme.arme[0].distance!==undefined && e[1].arme.arme[0].distance.nombre!==undefined && e[1].arme.arme[0].distance.nombre!=1) ? String(e[1].arme.arme[0].distance.nombre)+' ' : '' }}{{ pp_equipement(e[0]) }}</span>
+        <template v-if="e[1].arme!==undefined && e[1].arme.arme[0].contact!==undefined">
+          <span class="col-2 border p-0">
+            {{ e[1].arme.dommage[0] }}{{ e[1].arme.dommage[1] }}{{ (p.caracteristiques.force == 0) ? '' : p.caracteristiques.force.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}
+          </span>
+          <span class="col-4 border p-0">
+            {{ e[1].arme.type }}
+          </span>
+        </template>
+        <template v-else-if="e[1].arme!==undefined">
+          <span class="col-2 border p-0">{{ e[1].arme.dommage[0]}}{{e[1].arme.dommage[1] }}</span>
+          <span class="col-4 border p-0">{{ e[1].arme.arme[0].distance.portee }} m, {{ e[1].arme.type }}</span>
+        </template>
+        <template v-else-if="e[1].armure!==undefined">
+          <span class="col-6 border p-0">
+            DEF{{ (e[1].armure.defense==0) ? '' : e[1].armure.defense.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}
+          </span>
+        </template>
+        <template v-else>
+          <span class="col-6 border p-0"></span>
+        </template>
+        <span class="col-2 border p-0">
+          <button class="btn p-0" @click="retire_equipement(e[0])"><i class="bi bi-trash3"></i></button>
+        </span>
+      </div>
+    </li>
+  </ul>
+
+  <!-- equipements aux choix à la création -->
+  <div v-if="possibilites.length!==0">
+    <div class="row mx-0 mt-3">
+      <div class="col text-bg-light">Equipements au choix</div>
+    </div>
+    <div v-for="(l, i) in possibilites" class="row mx-0 mt-3">
+      <ul class="list-group p-0">
+        <li v-for="e in l" class="list-group-item p-0" :class="(choix[i][0]==e[0]) ? 'active' : ''">
+          <button class="btn w-100" @click="choix[i]=e">
+            {{ pp_equipement(e[0]) }}
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ajount d'equipement -->
+  <div class="row mx-0 mt-3">
+    <div class="col text-bg-light">Ajout d'équipement</div>
+  </div>
+  <div class="list-group-item p-0 text-center">
+    <div class="w-100 d-flex">
+      <select class="form-select" v-model="ajout[0]" @change="charge_custom_equipement">
+        <option value=""></option>
+        <option value="arme_contact_custom">Arme de contact sur mesure</option>
+        <option value="arme_distance_custom">Arme à distance sur mesure</option>
+        <option value="armure_custom">Armure sur mesure</option>
+        <option value="autre_custom">Autre sur mesure</option>
+        <option v-for="e in tous" :value="e">{{ pp_equipement(e) }}</option>
+      </select>
+      <input class="form-control" v-model="ajout[1]" type="number" style="max-width:60px" :disabled="['', 'arme_contact_custom', 'arme_distance_custom', 'armure_custom', 'autre_custom'].includes(ajout[0])"/>
+      <button class="btn btn-outline-light border-0 py-2" @click="ajoute_equipement()" :disabled="ajout[0]==''">Ajouter</button>
+    </div>
+    <div v-if="['arme_contact_custom', 'arme_distance_custom'].includes(ajout[0])" class="mb-3">
+      <div class="row mx-0">
+        <div class="col-2 text-bg-light">Nom</div>
+        <div class="col-6 px-0">
+          <input class="form-control py-0" v-model="ajout_custom[0]"/>
+        </div>
+        <div class="col-2 text-bg-light">Prix</div>
+        <div class="col-2 px-0">
+          <input class="form-control py-0" v-model="ajout_custom[1].arme.prix"/>
+        </div>
+        <div class="col-2 text-bg-light">Dégats</div>
+        <div class="col-4 px-0 d-flex">
+          <input type="number" class="form-control py-0" v-model="ajout_custom[1].arme.dommage[0]"/>
+          <select class="form-control py-0" v-model="ajout_custom[1].arme.dommage[1]">
+            <option v-for="d in ['d4', 'd4°', 'd6', 'd8', 'd10', 'd12', 'd20']" :value="d">{{ d }}</option>
+          </select>
+        </div>
+        <div class="col-2 text-bg-light">Type</div>
+        <div class="col-4 px-0">
+          <select class="form-control py-0" v-model="ajout_custom[1].arme.type">
+            <option v-for="t in ['contondants', 'perforants', 'tranchants']" :value="t">{{ t }}</option>
+          </select>
+        </div>
+        <template v-if="ajout[0]=='arme_distance_custom'">
+          <div class="col-2 offset-4 text-bg-light">Portée</div>
+          <div class="col-2 px-0">
+            <input type="number" class="form-control py-0" v-model="ajout_custom[1].arme.arme[0].distance.portee"/>
+          </div>
+        </template>
+      </div>
+      <textarea class="form-control" placeholder="notes" v-model="ajout_custom[1].arme.notes"></textarea>
+    </div>
+    <div v-else-if="ajout[0]=='armure_custom'" class="mb-3">
+      <div class="row mx-0">
+        <div class="col-2 text-bg-light">Nom</div>
+        <div class="col-6 px-0">
+          <input class="form-control py-0" v-model="ajout_custom[0]"/>
+        </div>
+        <div class="col-2 text-bg-light">Prix</div>
+        <div class="col-2 px-0">
+          <input class="form-control py-0" v-model="ajout_custom[1].armure.prix"/>
+        </div>
+      </div>
+      <div class="row mx-0">
+        <div class="col-2 offset-4 text-bg-light">Défense</div>
+        <div class="col-2 px-0">
+          <input type="number" class="form-control py-0" v-model="ajout_custom[1].armure.defense"/>
+        </div>
+      </div>
+      <textarea class="form-control" placeholder="notes" v-model="ajout_custom[1].armure.notes"></textarea>
+    </div>
+    <div v-else-if="ajout[0]=='autre_custom'" class="mb-3">
+      <div class="row mx-0">
+        <div class="col-2 text-bg-light">Nom</div>
+        <div class="col-6 px-0">
+          <input class="form-control py-0" v-model="ajout_custom[0]"/>
+        </div>
+        <div class="col-2 text-bg-light">Prix</div>
+        <div class="col-2 px-0">
+          <input class="form-control py-0" v-model="ajout_custom[1].autre.prix"/>
+        </div>
+      </div>
+      <textarea class="form-control" placeholder="description" v-model="ajout_custom[1].autre.description"></textarea>
+    </div>
+  </div>
+</div>

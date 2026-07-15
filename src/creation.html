@@ -1,0 +1,26 @@
+<div class="my-5">
+  <profil v-if="phase=='profil'" :p="p" ref="creation-profil"></profil>
+
+  <peuple v-else-if="phase=='peuple'" :p="p" ref="creation-peuple"></peuple>
+
+  <div v-else-if="phase=='caracteristiques'">
+    <div class="row mx-0 mt-3"><div class="col text-bg-light text-center">Caractéristiques</div></div>
+    <caracteristiques :p="p" @alert="alert" ref="creation-caracteristiques"></caracteristiques>
+  </div>
+
+  <div v-else-if="phase=='equipements'">
+    <div class="row mx-0 mt-3"><div class="col text-bg-light text-center">Equipements</div></div>
+    <equipements :p="p" ref="creation-equipements"></equipements>
+  </div>
+
+  <div v-else-if="phase=='niveau'">
+    <div class="row mx-0 my-3"><div class="col text-bg-light text-center">Niveau</div></div>
+    <niveau :p="p" ref="creation-niveau" @alert="alert"></niveau>
+  </div>
+
+  <voies v-else-if="phase=='voies'" :p="p" ref="creation-voies" @alert="alert"></voies>
+
+  <competences v-else-if="phase=='competences'" :p="p" ref="creation-competences" @alert="alert"></competences>
+
+  <sauvegarde v-else-if="phase=='sauvegarde'" :p="p" :lbl="label" ref="creation-sauvegarde" @alert="alert"></sauvegarde>
+</div>

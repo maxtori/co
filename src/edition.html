@@ -1,0 +1,93 @@
+<div class="my-5">
+  <div class="accordion" id="edition-accordeon" style="--bs-body-bg:none">
+    <!-- edition niveau -->
+    <div class="accordion-item">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#edition-niveau">
+        Niveau
+      </button>
+      <div id="edition-niveau" class="accordion-collapse collapse" data-bs-parent="#edition-accordeon" @[hide_collapse]="check('niveau')" @[shown_collapse]="ouvre('niveau')">
+        <div class="accordion-body">
+          <niveau :p="perso" ref="edition-niveau" @alert="alert"></niveau>
+        </div>
+      </div>
+    </div>
+    <!-- edition caraceristiques -->
+    <div class="accordion-item">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#edition-caracteristiques">
+        Caractéristiques
+      </button>
+      <div id="edition-caracteristiques" class="accordion-collapse collapse" data-bs-parent="#edition-accordeon" @[hide_collapse]="check('caracteristiques')" @[shown_collapse]="ouvre('caracteristiques')">
+        <div class="accordion-body text-center px-0 py-2">
+          <caracteristiques :p="perso" @alert="alert" ref="edition-caracteristiques"></caracteristiques>
+        </div>
+      </div>
+    </div>
+    <!-- edition voies -->
+    <div class="accordion-item">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#edition-capacites">
+        <span class="flex-fill">Capacités</span>
+        <span class="px-3">{{ points_de_maitrise[0] }} / {{ points_de_maitrise[1] }}</span>
+      </button>
+      <div id="edition-capacites" class="accordion-collapse collapse" data-bs-parent="#edition-accordeon" @[hide_collapse]="check('voies')" @[shown_collapse]="ouvre('voies')">
+        <div class="accordion-body p-0">
+          <voies :p="perso" edition ref="edition-voies" @alert="alert" @points_maitrise="points_maitrise"></voies>
+        </div>
+      </div>
+    </div>
+    <!-- edition equipements -->
+    <div class="accordion-item">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#edition-equipements">
+        Equipements
+      </button>
+      <div id="edition-equipements" class="accordion-collapse collapse" data-bs-parent="#edition-accordeon" @[hide_collapse]="check('equipements')" @[shown_collapse]="ouvre('equipements')">
+        <div class="accordion-body p-0">
+          <equipements :p="perso" ref="edition-equipements"></equipements>
+        </div>
+      </div>
+    </div>
+    <!-- edition competences -->
+    <div class="accordion-item">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#edition-competences">
+        <span class="flex-fill">Compétences</span>
+        <span class="px-3">{{ points_de_competences[0] }} / {{ points_de_competences[1] }}</span>
+      </button>
+      <div id="edition-competences" class="accordion-collapse collapse" data-bs-parent="#edition-accordeon" @[hide_collapse]="check('competences')" @[shown_collapse]="ouvre('competences')">
+        <div class="accordion-body p-0">
+          <competences :p="perso" edition ref="edition-competences" @alert="alert" @points_competences="points_competences"></competences>
+        </div>
+      </div>
+    </div>
+    <!-- edition bonuses -->
+    <div class="accordion-item">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#edition-bonuses">
+        Bonuses
+      </button>
+      <div id="edition-bonuses" class="accordion-collapse collapse" data-bs-parent="#edition-accordeon" @[hide_collapse]="check('bonuses')" @[shown_collapse]="ouvre('bonuses')">
+        <div class="accordion-body p-0">
+          <bonuses :p="perso" ref="edition-bonuses"></bonuses>
+        </div>
+      </div>
+    </div>
+    <!-- edition sauvegarde -->
+    <div class="accordion-item">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#edition-nom">
+        Sauvegarde
+      </button>
+      <div id="edition-nom" class="accordion-collapse collapse" data-bs-parent="#edition-accordeon" @[hide_collapse]="check('sauvegarde')" @[shown_collapse]="ouvre('sauvegarde')">
+        <div class="accordion-body p-0">
+          <sauvegarde :p="perso" :lbl="label" ref="edition-sauvegarde" @alert="alert"></sauvegarde>
+        </div>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#edition-notes">
+        Notes
+      </button>
+      <div id="edition-notes" class="accordion-collapse collapse" data-bs-parent="#edition-accordeon">
+        <div class="accordion-body p-0">
+          <textarea class="form-control" v-model="perso.notes" rows="8"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

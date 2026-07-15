@@ -82,6 +82,10 @@ type peuple =
   | Nain
 [@@deriving encoding {assoc}, jsoo]
 
+let peuple_to_str p = match Json_encoding.construct peuple_enc p with
+  | `String s -> s
+  | _ -> failwith "nom peuple non valide"
+
 type caracteristique = [
   | `AGI
   | `CON
@@ -183,7 +187,7 @@ type arme_type =
 
 type equipement =
   | Arme of {
-    arme: arme_type list; [@dft [Contact {deux_mains=None}]] dommage: int * de;
+    arme: arme_type list; [@ddft [Contact {deux_mains=None}]] dommage: int * de;
     prix: string option; typ: dommage_type [@key "type"]; notes: string option }
   | Armure of { defense: int; agilite_max: int option; prix: string option; notes: string option }
   | Autre of { description: string; prix: string option }
@@ -643,7 +647,7 @@ type bonus = {
 } [@@deriving encoding, jsoo]
 
 type voie_bonus = {
-  profils: profil_ou_famille list; [@dft []]
+  profils: profil_ou_famille list; [@ddft []]
   rangs: int list;
 } [@@deriving encoding, jsoo]
 
@@ -651,11 +655,11 @@ type bonus_avec_nom = string * bonus [@@deriving encoding, jsoo]
 
 type capacite = {
   nom: string;
-  rang: int; [@dft 0]
+  rang: int; [@ddft 0]
   description: string;
-  action: action list; [@dft []] [@encoding actions_enc]
-  sort: bool; [@dft false]
-  bonus: bonus list; [@dft []]
+  action: action list; [@ddft []] [@encoding actions_enc]
+  sort: bool; [@ddft false]
+  bonus: bonus list; [@ddft []]
   voie: voie_bonus option;
   html: string option;
 } [@@deriving encoding, jsoo]
@@ -674,9 +678,9 @@ type voies = (voie_type * voie) list [@assoc (voie_type_to_str, voie_type_of_str
 [@@@jsoo
   class type voies_jsoo = [voie_jsoo Ezjs_min.t] Ezjs_min.Table.ct
   let voies_to_jsoo l : voies_jsoo Ezjs_min.t =
-    Ezjs_min.Table.makef voie_to_jsoo @@ List.map (fun (k, v) -> voie_type_to_str k, v) l
+    Ezjs_min.Table.makef voie_to_jsoo @@ List.map (fun (k, v) -> Ezjs_min.to_string (voie_type_to_jsoo k), v) l
   let voies_of_jsoo t =
-    List.map (fun (k, v) -> voie_type_of_str k, v) @@
+    List.map (fun (k, v) -> voie_type_of_jsoo (Ezjs_min.string k), v) @@
     Ezjs_min.Table.itemsf voie_of_jsoo t
 ]
 
@@ -685,12 +689,14 @@ type points_avec_max = {
   max: int;
 } [@@deriving encoding, jsoo]
 
+type equipement_avec_nombre = equipement_nom * int option [@@deriving encoding, jsoo]
+
 type equipement_nom_ou_custom = [
-  | `connu of equipement_nom * int option
+  | `connu of equipement_avec_nombre
   | `custom of string * equipement
 ] [@@deriving encoding, jsoo]
 
-type equipement_et_nom = equipement_nom * equipement [@@deriving encoding, jsoo]
+type equipement_avec_nom = equipement_nom * equipement [@@deriving encoding, jsoo]
 
 type voie_et_rangs = voie_type * int list [@@deriving encoding, jsoo]
 
@@ -730,36 +736,48 @@ type attaques = {
   magique: int;
 } [@@deriving encoding, jsoo]
 
+type piece = [ `pp | `po | `pa | `pc ] [@@deriving encoding {assoc}, jsoo]
+let piece_of_str s = List.assoc s piece_assoc
+let piece_to_str = let l = List.map (fun (a, b) -> b, a) piece_assoc in fun (p: piece) -> List.assoc p l
+
+type bourse = { pp: int; po: int; pa: int; pc: int }
+[@@deriving encoding {remove_prefix=false}, jsoo {remove_prefix=false}]
+
 type personnage = {
   nom: string;
-  niveau: int; [@dft 1]
+  niveau: int; [@dfft 1]
   famille: famille;
   profil: profil;
   peuple: peuple;
   caracteristiques_base: caracteristiques;
+  bonus_peuple: bonus_avec_nom list; [@ddft []]
   caracteristiques: caracteristiques;
   points_de_vigueur: points_avec_max;
   des_de_recuperation: points_avec_max;
   points_de_chance: points_avec_max;
   points_de_mana: points_avec_max;
-  initiative: int; [@dft 0]
-  defense: int; [@dft 0]
-  reduction_de_degats: int; [@dft 0]
-  equipements: equipement_nom_ou_custom list; [@dft []]
+  initiative: int; [@ddft 0]
+  defense_equipement: int; [@ddft 0]
+  agilite_max: int; [@ddft 0]
+  defense: int; [@ddft 0]
+  reduction_de_degats: int; [@ddft 0]
+  equipements: equipement_nom_ou_custom list; [@ddft []]
   ideal: ideal option;
   travers: travers option;
-  description: string; [@dft ""]
+  description: string; [@ddft ""]
   image: string option;
-  voies: voie_et_rangs list; [@dft []]
-  bonuses: bonus_avec_nom list; [@dft []]
-  competences_maitrisees: competence_et_point list; [@dft []]
-  competences: competence_et_point list; [@dft []]
-  notes: string; [@dft ""]
-  attaques: attaques; [@dft {contact=0; distance=0; magique=0}]
-  degats: int;
+  voies: voie_et_rangs list; [@ddft []]
+  bonuses: bonus_avec_nom list; [@ddft []]
+  competences_maitrisees: competence_et_point list; [@ddft []]
+  competences: competence_et_point list; [@ddft []]
+  notes: string; [@ddft ""]
+  attaques: attaques; [@ddft {contact=0; distance=0; magique=0}]
+  degats: int; [@ddft 0]
+  bourse: bourse; [@ddft {pp=0; po=0; pa=0; pc=0}]
 } [@@deriving encoding, jsoo]
 
 let (let$) = Result.bind
+let (let@) f p = f p
 
 let caracteristiques_par_defaut peuple = match peuple with
   | None ->
@@ -798,12 +816,13 @@ let personnage_vide = {
   nom=""; niveau=1; famille=`Aventuriers; profil=`Arquebusier; peuple=Demi_elfe;
   caracteristiques=caracteristiques_par_defaut None;
   caracteristiques_base=caracteristiques_par_defaut (Some Demi_elfe);
+  bonus_peuple=[];
   points_de_vigueur=points_vide; des_de_recuperation=points_vide;
   points_de_chance=points_vide; points_de_mana=points_vide;
-  initiative=0; defense=0; reduction_de_degats=0;
+  initiative=0; defense_equipement=0; agilite_max=0; defense=0; reduction_de_degats=0;
   equipements=[]; ideal=None; travers=None; description="";
   image=None; voies=[]; bonuses=[]; competences_maitrisees=[]; competences=[];
-  notes=""; attaques=attaques_vide; degats=0;
+  notes=""; attaques=attaques_vide; degats=0; bourse={pp=0; po=0; pa=0; pc=0};
 }
 
 let profils_famille = function
@@ -826,35 +845,40 @@ let caracteristique_avec_valeur c acc i =
   acc
 
 let bonuses_peuple p c =
-  let nom, l = match p with
-    | Demi_elfe -> "demi_elfe", [
+  let nom = peuple_to_str p in
+  let l = match p with
+    | Demi_elfe -> [
       [ `PER, 1; `FOR, -1 ]; [ `PER, 1; `CON, -1 ];
       [ `CHA, 1; `FOR, -1 ]; [ `CHA, 1; `CON, -1 ];
     ]
-    | Demi_orc -> "demi_orc", [
+    | Demi_orc -> [
       [ `FOR, 1; `CHA, -1 ]; [ `FOR, 1; `INT, -1 ];
       [ `CON, 1; `CHA, -1 ]; [ `CON, 1; `INT, -1 ];
     ]
-    | Elfe_haut -> "elfe_haut", [
+    | Elfe_haut -> [
       [ `INT, 1; `FOR, -1 ]; [ `CHA, 1; `FOR, -1 ];
     ]
-    | Elfe_sylvain -> "elfe_sylvain", [
+    | Elfe_sylvain -> [
       [ `AGI, 1; `FOR, -1 ]; [ `PER, 1; `FOR, -1 ];
     ]
-    | Gnome -> "gnome", [
+    | Gnome -> [
       [ `INT, 1; `FOR, -1 ]; [ `PER, 1; `FOR, -1 ];
     ]
-    | Halfelin -> "halfelin", [
+    | Halfelin -> [
       [ `AGI, 1; `FOR, -1 ]; [ `VOL, 1; `FOR, -1 ];
     ]
     | Humain ->
       let l = caracteristique_avec_valeur c [] (-1) in
       let l = if List.length l >= 2 then l else caracteristique_avec_valeur c l 0 in
-      "humain", List.map (fun c -> [c, 1]) l
-    | Nain -> "nain", [
+      List.map (fun c -> [c, 1]) l
+    | Nain -> [
         [ `CON, 1; `AGI, -1 ]; [ `VOL, 1; `AGI, -1 ];
       ] in
   List.map (fun l -> List.map (fun (id, v) -> nom, {id; valeur=`int v; opt=None}) l) l
+
+let extrait_bonus_peuple p l =
+  let nom = peuple_to_str p in
+  List.filter (fun (n, _b) -> n = nom) l
 
 let plus_faibles_caracteristiques c =
   let rec aux acc i = match acc with
@@ -1033,7 +1057,7 @@ let voies_capacites ~(famille: famille) l =
     acc @ l2
   ) [] l
 
-let remplit_caracteristiques p def_equipement agi_max  =
+let remplit_caracteristiques p  =
   let caracteristiques = ajoute_caracteristiques p.caracteristiques_base p.bonuses in
   let p = { p with caracteristiques } in
   let aux p max = let courant = if p.courant = 0 || p.courant = p.max then max else p.courant in { courant; max } in
@@ -1047,7 +1071,7 @@ let remplit_caracteristiques p def_equipement agi_max  =
   let points_de_chance = aux p.points_de_chance @@ 2 + p.caracteristiques.charisme + (match p.famille with
     | `Aventuriers -> 1 | _ -> 0) in
   let initiative = 10 + p.caracteristiques.perception in
-  let defense = 10 + min agi_max p.caracteristiques.agilite + def_equipement in
+  let defense = 10 + min p.agilite_max p.caracteristiques.agilite + p.defense_equipement in
   let points_de_mana0 = p.points_de_mana in
   let p = { p with points_de_vigueur; des_de_recuperation; points_de_chance;
                    initiative; defense; points_de_mana={courant=0; max=0} } in
@@ -1098,7 +1122,7 @@ let bonus_capacites voies =
     | (c: capacite) :: tl ->
       if not (List.mem c.rang rgs) then aux vt rgs acc tl else
       let acc = acc @ (List.filter_map (fun (b: bonus) -> match b.opt with
-        | None | Some Some true-> Some (c.nom, b)
+        | None | Some Some true -> Some (c.nom, b)
         | _ -> None) c.bonus) in
       let acc = if c.sort then acc @ [ c.nom, { id=`PM; valeur=`int 1; opt=None } ] else acc in
       aux vt rgs acc tl in
@@ -1150,7 +1174,7 @@ let verifie_voies ?(validate=true) ~capacites p =
         else aux rg rgs in
     aux (rg0-1) rgs in
   let voies_capacites = List.flatten @@ List.filter_map (fun (c: capacite) ->
-    Option.bind c.voie @@ fun { profils; rangs } ->
+    let@ { profils; rangs } = Option.bind c.voie in
     let profils = List.fold_left (fun acc pf ->
       match pf with
       | `famille -> acc @ profils_famille p.famille

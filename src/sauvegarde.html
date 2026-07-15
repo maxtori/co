@@ -1,0 +1,39 @@
+<div class="text-center">
+  <div class="row mx-0">
+    <div class="col p-0 text-bg-light">Nom du personnage</div>
+    <div class="col p-0"><input class="form-control py-0" v-model="nom"/></div>
+  </div>
+  <div class="row mx-0">
+    <div class="col p-0 text-bg-light">Idéal</div>
+    <div class="col p-0">
+      <select class="form-control py-0" v-model="ideal">
+        <option v-for="i in ideaux" :value="i">{{ i }}</option>
+      </select>
+    </div>
+  </div>
+  <div class="row mx-0">
+    <div class="col p-0 text-bg-light">Travers</div>
+    <div class="col p-0">
+      <select class="form-control py-0" v-model="travers">
+        <option v-for="i in travers_options" :value="i">{{ i }}</option>
+      </select>
+    </div>
+  </div>
+  <div class="row mx-0 mt-2">
+    <div class="col text-bg-light">Description</div>
+  </div>
+  <textarea class="form-control" v-model="description"></textarea>
+  <div v-if="has_storage" class="row mx-0 mt-2">
+    <div class="col p-0 text-bg-light">Image</div>
+    <div class="col p-0">
+      <input class="form-control py-0" type="file" @change="charge_image" accept="image/*, application/pdf"/>
+    </div>
+    <div v-if="image_url!==undefined" class="p-2">
+      <img :src="image_url" alt="image" class="w-50">
+    </div>
+  </div>
+  <div class="row mx-0 mt-2">
+    <div class="col p-0 text-bg-light">Nom de la sauvegarde</div>
+    <div class="col p-0"><input class="form-control py-0" v-model="label" @keyup.enter="fin()"/></div>
+  </div>
+</div>

@@ -1,0 +1,108 @@
+<div class="text-center">
+
+  <div class="my-1 text-start">
+    <div class="mx-3">Les caracteristiques ne peuvent suivre que 3 différentes répartitions:</div>
+    <div class="row mx-0">
+      <div class="offset-2 col-4 p-0">Polyvalent:</div>
+      <div class="col-6 p-0">+2, +2, +2, +1, +1, 0, -1</div>
+    </div>
+    <div class="row mx-0">
+      <div class="offset-2 col-4 p-0">Expert:</div>
+      <div class="col-6 p-0"> +3, +2, +1, +1, 0, 0, -1</div>
+    </div>
+    <div class="row mx-0">
+      <div class="offset-2 col-4 p-0">Spécialiste:</div>
+      <div class="col-6 p-0">+4, +2, +1, 0, 0, -1, -1</div>
+    </div>
+  </div>
+
+  <div class="row mx-0">
+    <div class="col border p-0 d-flex justify-content-around">
+      <span class="flex-fill">AGI</span>
+      <input class="form-control py-0" type="number" v-model="choix.agilite" style="width:60px"/>
+    </div>
+    <div class="col border p-0 d-flex justify-content-around">
+      <span class="flex-fill">CON</span>
+      <input class="form-control py-0" type="number" v-model="choix.constitution" style="width:60px"/>
+    </div>
+    <div class="col border p-0 d-flex justify-content-around">
+      <span class="flex-fill">FOR</span>
+      <input class="form-control py-0" type="number" v-model="choix.force" style="width:60px"/>
+    </div>
+  </div>
+  <div class="row mx-0">
+    <div class="col border p-0 d-flex justify-content-around">
+      <span class="flex-fill">PER</span>
+      <input class="form-control py-0" type="number" v-model="choix.perception" style="width:60px"/>
+    </div>
+    <div class="col border p-0 d-flex justify-content-around">
+      <span class="flex-fill">CHA</span>
+      <input class="form-control py-0" type="number" v-model="choix.charisme" style="width:60px"/>
+    </div>
+    <div class="col border p-0 d-flex justify-content-around">
+      <span class="flex-fill">INT</span>
+      <input class="form-control py-0" type="number" v-model="choix.intelligence" style="width:60px"/>
+    </div>
+    <div class="col border p-0 d-flex justify-content-around">
+      <span class="flex-fill">VOL</span>
+      <input class="form-control py-0" type="number" v-model="choix.volonte" style="width:60px"/>
+    </div>
+  </div>
+
+  <div class="row mx-0 mt-3">
+    <div class="col p-0 text-bg-light">Bonus de peuple</div>
+  </div>
+
+  <ul class="list-group">
+    <li v-for="(p, i) in bonuses" class="list-group-item p-0" :class="(choix_bonus && choix_bonus[1]==i) ? 'active' : ''">
+      <div @click="choisit(p, i)" class="row mx-0" role="button">
+        <div v-for="b in p" class="col border p-0 d-flex justify-content">
+          <span class="flex-fill">{{ b[1].id }}</span>
+          <span class="flex-fill text-bg-light">{{ b[1].valeur }}</span>
+        </div>
+      </div>
+    </li>
+  </ul>
+
+  <div class="row mx-0 mt-3">
+    <div class="col p-0 text-bg-light">
+      <span>Résultats</span>
+      <button class="btn text-dark" @click="maj">
+        <i class="bi bi-arrow-clockwise"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="row mx-0">
+    <div class="col p-0 d-flex justify-content-around">
+      <span class="flex-fill border">AGI</span>
+      <span class="flex-fill text-bg-light">{{ resultat.agilite.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+    </div>
+    <div class="col p-0 d-flex justify-content-around">
+      <span class="flex-fill border">CON</span>
+      <span class="flex-fill text-bg-light" >{{ resultat.constitution.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+    </div>
+    <div class="col p-0 d-flex justify-content-around">
+      <span class="flex-fill border">FOR</span>
+      <span class="flex-fill text-bg-light">{{ resultat.force.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+    </div>
+  </div>
+  <div class="row mx-0">
+    <div class="col border p-0 d-flex justify-content-around">
+      <span class="flex-fill">PER</span>
+      <span class="flex-fill text-bg-light">{{ resultat.perception.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+    </div>
+    <div class="col border p-0 d-flex justify-content-around">
+      <span class="flex-fill">CHA</span>
+      <span class="flex-fill text-bg-light">{{ resultat.charisme.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+    </div>
+    <div class="col border p-0 d-flex justify-content-around">
+      <span class="flex-fill">INT</span>
+      <span class="flex-fill text-bg-light">{{ resultat.intelligence.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+    </div>
+    <div class="col border p-0 d-flex justify-content-around">
+      <span class="flex-fill">VOL</span>
+      <span class="flex-fill text-bg-light">{{ resultat.volonte.toLocaleString('fr-FR', {signDisplay: 'exceptZero'}) }}</span>
+    </div>
+  </div>
+</div>
