@@ -119,3 +119,8 @@ let fold f acc l cb =
     | [] -> cb acc
     | h :: tl -> f acc h @@ fun acc -> aux acc tl in
   aux acc l
+
+let modal = let cs : _ constr = Unsafe.global##.bootstrap##._Modal in fun id ->
+  let md = new%js cs (string ("#" ^ id)) in
+  ignore md##show;
+  md

@@ -100,7 +100,7 @@
         <edition v-else-if="page.edition!==undefined" :p="page.edition.perso" :lbl="page.edition.label" @alert="alert" ref="edition">
         </edition>
 
-        <!-- erreur modal -->
+        <!-- modal erreur -->
         <div id="erreur-modal" class="modal" @[hide_modal]="vide_erreur()">
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -111,7 +111,21 @@
           </div>
         </div>
 
-        <!-- de modal -->
+        <!-- modal edition -->
+        <div id="modal-edition" class="modal" @[hide_modal]="vide_edition()">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div v-if="ecrasement" class="modal-body text-center">
+                <div>Ecraser la sauvegarde "{{ ecrasement.perso.label }}" de {{ ecrasement.perso.perso.nom }} ?</div>
+                <button class="btn btn-light mt-3" @click="ecrase_personnage(ecrasement)">
+                  <i class="bi bi-floppy-fill"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- modal des -->
         <div id="des-modal" class="modal" @[hide_modal]="vide_des()">
           <div class="modal-dialog modal-dialog-centered">
             <div v-if="des" class="modal-content">

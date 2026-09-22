@@ -125,9 +125,7 @@ and charge_modal_points app g =
     | `points_de_mana -> p.points_de_mana, None in
   let points = { titre; genre; points; de; resultat=None } in
   app##.points := def (points_to_jsoo points);
-  let cs : _ constr = Unsafe.global##.bootstrap##._Modal in
-  let md = new%js cs (string "#points-modal") in
-  ignore md##show
+  ignore (modal "points-modal")
 
 and charge_modal_pieces app k =
   let p = personnage_of_jsoo app##.p in
@@ -139,9 +137,7 @@ and charge_modal_pieces app k =
     | `pa -> p.bourse.pa
     | `pc -> p.bourse.pc in
   app##.pieces := def (pieces_to_jsoo { titre; metal; quantite });
-  let cs : _ constr = Unsafe.global##.bootstrap##._Modal in
-  let md = new%js cs (string "#pieces-modal") in
-  ignore md##show
+  ignore (modal "pieces-modal")
 
 and pp_equipement _app e = Equipements.pp_equipement (Unsafe.obj [||]) e
 and pp_competence _app c = Competences.pp_competence (Unsafe.obj [||]) c

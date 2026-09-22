@@ -2,9 +2,16 @@ open Co
 open Ezjs_min
 open Common
 
+type suppression = {
+  perso: avec_label_et_phase;
+  modal: Unsafe.any;
+} [@@deriving jsoo]
+
 let%file _ = "./personnages.html"
 
 let%prop list : avec_label_et_phase list = {req}
+let%data suppression : suppression option = None
+and hide_modal = "hide.bs.modal"
 
 let personnage_to_b64 p =
   let s = EzEncoding.construct personnage_enc p in
@@ -16,6 +23,9 @@ let personnage_to_b64 p =
 
 let%meth detruit_personnage app (n: string) =
   let@ () = Common.suppression_personnage n in
+  let () = match Optdef.to_option app##.suppression with
+    | Some x -> (Unsafe.coerce x##.modal)##hide
+    | None -> () in
   [%emit "init" app]
 
 and telecharge_personnage _app (label: string) (p: personnage) =
@@ -39,6 +49,12 @@ and copie_lien_personnage _app (label: string) (p: personnage) =
     Promise.jthen ((Unsafe.coerce Dom_html.window##.navigator)##.clipboard##writeText (string s)) Fun.id
 
 and wavy_cadre _app (i: int) = Common.wavy_cadre i
+
+and modal_suppression app (perso: avec_label_et_phase) =
+  let modal = modal "modal-suppression" in
+  app##.suppression := def (suppression_to_jsoo {perso; modal})
+
+and vide_suppression app = app##.suppression := undefined
 
 and [@noconv] personnage app (p: personnage_jsoo t) = [%emit "perso" app p]
 

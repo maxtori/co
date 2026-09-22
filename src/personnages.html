@@ -23,10 +23,24 @@
             </button>
           </div>
           <div class="col d-flex">
-            <button class="btn py-0 flex-fill" @click="detruit_personnage(p.label)">
+            <button class="btn py-0 flex-fill" @click="modal_suppression(p)">
               <i class="bi bi-trash3"></i>
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- modal suppression -->
+  <div id="modal-suppression" class="modal" @[hide_modal]="vide_suppression()">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div v-if="suppression!==undefined"  class="modal-body text-center">
+          <div>Prêt à supprimer {{ suppression.perso.perso.nom }} ({{suppression.perso.label}}) ?</div>
+          <button class="btn btn-light mt-3" @click="detruit_personnage(suppression.perso.label)">
+            <i class="bi bi-trash3"></i>
+          </button>
         </div>
       </div>
     </div>

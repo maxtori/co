@@ -14,6 +14,17 @@ type page =
   | Backup of (Unsafe.any js_array t js_array t [@ignore])
 [@@deriving jsoo {remove_undefined; snake}]
 
+type edition = {
+  label: string;
+  perso: personnage;
+  existe: bool;
+} [@@deriving jsoo]
+
+type ecrasement = {
+  perso: avec_label;
+  modal: Unsafe.any;
+} [@@deriving jsoo]
+
 let%data page : page = Chargement
 and modal_erreur : string option = None
 and des : Personnage.des option = None
@@ -21,6 +32,7 @@ and tsp : int = Float.to_int @@ (to_float date##now) /. 1000.
 and image : string option = None
 and has_storage : bool = Option.is_some (Optdef.to_option Unsafe.global##.navigator##.storage)
 and hide_modal = "hide.bs.modal"
+and ecrasement : ecrasement option = None
 
 let ouvre_db f =
   Store.set_name "personnages";
@@ -39,26 +51,29 @@ let backup app st =
 
 let alert_aux app s =
   app##.modal_erreur_ := def (string s);
-  let cs : _ constr = Unsafe.global##.bootstrap##._Modal in
-  let md = new%js cs (string "#erreur-modal") in
-  ignore md##show
+  ignore (modal "erreur-modal")
 
 let chargement_personnages app f =
   let st = Store.store ~mode:READONLY !db in
   let error _ = backup app st in
   let@ l = Store.fold ~error st (fun label {perso; creation} acc ->
     {label; perso; creation} :: acc) [] in
-  f app (List.rev l)
+  f (List.rev l)
 
-let ajout_personnage ?creation app label perso f =
+let personnage_existe label f =
+  let st = Store.store ~mode:READONLY !db in
+  Store.Raw.get st (fun a -> match AOpt.to_option a with None -> f false | _ -> f true)
+    (Store.Raw.K (string label))
+
+let ajout_personnage ?creation label perso f =
   let st = Store.store ~mode:READWRITE !db in
-  Store.add ~key:label ~callback:(fun _ -> f app {label; perso; creation}) st {perso; creation}
+  Store.add ~key:label ~callback:(fun _ -> f {label; perso; creation}) st {perso; creation}
 
-let importation_personnage app label fichier f =
+let importation_personnage label fichier f =
   let@ s = ouverture_fichier fichier in
   let p = EzEncoding.destruct personnage_enc s in
   let label = if String.trim label = "" then Format.sprintf "%s_%d" p.nom p.niveau else label in
-  ajout_personnage app label p f
+  ajout_personnage label p f
 
 let to_raw x = Unsafe.global##._Vue##toRaw x
 
@@ -99,7 +114,7 @@ let route ?(loading=true) ?path ?prec app p =
   Dom_html.window##.history##pushState (state p1) (string "") path
 
 let init_aux app =
-  chargement_personnages app @@ fun app l -> match l with
+  chargement_personnages app @@ fun l -> match l with
   | [] -> route ~loading:false app (page_to_jsoo Nouveau)
   | _ -> route app (page_to_jsoo (Personnages l))
 
@@ -136,7 +151,7 @@ and phase_suivante app =
     (match nouveau.phase with
      | Fin ->
        let@ () = suppression_personnage label in
-       ajout_personnage app nouveau.label nouveau.perso @@ fun app {perso; _} ->
+       ajout_personnage nouveau.label nouveau.perso @@ fun {perso; _} ->
        let p = page_to_jsoo (Personnage { perso; label=nouveau.label }) in
        route ~prec app p
      | _ ->
@@ -147,9 +162,7 @@ and phase_suivante app =
 
 and charge_modal_des app des =
   app##.des := def des;
-  let cs : _ constr = Unsafe.global##.bootstrap##._Modal in
-  let md = new%js cs (string "#des-modal") in
-  ignore md##show
+  ignore (modal "des-modal")
 
 and lance_de app des =
   let open Personnage in
@@ -165,11 +178,20 @@ and lance_de app des =
 and edite app = match page_of_jsoo app##.page, Optdef.to_option [%ref app "edition"] with
   | Edition _, Some elt ->
     let@ x = Promise.jthen (Unsafe.coerce elt)##maj in
-    let { perso; label } : avec_label = avec_label_of_jsoo x in
-    let@ () = edition_personnage label perso in
-    let p = page_to_jsoo (Personnage { perso; label }) in
-    route ~prec:(page_to_jsoo (Edition {perso; label})) app p
+    let p = avec_label_of_jsoo x in
+    let@ b = personnage_existe p.label in
+    if b then
+      let modal = modal "modal-edition" in
+      app##.ecrasement := def (ecrasement_to_jsoo { perso=p; modal })
+    else
+    let@ _ = ajout_personnage p.label p.perso in
+    route ~prec:(page_to_jsoo (Edition p)) app (page_to_jsoo (Personnage p))
   | _ -> alert_aux app "cette fonction n'est pas accessible sur cette page"
+
+and ecrase_personnage app (e: ecrasement) =
+  let@ () = edition_personnage e.perso.label e.perso.perso in
+  ignore (Unsafe.coerce e.modal)##hide;
+  route ~prec:(page_to_jsoo (Edition e.perso)) app (page_to_jsoo (Personnage e.perso))
 
 and [@noconv] importation app (ev: Dom_html.inputElement Dom.event t) =
   match Opt.to_option ev##.target, page_of_jsoo app##.page with
@@ -177,7 +199,7 @@ and [@noconv] importation app (ev: Dom_html.inputElement Dom.event t) =
     (match Opt.to_option target##.files with
      | Some files ->
        let f = List.hd @@ Dom.list_of_nodeList files in
-       importation_personnage app key f @@ fun app p ->
+       let@ p = importation_personnage key f in
        route app (page_to_jsoo (Personnage {label=p.label; perso=p.perso}))
      | None -> ())
   | _ -> ()
@@ -190,6 +212,7 @@ and alert app s = alert_aux app (to_string s)
 
 and vide_erreur app = app##.modal_erreur_ := undefined
 and vide_des app = app##.des := undefined
+and vide_edition app = app##.ecrasement := undefined
 
 let () =
   let@ () = ouvre_db in
