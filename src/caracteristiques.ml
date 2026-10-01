@@ -33,7 +33,7 @@ let prepare app p =
     match acc with
     | None -> ()
     | Some (i, bonus) ->
-      app##.choix_bonus_ := def (bonus_avec_index_to_jsoo (p.bonus_peuple, i));
+      app##.choix_bonus_ := def (bonus_avec_index_to_jsoo (bonus, i));
       match calcul ~bonus p.caracteristiques_base with
       | Ok (_, caracteristiques) -> app##.resultat := caracteristiques_to_jsoo caracteristiques;
       | _ -> ()
