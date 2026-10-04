@@ -162,13 +162,14 @@ and lance_de_recuperation app points = match to_optdef de_of_jsoo points##.de wi
     let label = to_string app##.lbl in
     let@ r = Common.lance_de "des-recuperation" (de_str perso.niveau de) 1 in
     let p = points_of_jsoo points in
-    let points_de_vigueur = { perso.points_de_vigueur with courant = min (perso.points_de_vigueur.courant + r) perso.points_de_vigueur.max } in
+    let courant = min (perso.points_de_vigueur.courant + r + perso.niveau / 2) perso.points_de_vigueur.max in
+    let points_de_vigueur = { perso.points_de_vigueur with courant } in
     let des_de_recuperation = { p.points with courant = p.points.courant - 1 } in
     let perso = { perso with points_de_vigueur; des_de_recuperation } in
     points##.points##.courant := des_de_recuperation.courant;
     points##.resultat := def r;
     let@ () = edition_personnage label perso in
-    [%emit "perso" app (avec_label_et_phase_to_jsoo {perso; label; creation=None})]
+    [%emit "perso" app (avec_label_to_jsoo {perso; label})]
   | _ -> ()
 
 and vide_points app =
@@ -184,7 +185,7 @@ and vide_points app =
       | `points_de_mana -> { perso with points_de_mana = p.points } in
     let@ () = Common.edition_personnage label perso in
     app##.points := undefined;
-    [%emit "perso" app (avec_label_et_phase_to_jsoo {perso; label; creation=None})]
+    [%emit "perso" app (avec_label_to_jsoo {perso; label})]
   | _ -> ()
 
 and vide_pieces app =
@@ -200,7 +201,7 @@ and vide_pieces app =
     let perso = { perso with bourse } in
     let@ () = Common.edition_personnage label perso in
     app##.pieces := undefined;
-    [%emit "perso" app (avec_label_et_phase_to_jsoo {perso; label; creation=None})]
+    [%emit "perso" app (avec_label_to_jsoo {perso; label})]
   | _ -> ()
 
 [%%created fun app -> prepare app]
