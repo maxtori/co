@@ -7,6 +7,7 @@ type points = {
   points: points_avec_max;
   titre: string;
   de: de option;
+  points_de_vigueur_courant: int; [@mutable]
   resultat: int option; [@mutable]
 } [@@deriving jsoo]
 
@@ -123,7 +124,7 @@ and charge_modal_points app g =
     | `des_de_recuperation -> p.des_de_recuperation, Some (de_recuperation p.famille)
     | `points_de_chance -> p.points_de_chance, None
     | `points_de_mana -> p.points_de_mana, None in
-  let points = { titre; genre; points; de; resultat=None } in
+  let points = { titre; genre; points; de; resultat=None; points_de_vigueur_courant = p.points_de_vigueur.courant } in
   app##.points := def (points_to_jsoo points);
   ignore (modal "points-modal")
 
@@ -157,10 +158,11 @@ and rang_max _app rgs =
 
 and lance_de_recuperation app points = match to_optdef de_of_jsoo points##.de with
   | Some de ->
-    points##.resultat := undefined;
     let perso = personnage_of_jsoo app##.p in
     let label = to_string app##.lbl in
-    let@ r = Common.lance_de "des-recuperation" (de_str perso.niveau de) 1 in
+    points##.resultat := undefined;
+    points##.points_de_vigueur_courant_ := perso.points_de_vigueur.courant;
+    let@ r = lance_de "des-recuperation" (de_str perso.niveau de) 1 in
     let p = points_of_jsoo points in
     let courant = min (perso.points_de_vigueur.courant + r + perso.niveau / 2) perso.points_de_vigueur.max in
     let points_de_vigueur = { perso.points_de_vigueur with courant } in
@@ -177,13 +179,13 @@ and vide_points app =
   | Some p ->
     let perso = personnage_of_jsoo app##.p in
     let label = to_string app##.lbl in
-    if p.points.max < p.points.courant then Common.alert app "valeur supérieur au maximum" else
+    if p.points.max < p.points.courant then alert app "valeur supérieur au maximum" else
     let perso = match p.genre with
       | `points_de_vigueur -> { perso with points_de_vigueur = p.points }
       | `des_de_recuperation -> { perso with des_de_recuperation = p.points }
       | `points_de_chance -> { perso with points_de_chance = p.points }
       | `points_de_mana -> { perso with points_de_mana = p.points } in
-    let@ () = Common.edition_personnage label perso in
+    let@ () = edition_personnage label perso in
     app##.points := undefined;
     [%emit "perso" app (avec_label_to_jsoo {perso; label})]
   | _ -> ()
@@ -199,7 +201,7 @@ and vide_pieces app =
       | `pa -> { perso.bourse with pa = p.quantite }
       | `pc -> { perso.bourse with pc = p.quantite } in
     let perso = { perso with bourse } in
-    let@ () = Common.edition_personnage label perso in
+    let@ () = edition_personnage label perso in
     app##.pieces := undefined;
     [%emit "perso" app (avec_label_to_jsoo {perso; label})]
   | _ -> ()

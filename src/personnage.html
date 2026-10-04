@@ -276,7 +276,7 @@
           <h4 v-if="points.genre=='des_de_recuperation'" class="text-center">
             <span>Points de vigueur: </span>
             <span v-if="points.resultat!==undefined">
-              {{ p.points_de_vigueur.courant - points.resultat - Math.floor(p.niveau / 2) }} + {{ points.resultat }} + {{ Math.floor(p.niveau / 2) }} =
+              {{ points.points_de_vigueur_courant }} + {{ points.resultat }} + {{ Math.floor(p.niveau / 2) }} =
             </span>
             <span> {{ p.points_de_vigueur.courant }} / {{ p.points_de_vigueur.max }}</span>
           </h4>
