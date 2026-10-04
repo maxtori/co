@@ -1247,26 +1247,36 @@ let competences_maitrisees_profil : profil -> competence list = function
   | `Moine -> [ `acrobaties; `artisanat; `athletisme; `connaissance; `discretion; `empathie; `escalade; `medecine; `natation; `religion; `survie; `vigilance ]
   | `Pretre -> [ `artisanat; `athletisme; `connaissance; `empathie; `equitation; `intimidation; `medecine; `persuasion; `religion; `survie ]
 
-let competences_maitrisees ?choix ?(validation=true) (p: personnage) =
+let competences_maitrisees_peuple ?choix ?(validation=true) p =
   let peuple = match p.peuple with
     | Demi_elfe -> if List.exists (fun (vt, _) -> vt = `Elfe_haut) p.voies then Elfe_haut else Elfe_sylvain
     | p -> p in
-  let$ l = match peuple, choix with
-    | Demi_elfe, _ -> failwith "pas de competences pour demi elfe"
-    | Demi_orc, _ -> Ok [ `athletisme; `intimidation ]
-    | Elfe_haut, _ -> Ok [ `connaissance; `divertissement ]
-    | Elfe_sylvain, _ -> Ok [ `discretion; `survie ]
-    | Gnome, _ -> Ok [ `sciences; `occultisme ]
-    | Halfelin, _ -> Ok [ `discretion; `effraction ]
-    | Humain, None when validation -> Error "les compétences pour un humain requiert un choix"
-    | Humain, None -> Ok [ `artisanat ]
-    | Humain, Some c -> Ok [ `artisanat; c ]
-    | Nain, _ -> Ok [ `artisanat; `vigilance ] in
+  match peuple, choix with
+  | Demi_elfe, _ -> failwith "pas de competences pour demi elfe"
+  | Demi_orc, _ -> Ok [ `athletisme; `intimidation ]
+  | Elfe_haut, _ -> Ok [ `connaissance; `divertissement ]
+  | Elfe_sylvain, _ -> Ok [ `discretion; `survie ]
+  | Gnome, _ -> Ok [ `sciences; `occultisme ]
+  | Halfelin, _ -> Ok [ `discretion; `effraction ]
+  | Humain, None when validation -> Error "les compétences pour un humain requiert un choix"
+  | Humain, None -> Ok [ `artisanat ]
+  | Humain, Some c -> Ok [ `artisanat; c ]
+  | Nain, _ -> Ok [ `artisanat; `vigilance ]
+
+let choix_competence_maitrisee p l =
+  let maitrisees_profil = competences_maitrisees_profil p.profil in
+  let maitrisees_peuple = Result.get_ok (competences_maitrisees_peuple ~validation:false p) in
+  let maitrisees = maitrisees_profil @ maitrisees_peuple in
+  List.find_map (fun (c, _) -> if not (List.mem c maitrisees) then Some c else None) l
+
+let competences_maitrisees ?choix ?validation (p: personnage) =
+  let maitrisees_profil = competences_maitrisees_profil p.profil in
+  let$ maitrisees_peuple = competences_maitrisees_peuple ?choix ?validation p in
   Ok (List.fold_left (fun acc c ->
     match List.assoc_opt c acc with
     | None -> acc @ [ c, 0 ]
     | Some n -> (List.remove_assoc c acc) @ [ c, n+2 ]
-  ) (List.map (fun c -> c, 0) (competences_maitrisees_profil p.profil)) l)
+  ) (List.map (fun c -> c, 0) maitrisees_profil) maitrisees_peuple)
 
 let points_de_competences (p: personnage) =
   let points_niveau = 3 * p.niveau in

@@ -17,11 +17,11 @@ and competences: competence_et_point list = []
 and points: points_competences = 0, 0
 
 let prepare app perso =
-  let maitrisees, competences = match perso.competences_maitrisees with
+  let maitrisees, competences, choix = match perso.competences_maitrisees with
     | [] ->
       let maitrisees = Result.get_ok (competences_maitrisees ~validation:false perso) in
-      maitrisees, List.filter (fun (_, n) -> n <> 0) maitrisees
-    | _ -> perso.competences_maitrisees, perso.competences in
+      maitrisees, List.filter (fun (_, n) -> n <> 0) maitrisees, None
+    | _ -> perso.competences_maitrisees, perso.competences, choix_competence_maitrisee perso perso.competences_maitrisees in
   let possibilites_maitrisees = List.map snd competence_assoc in
   let possibilites = List.filter (fun c -> Option.is_none (List.assoc_opt c competences)) possibilites_maitrisees in
   let points_niveau, points_capacites, points_utilises, _ = Result.get_ok (points_de_competences perso) in
@@ -29,6 +29,7 @@ let prepare app perso =
   app##.possibilites := of_listf competence_to_jsoo possibilites;
   app##.possibilites_maitrisees_ := of_listf competence_to_jsoo possibilites_maitrisees;
   app##.competences := of_listf competence_et_point_to_jsoo competences;
+  app##.choix := optdef competence_to_jsoo choix;
   let points = points_competences_to_jsoo (points_utilises, points_niveau + points_capacites) in
   app##.points := points;
   if to_bool app##.edition then [%emit "points_competences" app points]
