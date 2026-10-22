@@ -11,9 +11,7 @@
  (preprocess (pps ppx_deriving_jsoo vue-ppx))
  (preprocessor_deps profil.html peuple.html caracteristiques.html equipements.html niveau.html voies.html competences.html bonuses.html sauvegarde.html creation.html personnage.html personnages.html edition.html backup.html)
  (libraries ezjs_idb ezjs_fetch co)
- (modes js)
- (js_of_ocaml (flags (:standard --pretty)))
-)
+ (modes js))
 
 (install
   (package co)

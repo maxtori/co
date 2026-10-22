@@ -43,6 +43,10 @@ let ouvre_db f =
   db := dbh;
   f ()
 
+let enregistre_worker () =
+  Option.iter (fun sw -> sw##register (string "sw.jw")) @@
+  Optdef.to_option Unsafe.global##.navigator##.serviceWorker
+
 let backup app st =
   let@ l = Store.Raw.fold st (fun label p acc ->
     (array [| Unsafe.inject label; Unsafe.inject p##.perso; Unsafe.inject p##.creation |]) :: acc
@@ -221,6 +225,7 @@ and vide_des app = app##.des := undefined
 and vide_edition app = app##.ecrasement := undefined
 
 let () =
+  enregistre_worker ();
   let@ () = ouvre_db in
   let app = [%app {conv; mount; unhide; export; components=[Creation; Personnages; Personnage; Edition; Backup]}] in
   let@ () = verifie_persistence app in
