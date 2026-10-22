@@ -28,8 +28,6 @@ let ouverture_image fichier f =
 
 let sauvegarde_fichier_persistent nom a f =
   let st = Unsafe.global##.navigator##.storage in
-  let@ b = Promise.jthen st##persist in
-  if not (to_bool b) then () else
   let@ dir = Promise.jthen st##getDirectory in
   let@ fh = Promise.jthen (dir##getFileHandle_1 (string nom) (object%js val create= _true end)) in
   let@ wr = Promise.jthen fh##createWritable in

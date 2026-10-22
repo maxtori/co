@@ -53,6 +53,12 @@ let alert_aux app s =
   app##.modal_erreur_ := def (string s);
   ignore (modal "erreur-modal")
 
+let verifie_persistence app f =
+  let st = Unsafe.global##.navigator##.storage in
+  let@ b = Promise.jthen st##persist in
+  if not (to_bool b) then alert_aux app "l'application a besoin de mémoire persistente"
+  else f ()
+
 let chargement_personnages app f =
   let st = Store.store ~mode:READONLY !db in
   let error _ = backup app st in
@@ -217,6 +223,7 @@ and vide_edition app = app##.ecrasement := undefined
 let () =
   let@ () = ouvre_db in
   let app = [%app {conv; mount; unhide; export; components=[Creation; Personnages; Personnage; Edition; Backup]}] in
+  let@ () = verifie_persistence app in
   Dom_html.window##.onpopstate := Dom_html.handler (fun (e : Dom_html.popStateEvent t) ->
     (try route app (Unsafe.coerce e##.state) with _exn -> init_aux app); _false);
   (Unsafe.coerce Dom_html.window)##.onfocus := Dom_html.handler (fun (_e : Dom_html.popStateEvent t) ->
