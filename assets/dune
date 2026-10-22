@@ -14,4 +14,5 @@
   (glob_files (*.ttf with_prefix assets/))
   (glob_files (*.png with_prefix assets/))
   (glob_files (*.webp with_prefix assets/))
+  (glob_files (*.svg with_prefix assets/))
 ))

@@ -1,7 +1,7 @@
 {
-  "name": "co",
+  "name": "Chroniques Oubliées",
   "short_name": "co",
-  "description": "co",
+  "description": "Personnages pour Chroniques Oubliées",
   "start_url": "index.html",
   "display": "standalone",
   "theme_color": "black",
@@ -9,5 +9,10 @@
   "icons": [
     { "src": "assets/co_192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "assets/co_512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "assets/co_512.png", "sizes": "any", "type": "image/png" } ]
+    { "src": "assets/co.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "assets/co_maskable_512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "assets/co_maskable.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" },
+    { "src": "assets/co_monochrome_512.png", "sizes": "512x512", "type": "image/png", "purpose": "monochrome" },
+    { "src": "assets/co_monochrome.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "monochrome" }
+  ]
 }
